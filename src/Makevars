@@ -1,0 +1,8 @@
+## We need the headers exported via inst/include
+#CXXFLAGS = -I../../src -L../../
+
+## Needed for the 'non-streams' variant charToPOSIXctNS
+# PKG_LIBS = -lCEasyGWAS
+
+PKG_LIBS=-L/bioinfo/users/hcliment/easyGWASCore/ -lCEasyGWAS
+PKG_CPPFLAGS=-I/bioinfo/users/hcliment/easyGWASCore/src -I/bioinfo/users/hcliment/easyGWASCore/External -I/bioinfo/users/hcliment/easyGWASCore/External -I/bioinfo/users/hcliment/easyGWASCore/External/maxflow -I/bioinfo/users/hcliment/easyGWASCore/External/Cephes -I/bioinfo/users/hcliment/anaconda3/lib/R/library/RcppEigen/include/ -I/bioinfo/users/hcliment/anaconda3/lib/R/library/Matrix/include/
