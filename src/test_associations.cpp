@@ -10,16 +10,17 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List create_scones_testing(double eta, double lambda, int nparams, int statistic){
+List test_associations(int statistic, std::string filesPath, double eta, double lambda) {
+
   CSconesSettings settings;
   CScones scones;
   GWASData tmpData;
 
   GWASData data;
 
-  string genotype_str = "../data/testing/scones/skat/genotype";
-  string phenotype_str = "../data/testing/scones/skat/phenotype.txt";
-  string network_str = "../data/testing/scones/skat/network.txt";
+  string genotype_str = filesPath + "genotype";
+  string phenotype_str = filesPath + "phenotype.txt";
+  string network_str = filesPath + "network.txt";
   uint encoding = 0;
   float64 maf = 0.05;
 
@@ -37,45 +38,35 @@ List create_scones_testing(double eta, double lambda, int nparams, int statistic
   settings.selection_criterion = CONSISTENCY;
   settings.selection_ratio = 0.8;
   settings.test_statistic = statistic;
-  settings.nParameters = nparams;
+  settings.nParameters = 10;
   settings.evaluateObjective = false;
   settings.dump_intermediate_results = true;
   settings.dump_path = "tmp/";
 
-  if (eta >= 0 & lambda >= 0) {
-    // set up specific lambda and eta
-    VectorXd l(1);
-    l(0) = lambda;
-    VectorXd e(1);
-    e(0) = eta;
-    settings.lambdas = l;
-    settings.etas = e;
-    // avoid gridsearch
-    settings.autoParameters = false;
-  } else {
-    settings.lambdas = VectorXd::Zero(settings.nParameters);
-    settings.etas = VectorXd::Zero(settings.nParameters);
-    settings.autoParameters = true;
-  }
+  // set up specific lambda and eta
+  VectorXd l(1);
+  l(0) = lambda;
+  VectorXd e(1);
+  e(0) = eta;
+  settings.lambdas = l;
+  settings.etas = e;
+  // avoid gridsearch
+  settings.autoParameters = false;
 
   scones = CScones(tmpData.Y.col(0),tmpData.X,tmpData.network, settings);
-  scones.test_associations();
+
+  scones.test_associations(eta, lambda);
 
   VectorXd indicator = scones.getIndicatorVector();
   VectorXd terms = scones.getObjectiveFunctionTerms(lambda,eta);
   VectorXd scores = scones.getScoreStatistic();
   SparseMatrixXd W = scones.getW();
 
-  double eta_f = scones.getBestEta();
-  double lambda_f =  scones.getBestLambda();
-
-  List run = List::create(indicator, terms,  eta_f, lambda_f);
   return Rcpp::List::create(Rcpp::Named("indicator") = indicator,
                             Rcpp::Named("terms") = terms,
                             Rcpp::Named("scores") = scores,
                             Rcpp::Named("W") = W,
-                            Rcpp::Named("eta") = eta_f,
-                            Rcpp::Named("lambda") = lambda_f,
-                            Rcpp::Named("eta") = eta_f);
-
+                            Rcpp::Named("eta") = eta,
+                            Rcpp::Named("lambda") = lambda,
+                            Rcpp::Named("eta") = eta);
 }

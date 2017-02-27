@@ -7,14 +7,15 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::MatrixXd A) {
+Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::VectorXd c) {
 
   CScones scones;
+  scones.setNFeatures(lW.rows());
 
-  VectorXd indicator_vector;
+  VectorXd indicator_vector(lW.rows());
 
   // Matrix A containing As and At
-  MatrixXd A(__n_features,2);
+  MatrixXd A(lW.rows(),2);
   //connect positive c values to sink
   VectorXd pos_c = (c.array()<=0).select(0,c);
   //connect negative c values to source

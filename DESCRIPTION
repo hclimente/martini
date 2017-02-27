@@ -1,15 +1,17 @@
 Package: rscones2
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: R interface for scones2
+Version: 0.1.1
+Author: Hector Climente
+Maintainer: Hector Climente <hector.climente@curie.fr>
+Description: Just a simple interface for scones2.
+License: MIT
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.8),
     RcppEigen (>= 0.3.2.9.0)
+Depends:
+    Matrix (>= 1.2-7.1)
 LinkingTo:
     Rcpp,
     RcppEigen
