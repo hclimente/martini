@@ -25,17 +25,55 @@ namespace rscones2 {
         }
     }
 
-    inline List create_scones_testing(double eta, double lambda, int nparams, int statistic) {
-        typedef SEXP(*Ptr_create_scones_testing)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr_create_scones_testing p_create_scones_testing = NULL;
-        if (p_create_scones_testing == NULL) {
-            validateSignature("List(*create_scones_testing)(double,double,int,int)");
-            p_create_scones_testing = (Ptr_create_scones_testing)R_GetCCallable("rscones2", "rscones2_create_scones_testing");
+    inline Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::VectorXd c) {
+        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
+        static Ptr_maxflow p_maxflow = NULL;
+        if (p_maxflow == NULL) {
+            validateSignature("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
+            p_maxflow = (Ptr_maxflow)R_GetCCallable("rscones2", "rscones2_maxflow");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_create_scones_testing(Rcpp::wrap(eta), Rcpp::wrap(lambda), Rcpp::wrap(nparams), Rcpp::wrap(statistic));
+            rcpp_result_gen = p_maxflow(Rcpp::wrap(lW), Rcpp::wrap(c));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+    }
+
+    inline std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::string filesPath, int min, int max) {
+        typedef SEXP(*Ptr_test_associations_custom_gridsearch)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_test_associations_custom_gridsearch p_test_associations_custom_gridsearch = NULL;
+        if (p_test_associations_custom_gridsearch == NULL) {
+            validateSignature("std::vector<Rcpp::List>(*test_associations_custom_gridsearch)(int,std::string,int,int)");
+            p_test_associations_custom_gridsearch = (Ptr_test_associations_custom_gridsearch)R_GetCCallable("rscones2", "rscones2_test_associations_custom_gridsearch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_test_associations_custom_gridsearch(Rcpp::wrap(statistic), Rcpp::wrap(filesPath), Rcpp::wrap(min), Rcpp::wrap(max));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<std::vector<Rcpp::List> >(rcpp_result_gen);
+    }
+
+    inline List test_associations_gridsearch(int statistic, std::string filesPath, int nparams) {
+        typedef SEXP(*Ptr_test_associations_gridsearch)(SEXP,SEXP,SEXP);
+        static Ptr_test_associations_gridsearch p_test_associations_gridsearch = NULL;
+        if (p_test_associations_gridsearch == NULL) {
+            validateSignature("List(*test_associations_gridsearch)(int,std::string,int)");
+            p_test_associations_gridsearch = (Ptr_test_associations_gridsearch)R_GetCCallable("rscones2", "rscones2_test_associations_gridsearch");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_test_associations_gridsearch(Rcpp::wrap(statistic), Rcpp::wrap(filesPath), Rcpp::wrap(nparams));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -44,23 +82,23 @@ namespace rscones2 {
         return Rcpp::as<List >(rcpp_result_gen);
     }
 
-    inline Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::MatrixXd A) {
-        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
-        static Ptr_maxflow p_maxflow = NULL;
-        if (p_maxflow == NULL) {
-            validateSignature("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::MatrixXd)");
-            p_maxflow = (Ptr_maxflow)R_GetCCallable("rscones2", "rscones2_maxflow");
+    inline List test_associations(int statistic, std::string filesPath, double eta, double lambda) {
+        typedef SEXP(*Ptr_test_associations)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_test_associations p_test_associations = NULL;
+        if (p_test_associations == NULL) {
+            validateSignature("List(*test_associations)(int,std::string,double,double)");
+            p_test_associations = (Ptr_test_associations)R_GetCCallable("rscones2", "rscones2_test_associations");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_maxflow(Rcpp::wrap(lW), Rcpp::wrap(A));
+            rcpp_result_gen = p_test_associations(Rcpp::wrap(statistic), Rcpp::wrap(filesPath), Rcpp::wrap(eta), Rcpp::wrap(lambda));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+        return Rcpp::as<List >(rcpp_result_gen);
     }
 
 }

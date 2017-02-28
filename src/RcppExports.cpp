@@ -50,6 +50,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_associations_custom_gridsearch
+std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::string filesPath, int min, int max);
+static SEXP rscones2_test_associations_custom_gridsearch_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP minSEXP, SEXP maxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< int >::type statistic(statisticSEXP);
+    Rcpp::traits::input_parameter< std::string >::type filesPath(filesPathSEXP);
+    Rcpp::traits::input_parameter< int >::type min(minSEXP);
+    Rcpp::traits::input_parameter< int >::type max(maxSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_associations_custom_gridsearch(statistic, filesPath, min, max));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP rscones2_test_associations_custom_gridsearch(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP minSEXP, SEXP maxSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(rscones2_test_associations_custom_gridsearch_try(statisticSEXP, filesPathSEXP, minSEXP, maxSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // test_associations_gridsearch
 List test_associations_gridsearch(int statistic, std::string filesPath, int nparams);
 static SEXP rscones2_test_associations_gridsearch_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP nparamsSEXP) {
@@ -121,6 +154,7 @@ static int rscones2_RcppExport_validate(const char* sig) {
     static std::set<std::string> signatures;
     if (signatures.empty()) {
         signatures.insert("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
+        signatures.insert("std::vector<Rcpp::List>(*test_associations_custom_gridsearch)(int,std::string,int,int)");
         signatures.insert("List(*test_associations_gridsearch)(int,std::string,int)");
         signatures.insert("List(*test_associations)(int,std::string,double,double)");
     }
@@ -130,6 +164,7 @@ static int rscones2_RcppExport_validate(const char* sig) {
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP rscones2_RcppExport_registerCCallable() { 
     R_RegisterCCallable("rscones2", "rscones2_maxflow", (DL_FUNC)rscones2_maxflow_try);
+    R_RegisterCCallable("rscones2", "rscones2_test_associations_custom_gridsearch", (DL_FUNC)rscones2_test_associations_custom_gridsearch_try);
     R_RegisterCCallable("rscones2", "rscones2_test_associations_gridsearch", (DL_FUNC)rscones2_test_associations_gridsearch_try);
     R_RegisterCCallable("rscones2", "rscones2_test_associations", (DL_FUNC)rscones2_test_associations_try);
     R_RegisterCCallable("rscones2", "rscones2_RcppExport_validate", (DL_FUNC)rscones2_RcppExport_validate);
