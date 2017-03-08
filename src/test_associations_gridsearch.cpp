@@ -39,7 +39,7 @@ List test_associations_gridsearch(int statistic, std::string filesPath, int npar
   settings.selection_ratio = 0.8;
   settings.test_statistic = statistic;
   settings.nParameters = nparams;
-  settings.evaluateObjective = false;
+  settings.evaluateObjective = true;
   settings.dump_intermediate_results = true;
   settings.dump_path = "tmp/";
 
@@ -54,15 +54,16 @@ List test_associations_gridsearch(int statistic, std::string filesPath, int npar
   double lambda_f =  scones.getBestLambda();
   VectorXd indicator = scones.getIndicatorVector();
   VectorXd terms = scones.getObjectiveFunctionTerms(lambda_f, eta_f);
+  // double objectiveScore = scones.getObjectiveScore();
   VectorXd scores = scones.getScoreStatistic();
   SparseMatrixXd W = scones.getW();
 
   return Rcpp::List::create(Rcpp::Named("indicator") = indicator,
                             Rcpp::Named("terms") = terms,
+                            // Rcpp::Named("objective") = objectiveScore,
                             Rcpp::Named("scores") = scores,
                             Rcpp::Named("W") = W,
                             Rcpp::Named("eta") = eta_f,
-                            Rcpp::Named("lambda") = lambda_f,
-                            Rcpp::Named("eta") = eta_f);
+                            Rcpp::Named("lambda") = lambda_f);
 
 }

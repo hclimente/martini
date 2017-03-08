@@ -10,7 +10,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List test_associations(int statistic, std::string filesPath, double lambda, double eta) {
+std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::string filesPath, int min, int max){
 
   CSconesSettings settings;
   CScones scones;
@@ -38,16 +38,16 @@ List test_associations(int statistic, std::string filesPath, double lambda, doub
   settings.selection_criterion = CONSISTENCY;
   settings.selection_ratio = 0.8;
   settings.test_statistic = statistic;
-  settings.nParameters = 10;
+  settings.nParameters = 0;
   settings.evaluateObjective = true;
   settings.dump_intermediate_results = true;
   settings.dump_path = "tmp/";
 
   // set up specific lambda and eta
   VectorXd l(1);
-  l(0) = lambda;
+  l(0) = 0;
   VectorXd e(1);
-  e(0) = eta;
+  e(0) = 0;
   settings.lambdas = l;
   settings.etas = e;
   // avoid gridsearch
@@ -55,22 +55,31 @@ List test_associations(int statistic, std::string filesPath, double lambda, doub
 
   scones = CScones(tmpData.Y.col(0),tmpData.X,tmpData.network, settings);
 
-  cout << "Testing associations.\n";
-  cout << lambda << "\t" << eta << "\n";
-  scones.test_associations(lambda, eta);
+  vector<Rcpp::List> grid;
+  for(int e = min; e <= max; e++){
+    for(int l = min; l <= max; l++){
 
-  cout << "Collecting results.\n";
-  VectorXd indicator = scones.getIndicatorVector();
-  VectorXd terms = scones.getObjectiveFunctionTerms(lambda,eta);
-  double objectiveScore = scones.getObjectiveScore();
-  VectorXd scores = scones.getScoreStatistic();
-  SparseMatrixXd W = scones.getW();
+      double lambda = pow(10, l);
+      double eta = pow(10, e);
 
-  return Rcpp::List::create(Rcpp::Named("indicator") = indicator,
-                            Rcpp::Named("terms") = terms,
-                            Rcpp::Named("objective") = objectiveScore,
-                            Rcpp::Named("scores") = scores,
-                            Rcpp::Named("W") = W,
-                            Rcpp::Named("lambda") = lambda,
-                            Rcpp::Named("eta") = eta);
+      scones.test_associations(lambda, eta);
+
+      VectorXd indicator = scones.getIndicatorVector();
+      VectorXd terms = scones.getObjectiveFunctionTerms(lambda, eta);
+      double objectiveScore = scones.getObjectiveScore();
+      VectorXd scores = scones.getScoreStatistic();
+      SparseMatrixXd W = scones.getW();
+
+      grid.push_back(Rcpp::List::create(Rcpp::Named("indicator") = indicator,
+                                        Rcpp::Named("terms") = terms,
+                                        Rcpp::Named("objective") = objectiveScore,
+                                        Rcpp::Named("scores") = scores,
+                                        Rcpp::Named("W") = W,
+                                        Rcpp::Named("lambda") = lambda,
+                                        Rcpp::Named("eta") = eta));
+
+    }
+  }
+
+  return grid;
 }
