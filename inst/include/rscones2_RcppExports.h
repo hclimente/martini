@@ -82,7 +82,7 @@ namespace rscones2 {
         return Rcpp::as<List >(rcpp_result_gen);
     }
 
-    inline List test_associations(int statistic, std::string filesPath, double eta, double lambda) {
+    inline List test_associations(int statistic, std::string filesPath, double lambda, double eta) {
         typedef SEXP(*Ptr_test_associations)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_test_associations p_test_associations = NULL;
         if (p_test_associations == NULL) {
@@ -92,7 +92,7 @@ namespace rscones2 {
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_test_associations(Rcpp::wrap(statistic), Rcpp::wrap(filesPath), Rcpp::wrap(eta), Rcpp::wrap(lambda));
+            rcpp_result_gen = p_test_associations(Rcpp::wrap(statistic), Rcpp::wrap(filesPath), Rcpp::wrap(lambda), Rcpp::wrap(eta));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

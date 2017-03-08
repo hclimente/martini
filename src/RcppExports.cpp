@@ -116,23 +116,23 @@ RcppExport SEXP rscones2_test_associations_gridsearch(SEXP statisticSEXP, SEXP f
     return rcpp_result_gen;
 }
 // test_associations
-List test_associations(int statistic, std::string filesPath, double eta, double lambda);
-static SEXP rscones2_test_associations_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP etaSEXP, SEXP lambdaSEXP) {
+List test_associations(int statistic, std::string filesPath, double lambda, double eta);
+static SEXP rscones2_test_associations_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP lambdaSEXP, SEXP etaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< int >::type statistic(statisticSEXP);
     Rcpp::traits::input_parameter< std::string >::type filesPath(filesPathSEXP);
-    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_associations(statistic, filesPath, eta, lambda));
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_associations(statistic, filesPath, lambda, eta));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP rscones2_test_associations(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP etaSEXP, SEXP lambdaSEXP) {
+RcppExport SEXP rscones2_test_associations(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP lambdaSEXP, SEXP etaSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(rscones2_test_associations_try(statisticSEXP, filesPathSEXP, etaSEXP, lambdaSEXP));
+        rcpp_result_gen = PROTECT(rscones2_test_associations_try(statisticSEXP, filesPathSEXP, lambdaSEXP, etaSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {

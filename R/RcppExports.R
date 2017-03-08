@@ -17,8 +17,8 @@ test_associations_gridsearch <- function(statistic, filesPath, nparams) {
     .Call('rscones2_test_associations_gridsearch', PACKAGE = 'rscones2', statistic, filesPath, nparams)
 }
 
-test_associations <- function(statistic, filesPath, eta, lambda) {
-    .Call('rscones2_test_associations', PACKAGE = 'rscones2', statistic, filesPath, eta, lambda)
+test_associations <- function(statistic, filesPath, lambda, eta) {
+    .Call('rscones2_test_associations', PACKAGE = 'rscones2', statistic, filesPath, lambda, eta)
 }
 
 # Register entry points for exported C++ functions
