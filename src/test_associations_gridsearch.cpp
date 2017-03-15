@@ -1,3 +1,6 @@
+#ifndef RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH
+#define RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH
+
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
@@ -10,13 +13,21 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List test_associations_gridsearch(int statistic, std::string filesPath, int nparams){
+List test_associations_gridsearch(int statistic, std::string filesPath, unsigned int gridparams, int griddepth, unsigned int criterion){
 
   CSconesSettings settings;
-  CScones scones;
-  GWASData tmpData;
+  settings = CSconesSettings();
+
+  // custom settings
+  settings.test_statistic = statistic;
+  settings.selection_criterion = criterion;
+  settings.nParameters = gridparams;
+  settings.gridsearch_depth = griddepth;
+  settings.lambdas = VectorXd::Zero(settings.nParameters);
+  settings.etas = VectorXd::Zero(settings.nParameters);
 
   GWASData data;
+  GWASData tmpData;
 
   string genotype_str = filesPath + "genotype";
   string phenotype_str = filesPath + "phenotype.txt";
@@ -24,30 +35,16 @@ List test_associations_gridsearch(int statistic, std::string filesPath, int npar
   uint encoding = 0;
   float64 maf = 0.05;
 
-  CPlinkParser::readPEDFile(genotype_str + ".ped", &data);
-  CPlinkParser::readMAPFile(genotype_str + ".map", &data);
-  CPlinkParser::readPhenotypeFile(phenotype_str,&data);
-  CGWASDataHelper::encodeHeterozygousData(&data,encoding);
-  CGWASDataHelper::filterSNPsByMAF(&data,maf);
-  CSconesIO::readSparseNetworkFile(network_str,&data);
-  tmpData = CGWASDataHelper::removeSamples4MissingData(data,0);
+  CPlinkParser::readPEDFile(genotype_str + ".ped", &tmpData);
+  CPlinkParser::readMAPFile(genotype_str + ".map", &tmpData);
+  CPlinkParser::readPhenotypeFile(phenotype_str, &tmpData);
+  CGWASDataHelper::encodeHeterozygousData(&tmpData, encoding);
+  CGWASDataHelper::filterSNPsByMAF(&tmpData, maf);
+  CSconesIO::readSparseNetworkFile(network_str, &tmpData);
+  data = CGWASDataHelper::removeSamples4MissingData(tmpData, 0);
 
-  settings = CSconesSettings();
-  settings.folds = 10;
-  settings.seed = 0;
-  settings.selection_criterion = CONSISTENCY;
-  settings.selection_ratio = 0.8;
-  settings.test_statistic = statistic;
-  settings.nParameters = nparams;
-  settings.evaluateObjective = true;
-  settings.dump_intermediate_results = true;
-  settings.dump_path = "tmp/";
-
-  settings.lambdas = VectorXd::Zero(settings.nParameters);
-  settings.etas = VectorXd::Zero(settings.nParameters);
-  settings.autoParameters = true;
-
-  scones = CScones(tmpData.Y.col(0),tmpData.X,tmpData.network, settings);
+  CScones scones;
+  scones = CScones(data.Y.col(0), data.X, data.network, settings);
   scones.test_associations();
 
   double eta_f = scones.getBestEta();
@@ -67,3 +64,5 @@ List test_associations_gridsearch(int statistic, std::string filesPath, int npar
                             Rcpp::Named("lambda") = lambda_f);
 
 }
+
+#endif //RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH

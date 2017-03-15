@@ -1,3 +1,6 @@
+#ifndef RSCONES2_TEST_ASSOCIATIONS_CUSTOM_GRIDSEARCH
+#define RSCONES2_TEST_ASSOCIATIONS_CUSTOM_GRIDSEARCH
+
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
@@ -13,36 +16,10 @@ using namespace Rcpp;
 std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::string filesPath, int min, int max){
 
   CSconesSettings settings;
-  CScones scones;
-  GWASData tmpData;
-
-  GWASData data;
-
-  string genotype_str = filesPath + "genotype";
-  string phenotype_str = filesPath + "phenotype.txt";
-  string network_str = filesPath + "network.txt";
-  uint encoding = 0;
-  float64 maf = 0.05;
-
-  CPlinkParser::readPEDFile(genotype_str + ".ped", &data);
-  CPlinkParser::readMAPFile(genotype_str + ".map", &data);
-  CPlinkParser::readPhenotypeFile(phenotype_str,&data);
-  CGWASDataHelper::encodeHeterozygousData(&data,encoding);
-  CGWASDataHelper::filterSNPsByMAF(&data,maf);
-  CSconesIO::readSparseNetworkFile(network_str,&data);
-  tmpData = CGWASDataHelper::removeSamples4MissingData(data,0);
-
   settings = CSconesSettings();
-  settings.folds = 10;
-  settings.seed = 0;
-  settings.selection_criterion = CONSISTENCY;
-  settings.selection_ratio = 0.8;
-  settings.test_statistic = statistic;
-  settings.nParameters = 0;
-  settings.evaluateObjective = true;
-  settings.dump_intermediate_results = true;
-  settings.dump_path = "tmp/";
 
+  // custom settings
+  settings.test_statistic = statistic;
   // set up specific lambda and eta
   VectorXd l(1);
   l(0) = 0;
@@ -53,7 +30,25 @@ std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::
   // avoid gridsearch
   settings.autoParameters = false;
 
-  scones = CScones(tmpData.Y.col(0),tmpData.X,tmpData.network, settings);
+  GWASData data;
+  GWASData tmpData;
+
+  string genotype_str = filesPath + "genotype";
+  string phenotype_str = filesPath + "phenotype.txt";
+  string network_str = filesPath + "network.txt";
+  uint encoding = 0;
+  float64 maf = 0.05;
+
+  CPlinkParser::readPEDFile(genotype_str + ".ped", &tmpData);
+  CPlinkParser::readMAPFile(genotype_str + ".map", &tmpData);
+  CPlinkParser::readPhenotypeFile(phenotype_str, &tmpData);
+  CGWASDataHelper::encodeHeterozygousData(&tmpData, encoding);
+  CGWASDataHelper::filterSNPsByMAF(&tmpData, maf);
+  CSconesIO::readSparseNetworkFile(network_str, &tmpData);
+  data = CGWASDataHelper::removeSamples4MissingData(tmpData, 0);
+
+  CScones scones;
+  scones = CScones(data.Y.col(0), data.X, data.network, settings);
 
   vector<Rcpp::List> grid;
   for(int e = min; e <= max; e++){
@@ -83,3 +78,5 @@ std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::
 
   return grid;
 }
+
+#endif //RSCONES2_TEST_ASSOCIATIONS_CUSTOM_GRIDSEARCH
