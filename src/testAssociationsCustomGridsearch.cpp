@@ -13,7 +13,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-std::vector<Rcpp::List> test_associations_custom_gridsearch(int statistic, std::string filesPath, int min, int max){
+std::vector<Rcpp::List> testAssociationsCustomGridsearch(int statistic, std::string filesPath, int min, int max){
 
   CSconesSettings settings;
   settings = CSconesSettings();

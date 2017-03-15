@@ -1,5 +1,5 @@
-#ifndef RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH
-#define RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH
+#ifndef RSCONES2_TEST_ASSOCIATIONS
+#define RSCONES2_TEST_ASSOCIATIONS
 
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::depends(RcppEigen)]]
@@ -13,18 +13,21 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List test_associations_gridsearch(int statistic, std::string filesPath, unsigned int gridparams, int griddepth, unsigned int criterion){
+List testAssociations(int statistic, std::string filesPath, double lambda, double eta) {
 
   CSconesSettings settings;
   settings = CSconesSettings();
 
   // custom settings
-  settings.test_statistic = statistic;
-  settings.selection_criterion = criterion;
-  settings.nParameters = gridparams;
-  settings.gridsearch_depth = griddepth;
-  settings.lambdas = VectorXd::Zero(settings.nParameters);
-  settings.etas = VectorXd::Zero(settings.nParameters);
+  // set up specific lambda and eta
+  VectorXd l(1);
+  l(0) = lambda;
+  VectorXd e(1);
+  e(0) = eta;
+  settings.lambdas = l;
+  settings.etas = e;
+  // avoid gridsearch
+  settings.autoParameters = false;
 
   GWASData data;
   GWASData tmpData;
@@ -45,24 +48,25 @@ List test_associations_gridsearch(int statistic, std::string filesPath, unsigned
 
   CScones scones;
   scones = CScones(data.Y.col(0), data.X, data.network, settings);
-  scones.test_associations();
 
-  double eta_f = scones.getBestEta();
-  double lambda_f =  scones.getBestLambda();
+  cout << "Testing associations.\n";
+  cout << lambda << "\t" << eta << "\n";
+  scones.test_associations(lambda, eta);
+
+  cout << "Collecting results.\n";
   VectorXd indicator = scones.getIndicatorVector();
-  VectorXd terms = scones.getObjectiveFunctionTerms(lambda_f, eta_f);
-  // double objectiveScore = scones.getObjectiveScore();
+  VectorXd terms = scones.getObjectiveFunctionTerms(lambda,eta);
+  double objectiveScore = scones.getObjectiveScore();
   VectorXd scores = scones.getScoreStatistic();
   SparseMatrixXd W = scones.getW();
 
   return Rcpp::List::create(Rcpp::Named("indicator") = indicator,
                             Rcpp::Named("terms") = terms,
-                            // Rcpp::Named("objective") = objectiveScore,
+                            Rcpp::Named("objective") = objectiveScore,
                             Rcpp::Named("scores") = scores,
                             Rcpp::Named("W") = W,
-                            Rcpp::Named("eta") = eta_f,
-                            Rcpp::Named("lambda") = lambda_f);
-
+                            Rcpp::Named("lambda") = lambda,
+                            Rcpp::Named("eta") = eta);
 }
 
-#endif //RSCONES2_TEST_ASSOCIATIONS_GRIDSEARCH
+#endif //RSCONES2_TEST_ASSOCIATIONS
