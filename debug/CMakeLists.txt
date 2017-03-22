@@ -13,5 +13,7 @@ include_directories(/bioinfo/users/hcliment/anaconda3/lib/R/library/Matrix/inclu
         /bioinfo/users/hcliment/anaconda3/lib/R/include)
 
 add_executable(DBtest_associations_gridsearch DBtest_associations_gridsearch.cpp ${SOURCES})
-
 target_link_libraries(DBtest_associations_gridsearch CEasyGWAS R gfortran)
+
+add_executable(DBreadNetwork DBreadNetwork.cpp ${SOURCES})
+target_link_libraries(DBreadNetwork CEasyGWAS R gfortran)
