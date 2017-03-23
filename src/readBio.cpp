@@ -8,26 +8,21 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-List getData(std::string filesPath) {
+List readBio(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
   GWASData data;
   GWASData tmpData;
 
-  string genotype_str = filesPath + "genotype";
-  string phenotype_str = filesPath + "phenotype.txt";
-  string network_str = filesPath + "network.txt";
-  uint encoding = 0;
-  float64 maf = 0.05;
-
-  CPlinkParser::readPEDFile(genotype_str + ".ped", &tmpData);
-  CPlinkParser::readMAPFile(genotype_str + ".map", &tmpData);
-  CPlinkParser::readPhenotypeFile(phenotype_str, &tmpData);
+  CPlinkParser::readPEDFile(pedBasename + ".ped", &tmpData);
+  CPlinkParser::readMAPFile(pedBasename + ".map", &tmpData);
+  CPlinkParser::readPhenotypeFile(phenoFile, &tmpData);
   CGWASDataHelper::encodeHeterozygousData(&tmpData, encoding);
   CGWASDataHelper::filterSNPsByMAF(&tmpData, maf);
-  CSconesIO::readSparseNetworkFile(network_str, &tmpData);
   data = CGWASDataHelper::removeSamples4MissingData(tmpData, 0);
+
+  CSconesIO::readSparseNetworkFile(netPath, &data);
 
   return Rcpp::List::create(Rcpp::Named("Y") = data.Y.col(0),
                             Rcpp::Named("X") = data.X,
-                            Rcpp::Named("network") = data.network);
+                            Rcpp::Named("net") = data.network);
 
 }
