@@ -4,5 +4,5 @@
 ## Needed for the 'non-streams' variant charToPOSIXctNS
 # PKG_LIBS = -lCEasyGWAS
 
-PKG_LIBS=-L/bioinfo/users/hcliment/easyGWASCore/ -lCEasyGWAS
-PKG_CPPFLAGS=-I/bioinfo/users/hcliment/easyGWASCore/src -I/bioinfo/users/hcliment/easyGWASCore/External -I/bioinfo/users/hcliment/easyGWASCore/External -I/bioinfo/users/hcliment/easyGWASCore/External/maxflow -I/bioinfo/users/hcliment/easyGWASCore/External/Cephes -I/bioinfo/users/hcliment/anaconda3/lib/R/library/RcppEigen/include/ -I/bioinfo/users/hcliment/anaconda3/lib/R/library/Matrix/include/
+PKG_LIBS=-L../../cmake-build-release -lCEasyGWAS
+PKG_CPPFLAGS=-I../../src -I../../External -I../../External -I../../External/maxflow -I../../External/Cephes -I/Users/hclimente/anaconda/lib/R/library/RcppEigen/include/ -I/Users/hclimente/anaconda/lib/R/library/Matrix/include/
