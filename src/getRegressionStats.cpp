@@ -17,6 +17,7 @@ List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
   double BIC;
   double AIC;
   double AICc;
+  double logLikelihood;
 
   bool binary = true;
   for(int64 i=0; i<Y.rows();i++) {
@@ -33,6 +34,7 @@ List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
     BIC = logistic_regression.getBIC();
     AIC = logistic_regression.getAIC();
     AICc = logistic_regression.getAICc();
+    logLikelihood = logistic_regression.getLogLikelihood();
   } else { //if phenotype is continuous select LinearRegression
     CLinearRegression linear_regression;
     linear_regression = CLinearRegression();
@@ -40,11 +42,13 @@ List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
     BIC = linear_regression.getBIC();
     AIC = linear_regression.getAIC();
     AICc = linear_regression.getAICc();
+    logLikelihood = linear_regression.getLogLikelihood();
   }
 
   return Rcpp::List::create(Rcpp::Named("BIC") = BIC,
                             Rcpp::Named("AIC") = AIC,
-                            Rcpp::Named("AICc") = AICc);
+                            Rcpp::Named("AICc") = AICc,
+                            Rcpp::Named("logLikelihood") = logLikelihood);
 
 }
 
