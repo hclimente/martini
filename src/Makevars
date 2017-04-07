@@ -4,5 +4,5 @@
 ## Needed for the 'non-streams' variant charToPOSIXctNS
 # PKG_LIBS = -lCEasyGWAS
 
-PKG_LIBS=-L../../cmake-build-release -lCEasyGWAS
-PKG_CPPFLAGS=-I../../src -I../../External -I../../External -I../../External/maxflow -I../../External/Cephes -I/Users/hclimente/anaconda/lib/R/library/RcppEigen/include/ -I/Users/hclimente/anaconda/lib/R/library/Matrix/include/
+PKG_LIBS=-L../../scones2/cmake-build-release -lCEasyGWAS -L../../scones2/cmake-build-release/External/maxflow -lmaxflow
+PKG_CPPFLAGS=-I../../scones2/src -I../../scones2/External -I../../scones2/External -I../../scones2/External/maxflow -I../../scones2/External/Cephes
