@@ -1,8 +1,7 @@
-## We need the headers exported via inst/include
-#CXXFLAGS = -I../../src -L../../
+PKG_LIBS=-Lscones2/ -lCEasyGWAS -Lscones2/External/maxflow -lmaxflow
+PKG_CPPFLAGS=-Iscones2/src -Iscones2/External -Iscones2/External -Iscones2/External/maxflow -Iscones2/External/Cephes
 
-## Needed for the 'non-streams' variant charToPOSIXctNS
-# PKG_LIBS = -lCEasyGWAS
+all: $(SHLIB)
 
-PKG_LIBS=-L../../scones2/cmake-build-release -lCEasyGWAS -L../../scones2/cmake-build-release/External/maxflow -lmaxflow
-PKG_CPPFLAGS=-I../../scones2/src -I../../scones2/External -I../../scones2/External -I../../scones2/External/maxflow -I../../scones2/External/Cephes
+scones2:
+	@(cd scones2 && cmake . && $(MAKE))
