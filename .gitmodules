@@ -1,0 +1,3 @@
+[submodule "src/scones2"]
+	path = src/scones2
+	url = git@github.com:hclimente/scones2.git
