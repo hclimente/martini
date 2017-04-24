@@ -1,10 +1,16 @@
 PKG_LIBS=-Lscones2/ -lCEasyGWAS -Lscones2/External/maxflow -lmaxflow
 PKG_CPPFLAGS=-Iscones2/src -Iscones2/External -Iscones2/External -Iscones2/External/maxflow -Iscones2/External/Cephes
 
-all: libCEasyGWAS $(SHLIB) 
+all: libCEasyGWAS libmaxflow $(SHLIB)
 
-libCEasyGWAS:
-	@(cd scones2 && cmake . && $(MAKE))
+cmake:
+	@(cd scones2 && cmake .)
+
+libCEasyGWAS: cmake
+	@(cd scones2 && $(MAKE) CEasyGWAS)
+	
+libmaxflow: cmake
+	@(cd scones2 && $(MAKE) maxflow)
 	
 clean:
 	@(cd scones2 && make clean)
