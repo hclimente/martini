@@ -21,8 +21,9 @@ List readBio(std::string pedBasename, std::string phenoFile, std::string netPath
 
   CSconesIO::readSparseNetworkFile(netPath, &data);
 
-  return Rcpp::List::create(Rcpp::Named("Y") = data.Y.col(0),
-                            Rcpp::Named("X") = data.X,
+  return Rcpp::List::create(Rcpp::Named("X") = data.X,
+                            Rcpp::Named("Y") = data.Y.col(0),
+                            Rcpp::Named("ids") = data.snp_identifiers,
                             Rcpp::Named("net") = data.network);
 
 }
