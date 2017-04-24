@@ -14,9 +14,9 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
 
-  double BIC;
-  double AIC;
-  double AICc;
+  double dBIC;
+  double dAIC;
+  double dAICc;
   double logLikelihood;
 
   bool binary = true;
@@ -31,23 +31,23 @@ List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
     CLogisticRegression logistic_regression;
     logistic_regression = CLogisticRegression();
     logistic_regression.fit(Y, X);
-    BIC = logistic_regression.getBIC();
-    AIC = logistic_regression.getAIC();
-    AICc = logistic_regression.getAICc();
+    dBIC = logistic_regression.getBIC();
+    dAIC = logistic_regression.getAIC();
+    dAICc = logistic_regression.getAICc();
     logLikelihood = logistic_regression.getLogLikelihood();
   } else { //if phenotype is continuous select LinearRegression
     CLinearRegression linear_regression;
     linear_regression = CLinearRegression();
     linear_regression.fit(Y, X);
-    BIC = linear_regression.getBIC();
-    AIC = linear_regression.getAIC();
-    AICc = linear_regression.getAICc();
+    dBIC = linear_regression.getBIC();
+    dAIC = linear_regression.getAIC();
+    dAICc = linear_regression.getAICc();
     logLikelihood = linear_regression.getLogLikelihood();
   }
 
-  return Rcpp::List::create(Rcpp::Named("BIC") = BIC,
-                            Rcpp::Named("AIC") = AIC,
-                            Rcpp::Named("AICc") = AICc,
+  return Rcpp::List::create(Rcpp::Named("BIC") = dBIC,
+                            Rcpp::Named("AIC") = dAIC,
+                            Rcpp::Named("AICc") = dAICc,
                             Rcpp::Named("logLikelihood") = logLikelihood);
 
 }
