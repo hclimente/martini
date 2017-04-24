@@ -1,5 +1,9 @@
-#include "../src/test_associations_gridsearch.cpp"
+#include "../src/runScones.cpp"
 
 int main(){
-    test_associations_gridsearch(0, "/bioinfo/users/hcliment/easyGWASCore/data/testing/scones/skat/", 10, 1, 2);
+    string wd = "/bioinfo/users/hcliment/easyGWASCore/data/testing/scones/skat/";
+    string pedBasename = wd + "genotype";
+    string phenoFile = wd + "phenotype.txt";
+    string netFile = wd + "network.txt";
+#runScones(0, , 10, 1, 2);
 }
