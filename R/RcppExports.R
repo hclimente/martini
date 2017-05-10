@@ -9,24 +9,12 @@ maxflow <- function(lW, c) {
     .Call('rscones2_maxflow', PACKAGE = 'rscones2', lW, c)
 }
 
-readBio <- function(pedBasename, phenoFile, netPath, encoding, maf) {
-    .Call('rscones2_readBio', PACKAGE = 'rscones2', pedBasename, phenoFile, netPath, encoding, maf)
+readGWAS <- function(pedBasename, phenoFile, netPath, encoding, maf) {
+    .Call('rscones2_readGWAS', PACKAGE = 'rscones2', pedBasename, phenoFile, netPath, encoding, maf)
 }
 
 runScones <- function(X, Y, network, userSettings) {
     .Call('rscones2_runScones', PACKAGE = 'rscones2', X, Y, network, userSettings)
-}
-
-testAssociations <- function(statistic, filesPath, lambda, eta) {
-    .Call('rscones2_testAssociations', PACKAGE = 'rscones2', statistic, filesPath, lambda, eta)
-}
-
-testAssociationsCustomGridsearch <- function(statistic, filesPath, min, max) {
-    .Call('rscones2_testAssociationsCustomGridsearch', PACKAGE = 'rscones2', statistic, filesPath, min, max)
-}
-
-testAssociationsGridsearch <- function(statistic, filesPath, gridparams, griddepth, criterion) {
-    .Call('rscones2_testAssociationsGridsearch', PACKAGE = 'rscones2', statistic, filesPath, gridparams, griddepth, criterion)
 }
 
 # Register entry points for exported C++ functions

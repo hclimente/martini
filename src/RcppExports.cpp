@@ -71,9 +71,9 @@ RcppExport SEXP rscones2_maxflow(SEXP lWSEXP, SEXP cSEXP) {
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// readBio
-List readBio(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf);
-static SEXP rscones2_readBio_try(SEXP pedBasenameSEXP, SEXP phenoFileSEXP, SEXP netPathSEXP, SEXP encodingSEXP, SEXP mafSEXP) {
+// readGWAS
+List readGWAS(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf);
+static SEXP rscones2_readGWAS_try(SEXP pedBasenameSEXP, SEXP phenoFileSEXP, SEXP netPathSEXP, SEXP encodingSEXP, SEXP mafSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< std::string >::type pedBasename(pedBasenameSEXP);
@@ -81,15 +81,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type netPath(netPathSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type encoding(encodingSEXP);
     Rcpp::traits::input_parameter< double >::type maf(mafSEXP);
-    rcpp_result_gen = Rcpp::wrap(readBio(pedBasename, phenoFile, netPath, encoding, maf));
+    rcpp_result_gen = Rcpp::wrap(readGWAS(pedBasename, phenoFile, netPath, encoding, maf));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP rscones2_readBio(SEXP pedBasenameSEXP, SEXP phenoFileSEXP, SEXP netPathSEXP, SEXP encodingSEXP, SEXP mafSEXP) {
+RcppExport SEXP rscones2_readGWAS(SEXP pedBasenameSEXP, SEXP phenoFileSEXP, SEXP netPathSEXP, SEXP encodingSEXP, SEXP mafSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(rscones2_readBio_try(pedBasenameSEXP, phenoFileSEXP, netPathSEXP, encodingSEXP, mafSEXP));
+        rcpp_result_gen = PROTECT(rscones2_readGWAS_try(pedBasenameSEXP, phenoFileSEXP, netPathSEXP, encodingSEXP, mafSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -138,106 +138,6 @@ RcppExport SEXP rscones2_runScones(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEX
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// testAssociations
-List testAssociations(int statistic, std::string filesPath, double lambda, double eta);
-static SEXP rscones2_testAssociations_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP lambdaSEXP, SEXP etaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< int >::type statistic(statisticSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filesPath(filesPathSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
-    rcpp_result_gen = Rcpp::wrap(testAssociations(statistic, filesPath, lambda, eta));
-    return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP rscones2_testAssociations(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP lambdaSEXP, SEXP etaSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(rscones2_testAssociations_try(statisticSEXP, filesPathSEXP, lambdaSEXP, etaSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error(CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
-}
-// testAssociationsCustomGridsearch
-std::vector<Rcpp::List> testAssociationsCustomGridsearch(int statistic, std::string filesPath, int min, int max);
-static SEXP rscones2_testAssociationsCustomGridsearch_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP minSEXP, SEXP maxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< int >::type statistic(statisticSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filesPath(filesPathSEXP);
-    Rcpp::traits::input_parameter< int >::type min(minSEXP);
-    Rcpp::traits::input_parameter< int >::type max(maxSEXP);
-    rcpp_result_gen = Rcpp::wrap(testAssociationsCustomGridsearch(statistic, filesPath, min, max));
-    return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP rscones2_testAssociationsCustomGridsearch(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP minSEXP, SEXP maxSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(rscones2_testAssociationsCustomGridsearch_try(statisticSEXP, filesPathSEXP, minSEXP, maxSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error(CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
-}
-// testAssociationsGridsearch
-List testAssociationsGridsearch(int statistic, std::string filesPath, unsigned int gridparams, int griddepth, unsigned int criterion);
-static SEXP rscones2_testAssociationsGridsearch_try(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP gridparamsSEXP, SEXP griddepthSEXP, SEXP criterionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< int >::type statistic(statisticSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filesPath(filesPathSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type gridparams(gridparamsSEXP);
-    Rcpp::traits::input_parameter< int >::type griddepth(griddepthSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type criterion(criterionSEXP);
-    rcpp_result_gen = Rcpp::wrap(testAssociationsGridsearch(statistic, filesPath, gridparams, griddepth, criterion));
-    return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP rscones2_testAssociationsGridsearch(SEXP statisticSEXP, SEXP filesPathSEXP, SEXP gridparamsSEXP, SEXP griddepthSEXP, SEXP criterionSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(rscones2_testAssociationsGridsearch_try(statisticSEXP, filesPathSEXP, gridparamsSEXP, griddepthSEXP, criterionSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error(CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
-}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int rscones2_RcppExport_validate(const char* sig) { 
@@ -245,11 +145,8 @@ static int rscones2_RcppExport_validate(const char* sig) {
     if (signatures.empty()) {
         signatures.insert("List(*getRegressionStats)(Eigen::MatrixXd,Eigen::VectorXd)");
         signatures.insert("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
-        signatures.insert("List(*readBio)(std::string,std::string,std::string,unsigned int,double)");
+        signatures.insert("List(*readGWAS)(std::string,std::string,std::string,unsigned int,double)");
         signatures.insert("List(*runScones)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
-        signatures.insert("List(*testAssociations)(int,std::string,double,double)");
-        signatures.insert("std::vector<Rcpp::List>(*testAssociationsCustomGridsearch)(int,std::string,int,int)");
-        signatures.insert("List(*testAssociationsGridsearch)(int,std::string,unsigned int,int,unsigned int)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -258,11 +155,8 @@ static int rscones2_RcppExport_validate(const char* sig) {
 RcppExport SEXP rscones2_RcppExport_registerCCallable() { 
     R_RegisterCCallable("rscones2", "rscones2_getRegressionStats", (DL_FUNC)rscones2_getRegressionStats_try);
     R_RegisterCCallable("rscones2", "rscones2_maxflow", (DL_FUNC)rscones2_maxflow_try);
-    R_RegisterCCallable("rscones2", "rscones2_readBio", (DL_FUNC)rscones2_readBio_try);
+    R_RegisterCCallable("rscones2", "rscones2_readGWAS", (DL_FUNC)rscones2_readGWAS_try);
     R_RegisterCCallable("rscones2", "rscones2_runScones", (DL_FUNC)rscones2_runScones_try);
-    R_RegisterCCallable("rscones2", "rscones2_testAssociations", (DL_FUNC)rscones2_testAssociations_try);
-    R_RegisterCCallable("rscones2", "rscones2_testAssociationsCustomGridsearch", (DL_FUNC)rscones2_testAssociationsCustomGridsearch_try);
-    R_RegisterCCallable("rscones2", "rscones2_testAssociationsGridsearch", (DL_FUNC)rscones2_testAssociationsGridsearch_try);
     R_RegisterCCallable("rscones2", "rscones2_RcppExport_validate", (DL_FUNC)rscones2_RcppExport_validate);
     return R_NilValue;
 }
