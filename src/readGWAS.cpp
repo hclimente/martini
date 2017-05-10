@@ -8,7 +8,7 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-List readBio(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
+List readGWAS(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
   GWASData data;
   GWASData tmpData;
 
