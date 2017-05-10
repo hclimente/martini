@@ -4,13 +4,13 @@ PKG_CPPFLAGS=-Iscones2/src -Iscones2/External -Iscones2/External -Iscones2/Exter
 all: libCEasyGWAS libmaxflow $(SHLIB)
 
 cmake:
-	@(cd scones2 && cmake .)
+	@(cmake .)
 
 libCEasyGWAS: cmake
-	@(cd scones2 && $(MAKE) CEasyGWAS)
+	@($(MAKE) CEasyGWAS)
 	
 libmaxflow: cmake
-	@(cd scones2 && $(MAKE) maxflow)
+	@($(MAKE) maxflow)
 	
 clean:
-	@(cd scones2 && make clean)
+	@(make clean)
