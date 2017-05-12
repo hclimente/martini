@@ -1,12 +1,11 @@
-#include "../src/readBio.cpp"
+#include "../src/readGWAS.cpp"
 
 int main(){
-    readBio("/bioinfo/users/hcliment/easyGWASCore/data/testing/scones/skat/network.txt");
 
-    string wd = "/bioinfo/users/hcliment/easyGWASCore/data/testing/scones/skat/";
-    string pedBasename = wd + "genotype";
-    string phenoFile = wd + "phenotype.txt";
-    string netFile = wd + "network.txt";
+    std::string wd = "src/scones2/data/testing/scones/skat/";
+    std::string pedBasename = wd + "genotype";
+    std::string phenoFile = wd + "phenotype.txt";
+    std::string netFile = wd + "network.txt";
 
-    readBio(pedBasename, phenoFile, netFile, 0, 0.05);
+    readGWAS(pedBasename, phenoFile, netFile, 0, 0.05);
 }
