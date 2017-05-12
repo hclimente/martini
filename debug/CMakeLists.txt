@@ -1,19 +1,30 @@
-file(GLOB_RECURSE SOURCES /Users/hclimente/anaconda/lib/R/library/Matrix/include/*h
-        /Users/hclimente/anaconda/lib/R/library/Rcpp/include/*h
-        /Users/hclimente/anaconda/lib/R/library/RcppEigen/include/*h
-        /Users/hclimente/anaconda/lib/R/include/*h)
+set(R_LIBRARIES "~/anaconda/lib")
 
-link_directories(/Users/hclimente/anaconda/lib/R/library/Rcpp/libs/
-        /Users/hclimente/anaconda/lib/R/lib/
-        /Users/hclimente/anaconda/lib )
+file(GLOB_RECURSE SOURCES ${R_LIBRARIES}/R/library/Matrix/include/*h
+		${R_LIBRARIES}/R/library/Rcpp/include/*h
+		${R_LIBRARIES}/R/library/RcppEigen/include/*h
+		${R_LIBRARIES}/R/include/*h)
 
-include_directories(/Users/hclimente/anaconda/lib/R/library/Matrix/include/
-        /Users/hclimente/anaconda/lib/R/library/Rcpp/include
-        /Users/hclimente/anaconda/lib/R/library/RcppEigen/include
-        /Users/hclimente/anaconda/lib/R/include)
+link_directories(${R_LIBRARIES}/R/library/Rcpp/libs/
+		${R_LIBRARIES}/R/lib/
+		${R_LIBRARIES}
+		${PROJECT_SOURCE_DIR}/src/scones2
+		${PROJECT_SOURCE_DIR}/src/scones2/External/maxflow
+		${PROJECT_SOURCE_DIR}/src/scones2/External/Cephes
+		${PROJECT_SOURCE_DIR}/src/scones2/External/eigen)
 
-add_executable(DBtest_associations_gridsearch DBtest_associations_gridsearch.cpp ${SOURCES})
-target_link_libraries(DBtest_associations_gridsearch CEasyGWAS R gfortran)
+include_directories(${R_LIBRARIES}/R/library/Matrix/include/
+		${R_LIBRARIES}/R/library/Rcpp/include
+		${R_LIBRARIES}/R/library/RcppEigen/include
+		${R_LIBRARIES}/R/include
+		${PROJECT_SOURCE_DIR}/src/scones2/src/
+		${PROJECT_SOURCE_DIR}/src/scones2/External
+		${PROJECT_SOURCE_DIR}/src/scones2/External/maxflow
+		${PROJECT_SOURCE_DIR}/src/scones2/External/Cephes
+		${PROJECT_SOURCE_DIR}/src/scones2/External/eigen)
+
+# add_executable(DBtest_associations_gridsearch DBtest_associations_gridsearch.cpp ${SOURCES})
+# target_link_libraries(DBtest_associations_gridsearch CEasyGWAS R gfortran)
 
 add_executable(DBreadNetwork DBreadNetwork.cpp ${SOURCES})
 target_link_libraries(DBreadNetwork CEasyGWAS R gfortran)
