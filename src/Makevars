@@ -1,16 +1,16 @@
-PKG_LIBS=-Lscones2/ -lCEasyGWAS -Lscones2/External/maxflow -lmaxflow
-PKG_CPPFLAGS=-Iscones2/src -Iscones2/External -Iscones2/External -Iscones2/External/maxflow -Iscones2/External/Cephes
+PKG_LIBS=-Lgin/ -lCEasyGWAS -Lgin/External/maxflow -lmaxflow
+PKG_CPPFLAGS=-Igin/src -Igin/External -Igin/External -Igin/External/maxflow -Igin/External/Cephes
 
 all: libCEasyGWAS libmaxflow $(SHLIB)
 
 cmake:
-	@(cp -f CMakeLists.txt scones2 && cd scones2 && cmake .)
+	@(cp -f CMakeLists.txt gin && cd gin && cmake .)
 
 libCEasyGWAS: cmake
-	@(cd scones2 && $(MAKE) CEasyGWAS)
+	@(cd gin && $(MAKE) CEasyGWAS)
 	
 libmaxflow: cmake
-	@(cd scones2 && $(MAKE) maxflow)
+	@(cd gin && $(MAKE) maxflow)
 	
 clean:
-	@(cd scones2 && make clean)
+	@(cd gin && make clean)

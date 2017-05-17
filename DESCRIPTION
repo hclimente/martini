@@ -12,7 +12,8 @@ Imports:
     RcppEigen (>= 0.3.2.9.0)
 Depends:
     Matrix (>= 1.2-7.1),
-    igraph (>= 1.0.1)
+    igraph (>= 1.0.1),
+    GWASTools (>= 1.20.0)
 LinkingTo:
     Rcpp,
     RcppEigen

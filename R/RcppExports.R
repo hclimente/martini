@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 getRegressionStats <- function(X, Y) {
-    .Call('rscones2_getRegressionStats', PACKAGE = 'rscones2', X, Y)
+    .Call('martini_getRegressionStats', PACKAGE = 'martini', X, Y)
 }
 
 maxflow <- function(lW, c) {
-    .Call('rscones2_maxflow', PACKAGE = 'rscones2', lW, c)
+    .Call('martini_maxflow', PACKAGE = 'martini', lW, c)
 }
 
 readGWAS <- function(pedBasename, phenoFile, netPath, encoding, maf) {
-    .Call('rscones2_readGWAS', PACKAGE = 'rscones2', pedBasename, phenoFile, netPath, encoding, maf)
+    .Call('martini_readGWAS', PACKAGE = 'martini', pedBasename, phenoFile, netPath, encoding, maf)
 }
 
 runScones <- function(X, Y, network, userSettings) {
-    .Call('rscones2_runScones', PACKAGE = 'rscones2', X, Y, network, userSettings)
+    .Call('martini_runScones', PACKAGE = 'martini', X, Y, network, userSettings)
 }
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('rscones2_RcppExport_registerCCallable', PACKAGE = 'rscones2')
+    .Call('martini_RcppExport_registerCCallable', PACKAGE = 'martini')
 })
