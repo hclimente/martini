@@ -1,10 +1,10 @@
-Package: rscones2
+Package: martini
 Type: Package
-Title: R interface for scones2
+Title: User-friendly version of GIN (GWAS Incorporating Networks).
 Version: 0.1.1
 Author: Hector Climente
 Maintainer: Hector Climente <hector.climente@curie.fr>
-Description: Just a simple interface for scones2.
+Description: User-friendly version of GIN (GWAS Incorporating Networks).
 License: MIT
 LazyData: TRUE
 Imports:
