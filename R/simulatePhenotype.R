@@ -14,10 +14,10 @@ simulatePhenotype <- function(X, snps, h2, model = "additive", effectSize = rnor
   else
     stop(paste0("Genetic model ", model, " not recognised."))
   
-  noise.var <- var(geno) * (1 / h2 - 1)
-  noise <- rnorm(length(geno), sd = sqrt(noise.var))
+  residual.var <- var(geno) * (1 / h2 - 1)
+  residual <- rnorm(length(geno), sd = sqrt(residual.var))
   
-  trait <- geno + noise
+  trait <- geno + residual
   
   if (qualitative){
     if (! exists("ncases") )
