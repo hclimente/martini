@@ -1,8 +1,6 @@
 shake <- function(gwas, net, ...) {
 
-  # change gwas according to stuff
   # add some match correspondence between gwas and net
-  # present the results better
   
   X <- as(gwas$genotypes, "numeric")
   Y <- gwas$fam$affected
@@ -12,8 +10,12 @@ shake <- function(gwas, net, ...) {
   W <- get.adjacency(net, type="both", sparse = TRUE)
   settings <- getGinSettings(...)
   
-  results <- runGin(X, Y, W, settings)
+  gin <- runGin(X, Y, W, settings)
   
-  return(results)
+  gwas$map$ginscore <- gin$scores
+  gwas$map$ginpicked <- as.logical(gin$indicator)
+  gwas$gin <- list(lambda = gin$lambda, eta = gin$eta)
+  
+  return(gwas)
   
 }
