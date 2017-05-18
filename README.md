@@ -8,7 +8,7 @@ Currently only local installation is supported. First, clone the repository with
 
 ```{bash}
 git clone --recursive git@github.com:hclimente/martini.git
-cd rscones/src/gin
+cd martini/src/gin
 git submodule update --init --recursive
 cd ../..
 ```
