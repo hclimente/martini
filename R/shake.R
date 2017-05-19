@@ -1,13 +1,15 @@
 shake <- function(gwas, net, ...) {
 
-  # add some match correspondence between gwas and net
-  
   X <- as(gwas$genotypes, "numeric")
   Y <- gwas$fam$affected
   
   # remove redundant edges and self-edges
   net <- simplify(net)
   W <- get.adjacency(net, type="both", sparse = TRUE)
+  
+  # order according to order in map
+  W <- W[g$map$snp.names, g$map$snp.names]
+  
   settings <- getGinSettings(...)
   
   gin <- runGin(X, Y, W, settings)
