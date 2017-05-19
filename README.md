@@ -21,6 +21,43 @@ install.packages(".", repos = NULL, type="source")
 
 # Usage
 
+## GWAS Incorpotating Networks
+
+```{r}
+library(martini)
+
+data(simplegwas)
+# contains two variables:
+#   - geno: genotype information, created with read.pedfile (snpStats package)
+#   - net: dataframe with edge information
+
+graph <- graph_from_data_frame(net, directed = F )
+
+g <- shake(geno, graph)
+
+# shake creates a copy from the geno object with two modifications
+# g$map is modified to include two extra columns: one with the statistic and other informing if the feature got selected
+
+head(g$map)
+#   V1 snp.names V3 V4 allele.1 allele.2  ginscore ginpicked
+# 1  1       1_1  0  1        A        T 361.13735     FALSE
+# 2  1       1_2  0  2        T        A 344.29586     FALSE
+# 3  1       1_3  0  3        T        A 894.68186     FALSE
+# 4  1       1_4  0  4        T        A 180.98245     FALSE
+# 5  1       1_5  0  5        A        T 402.55416     FALSE
+# 6  1       1_6  0  6        A        T  21.54136     FALSE
+
+# g$gin contains the best parameters found in the gridsearch
+
+g$gin
+# $lambda
+# [1] 278.2559
+# 
+# $eta
+# [1] 16681.01
+
+```
+
 ## Simulate quantitative phenotype
 
 ```{r}
