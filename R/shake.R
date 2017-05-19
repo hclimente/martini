@@ -8,7 +8,7 @@ shake <- function(gwas, net, ...) {
   W <- get.adjacency(net, type="both", sparse = TRUE)
   
   # order according to order in map
-  W <- W[g$map$snp.names, g$map$snp.names]
+  W <- W[gwas$map$snp.names, gwas$map$snp.names]
   
   settings <- getGinSettings(...)
   
