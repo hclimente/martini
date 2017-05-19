@@ -25,19 +25,29 @@ install.packages(".", repos = NULL, type="source")
 
 ```{r}
 library(martini)
-
 data(simplegwas)
-# contains two variables:
-#   - geno: genotype information, created with read.pedfile (snpStats package)
-#   - net: dataframe with edge information
+```
+The example data contains two variables:
 
+- `geno`: genotype information, created with read.pedfile (`snpStats` package)
+- `net`: dataframe with edge information.
+
+```{r}
 graph <- graph_from_data_frame(net, directed = F )
+```
 
+martini uses igraph networks of SNPs. The user can connect them according to gene membership, sequence contiguity, protein-protein interactions, etc.
+
+```{r}
 g <- shake(geno, graph)
+```
 
-# shake creates a copy from the geno object with two modifications
-# g$map is modified to include two extra columns: one with the statistic and other informing if the feature got selected
+`shake` is the main function in martini. Additional arguments can be passed. `shake` creates a copy from the `geno` object with two modifications:
 
+- `g$map` is modified to include two extra columns: one with the statistic and other informing if the feature got selected.
+- `g$gin` contains the best gin parameters found in the gridsearch.
+
+```{r}
 head(g$map)
 #   V1 snp.names V3 V4 allele.1 allele.2  ginscore ginpicked
 # 1  1       1_1  0  1        A        T 361.13735     FALSE
@@ -46,8 +56,6 @@ head(g$map)
 # 4  1       1_4  0  4        T        A 180.98245     FALSE
 # 5  1       1_5  0  5        A        T 402.55416     FALSE
 # 6  1       1_6  0  6        A        T  21.54136     FALSE
-
-# g$gin contains the best parameters found in the gridsearch
 
 g$gin
 # $lambda
