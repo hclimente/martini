@@ -13,8 +13,8 @@ readGWAS <- function(pedBasename, phenoFile, netPath, encoding, maf) {
     .Call('martini_readGWAS', PACKAGE = 'martini', pedBasename, phenoFile, netPath, encoding, maf)
 }
 
-runScones <- function(X, Y, network, userSettings) {
-    .Call('martini_runScones', PACKAGE = 'martini', X, Y, network, userSettings)
+runGin <- function(X, Y, network, userSettings) {
+    .Call('martini_runGin', PACKAGE = 'martini', X, Y, network, userSettings)
 }
 
 # Register entry points for exported C++ functions

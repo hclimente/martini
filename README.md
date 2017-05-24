@@ -8,7 +8,7 @@ Currently only local installation is supported. First, clone the repository with
 
 ```{bash}
 git clone --recursive git@github.com:hclimente/martini.git
-cd rscones/src/gin
+cd martini/src/gin
 git submodule update --init --recursive
 cd ../..
 ```
@@ -20,6 +20,51 @@ install.packages(".", repos = NULL, type="source")
 ```
 
 # Usage
+
+## GWAS Incorpotating Networks
+
+```{r}
+library(martini)
+data(simplegwas)
+```
+The example data contains two variables:
+
+- `geno`: genotype information, created with read.pedfile (`snpStats` package)
+- `net`: dataframe with edge information.
+
+```{r}
+graph <- graph_from_data_frame(net, directed = F )
+```
+
+martini uses igraph networks of SNPs. The user can connect them according to gene membership, sequence contiguity, protein-protein interactions, etc.
+
+```{r}
+g <- shake(geno, graph)
+```
+
+`shake` is the main function in martini. Additional arguments can be passed. `shake` creates a copy from the `geno` object with two modifications:
+
+- `g$map` is modified to include two extra columns: one with the statistic and other informing if the feature got selected.
+- `g$gin` contains the best gin parameters found in the gridsearch.
+
+```{r}
+head(g$map)
+#   V1 snp.names V3 V4 allele.1 allele.2  ginscore ginpicked
+# 1  1       1_1  0  1        A        T 361.13735     FALSE
+# 2  1       1_2  0  2        T        A 344.29586     FALSE
+# 3  1       1_3  0  3        T        A 894.68186     FALSE
+# 4  1       1_4  0  4        T        A 180.98245     FALSE
+# 5  1       1_5  0  5        A        T 402.55416     FALSE
+# 6  1       1_6  0  6        A        T  21.54136     FALSE
+
+g$gin
+# $lambda
+# [1] 278.2559
+# 
+# $eta
+# [1] 16681.01
+
+```
 
 ## Simulate quantitative phenotype
 

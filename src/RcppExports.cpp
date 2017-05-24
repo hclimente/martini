@@ -105,24 +105,24 @@ RcppExport SEXP martini_readGWAS(SEXP pedBasenameSEXP, SEXP phenoFileSEXP, SEXP 
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// runScones
-List runScones(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings);
-static SEXP martini_runScones_try(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
+// runGin
+List runGin(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings);
+static SEXP martini_runGin_try(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> >::type network(networkSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type userSettings(userSettingsSEXP);
-    rcpp_result_gen = Rcpp::wrap(runScones(X, Y, network, userSettings));
+    rcpp_result_gen = Rcpp::wrap(runGin(X, Y, network, userSettings));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP martini_runScones(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
+RcppExport SEXP martini_runGin(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(martini_runScones_try(XSEXP, YSEXP, networkSEXP, userSettingsSEXP));
+        rcpp_result_gen = PROTECT(martini_runGin_try(XSEXP, YSEXP, networkSEXP, userSettingsSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -146,7 +146,7 @@ static int martini_RcppExport_validate(const char* sig) {
         signatures.insert("List(*getRegressionStats)(Eigen::MatrixXd,Eigen::VectorXd)");
         signatures.insert("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
         signatures.insert("List(*readGWAS)(std::string,std::string,std::string,unsigned int,double)");
-        signatures.insert("List(*runScones)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
+        signatures.insert("List(*runGin)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -156,7 +156,7 @@ RcppExport SEXP martini_RcppExport_registerCCallable() {
     R_RegisterCCallable("martini", "martini_getRegressionStats", (DL_FUNC)martini_getRegressionStats_try);
     R_RegisterCCallable("martini", "martini_maxflow", (DL_FUNC)martini_maxflow_try);
     R_RegisterCCallable("martini", "martini_readGWAS", (DL_FUNC)martini_readGWAS_try);
-    R_RegisterCCallable("martini", "martini_runScones", (DL_FUNC)martini_runScones_try);
+    R_RegisterCCallable("martini", "martini_runGin", (DL_FUNC)martini_runGin_try);
     R_RegisterCCallable("martini", "martini_RcppExport_validate", (DL_FUNC)martini_RcppExport_validate);
     return R_NilValue;
 }
