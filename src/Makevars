@@ -1,16 +1,10 @@
-PKG_LIBS=-Lgin/ -lCEasyGWAS -Lgin/External/maxflow -lmaxflow
+PKG_LIBS=-Lgin -lgin-linux-x64
 PKG_CPPFLAGS=-Igin/src -Igin/External -Igin/External -Igin/External/maxflow -Igin/External/Cephes
 
-all: libCEasyGWAS libmaxflow $(SHLIB)
+all: libgin $(SHLIB)
 
-cmake:
-	@(cp -f CMakeLists.txt gin && cd gin && cmake .)
-
-libCEasyGWAS: cmake
-	@(cd gin && $(MAKE) CEasyGWAS)
-	
-libmaxflow: cmake
-	@(cd gin && $(MAKE) maxflow)
+libgin:
+	@(wget  -nc https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-linux-x64.a gin)
 	
 clean:
-	@(cd gin && make clean)
+	@(cd gin && rm libgin-linux-x64.a)
