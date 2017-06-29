@@ -1,10 +1,18 @@
-PKG_LIBS=-Lgin -lgin-linux-x64
+PKG_LIBS=-Lgin -lgin
 PKG_CPPFLAGS=-Igin/src -Igin/External -Igin/External -Igin/External/maxflow -Igin/External/Cephes
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Linux)
+	url=https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-linux-x64.a
+endif
+ifeq ($(UNAME), Darwin)
+	url=https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-macosx-x64.a
+endif
 
 all: libgin $(SHLIB)
 
 libgin:
-	@(wget  -nc https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-linux-x64.a gin)
+		@(wget -N $(url) -O gin/libgin.a)
 	
 clean:
-	@(cd gin && rm libgin-linux-x64.a)
+	@(rm gin/libgin.a)
