@@ -2,7 +2,8 @@ Package: martini
 Type: Package
 Title: User-friendly version of GIN (GWAS Incorporating Networks).
 Version: 0.1.1
-Author: Hector Climente
+Author@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
+                  role = c("aut", "cre"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
 Description: User-friendly version of GIN (GWAS Incorporating Networks).
 License: MIT
@@ -17,5 +18,4 @@ Depends:
 LinkingTo:
     Rcpp,
     RcppEigen
-Remotes:
-    hclimente/gin@v0.1-alpha
+SystemRequirements:gin
