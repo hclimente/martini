@@ -1,18 +1,23 @@
-PKG_LIBS=-Lgin -lgin
-PKG_CPPFLAGS=-Igin/src -Igin/External -Igin/External -Igin/External/maxflow -Igin/External/Cephes
 UNAME := $(shell uname)
+ver = 0.1-alpha
 
 ifeq ($(UNAME), Linux)
-	url=https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-linux-x64.a
+	url=https://github.com/hclimente/gin/releases/download/v$(ver)/libgin-linux-x64.a
 endif
 ifeq ($(UNAME), Darwin)
-	url=https://github.com/hclimente/gin/releases/download/v0.1-alpha/libgin-macosx-x64.a
+	url=https://github.com/hclimente/gin/releases/download/v$(ver)/libgin-macosx-x64.a
 endif
 
-all: libgin $(SHLIB)
+PKG_LIBS=-Lgin-$(ver) -lgin
+PKG_CPPFLAGS=-Igin-$(ver)/src -Igin-$(ver)/External -Igin-$(ver)/External -Igin-$(ver)/External/maxflow -Igin-$(ver)/External/Cephes
 
-libgin:
-		@(wget -N $(url) -O gin/libgin.a)
+all: ginHeaders ginLib $(SHLIB)
+
+ginHeaders:
+		@(wget -N https://github.com/hclimente/gin/archive/v$(ver).zip && unzip -o v$(ver).zip)
+		
+ginLib:
+		@(wget -N $(url) -O gin-$(ver)/libgin.a)
 	
 clean:
 	@(rm gin/libgin.a)
