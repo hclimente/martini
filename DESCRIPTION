@@ -17,3 +17,5 @@ Depends:
 LinkingTo:
     Rcpp,
     RcppEigen
+Remotes:
+    hclimente/gin@v0.1-alpha
