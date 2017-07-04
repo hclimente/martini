@@ -4,19 +4,10 @@ R implementation of [gin](https://github.com/hclimente/gin).
 
 # Installation
 
-Currently only local installation is supported. First, clone the repository with all its submodules.
+First, install [gin](https://github.com/hclimente/gin). Then,
 
-```{bash}
-git clone --recursive git@github.com:hclimente/martini.git
-cd martini/src/gin
-git submodule update --init --recursive
-cd ../..
 ```
-
-Then, open a R terminal and install it from source:
-
-```{r}
-install.packages(".", repos = NULL, type="source")
+devtools::install_github("hclimente/martini")
 ```
 
 # Usage
