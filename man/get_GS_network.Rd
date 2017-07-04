@@ -4,10 +4,10 @@
 \alias{get_GS_network}
 \title{Get GS network.}
 \usage{
-get_GS_network(map)
+get_GS_network(gwas)
 }
 \arguments{
-\item{map}{A map object with the SNP position information.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 }
 \value{
 An igraph network of the GS network of the SNPs.

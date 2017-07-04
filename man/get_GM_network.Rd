@@ -4,12 +4,12 @@
 \alias{get_GM_network}
 \title{Get GM network.}
 \usage{
-get_GM_network(map, snp2gene)
+get_GM_network(gwas, snp2gene)
 }
 \arguments{
-\item{map}{A map object with the SNP position information.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{snp2gene}{A data frame with two columns: snp and gene. The first column contains the id of the SNP; the second, the gene which is mapped to.}
+\item{snp2gene}{A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).}
 }
 \value{
 An igraph network of the GM network of the SNPs.

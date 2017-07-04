@@ -4,14 +4,14 @@
 \alias{get_GI_network}
 \title{Get GI network.}
 \usage{
-get_GI_network(map, snp2gene, tab)
+get_GI_network(gwas, snp2gene, ppi)
 }
 \arguments{
-\item{map}{A map object with the SNP position information.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{snp2gene}{A data frame with two columns: snp and gene. The first column contains the id of the SNP; the second, the gene which is mapped to.}
+\item{snp2gene}{A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).}
 
-\item{tab}{A data frame describing protein-protein interactions in TAB format.}
+\item{ppi}{A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of the interacting proteins.}
 }
 \value{
 An igraph network of the GI network of the SNPs.
