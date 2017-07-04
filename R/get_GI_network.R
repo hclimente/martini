@@ -1,4 +1,4 @@
-getGINet <- function(tab, snp2gene, map)  {
+get_GI_network <- function(tab, snp2gene, map)  {
   
   genes <- read.delim2(snp2gene)
   colnames(genes) <- c("snp","gene")

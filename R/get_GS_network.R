@@ -1,4 +1,4 @@
-getGSNet <- function(map)  {
+get_GS_network <- function(map)  {
   
   map <- read.delim2(map, sep = " ", header = FALSE)
   colnames(map) <- c("chr","gene","cm","pos")

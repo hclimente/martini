@@ -1,4 +1,4 @@
-getGMNet <- function(map, snp2gene)  {
+get_GM_network <- function(map, snp2gene)  {
   
   genes <- read.delim2(snp2gene)
   colnames(genes) <- c("snp","gene")
