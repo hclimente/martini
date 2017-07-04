@@ -5,11 +5,10 @@
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
 #' @param ... Extra arguments for shake.
-#' @return A copy of the SnpMatrix object, with the following additions:
+#' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{
-#' \item{map$ginscore: contains the univariate association score for every single SNP.}
-#' \item{map$ginpicked: logical vector indicating if the SNP was selected by shake or not.}
-#' \item{gin: list with the selected values for eta and lambda.}
+#' \item{C: contains the univariate association score for every single SNP.}
+#' \item{selected: logical vector indicating if the SNP was selected by shake or not.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171–179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
@@ -28,11 +27,13 @@ shake <- function(gwas, net, ...) {
   settings <- get_shake_settings(...)
   
   gin <- run_shake(X, Y, W, settings)
+  cat("eta =", gin$eta, "\nlambda =", gin$lambda)
   
-  gwas$map$ginscore <- gin$scores
-  gwas$map$ginpicked <- as.logical(gin$indicator)
-  gwas$gin <- list(lambda = gin$lambda, eta = gin$eta)
+  map <- gwas$map
+  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  map$C <- gin$scores
+  map$selected <- as.logical(gin$indicator)
   
-  return(gwas)
+  return(map)
   
 }

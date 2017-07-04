@@ -14,11 +14,10 @@ shake(gwas, net, ...)
 \item{...}{Extra arguments for shake.}
 }
 \value{
-A copy of the SnpMatrix object, with the following additions:
+A copy of the SnpMatrix$map object, with the following additions:
 \itemize{
-\item{map$ginscore: contains the univariate association score for every single SNP.}
-\item{map$ginpicked: logical vector indicating if the SNP was selected by shake or not.}
-\item{gin: list with the selected values for eta and lambda.}
+\item{C: contains the univariate association score for every single SNP.}
+\item{selected: logical vector indicating if the SNP was selected by shake or not.}
 }
 }
 \description{
