@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 getRegressionStats <- function(X, Y) {
-    .Call('martini_getRegressionStats', PACKAGE = 'martini', X, Y)
+    .Call('_martini_getRegressionStats', PACKAGE = 'martini', X, Y)
 }
 
 maxflow <- function(lW, c) {
-    .Call('martini_maxflow', PACKAGE = 'martini', lW, c)
+    .Call('_martini_maxflow', PACKAGE = 'martini', lW, c)
 }
 
 readGWAS <- function(pedBasename, phenoFile, netPath, encoding, maf) {
-    .Call('martini_readGWAS', PACKAGE = 'martini', pedBasename, phenoFile, netPath, encoding, maf)
+    .Call('_martini_readGWAS', PACKAGE = 'martini', pedBasename, phenoFile, netPath, encoding, maf)
 }
 
 runGin <- function(X, Y, network, userSettings) {
-    .Call('martini_runGin', PACKAGE = 'martini', X, Y, network, userSettings)
+    .Call('_martini_runGin', PACKAGE = 'martini', X, Y, network, userSettings)
 }
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('martini_RcppExport_registerCCallable', PACKAGE = 'martini')
+    .Call('_martini_RcppExport_registerCCallable', PACKAGE = 'martini')
 })
