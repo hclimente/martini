@@ -1,4 +1,4 @@
-plotSelectedSnps <- function(map){
+plot_selected_snps <- function(map){
   library(Gviz)
   
   s <- which(map$selected)

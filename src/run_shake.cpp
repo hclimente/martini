@@ -14,7 +14,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List runGin(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
+List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
 
   CSconesSettings settings;
   settings = getSettings(userSettings);

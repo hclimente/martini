@@ -1,4 +1,4 @@
-simulatePhenotype <- function(X, snps, h2, model = "additive", effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols){
+simulate_phenotype <- function(X, snps, h2, model = "additive", effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols){
   # check correspondence with gcta implementation
 
   X <- X[, snps]

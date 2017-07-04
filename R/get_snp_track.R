@@ -1,4 +1,4 @@
-getSnpTrack <- function(map, selected, name = "SNP"){
+get_snp_track <- function(map, selected, name = "SNP"){
   library(Gviz)
   
   s <- which(selected)

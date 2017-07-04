@@ -1,4 +1,4 @@
-simulateCausalSNPs <- function(net, n) {
+simulate_causal_snps <- function(net, n) {
 
   idx <- 1
   

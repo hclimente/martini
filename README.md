@@ -66,11 +66,11 @@ data(toyGWAS)
 simulation <- data.frame(causal = logical(1000) )
 
 # simulate 20 causal SNPs, interconnected in the PPI network
-simulation$causal <- simulateCausalSNPs(toyGWAS$net, 20)
+simulation$causal <- simulate_causal_snps(toyGWAS$net, 20)
 
 # get their effect sizes from a normal distribution and simulate the phenotype
 simulation$effectSize[simulation$causal] <- rnorm(sum(simulation$causal))
-Y.simu <- simulatePhenotype(toyGWAS$X, simulation$causal, 
+Y.simu <- simulate_phenotype(toyGWAS$X, simulation$causal, 
                             h2 = 1, 
                             effectSize = simulation$effectSize[simulation$causal], 
                             qualitative = TRUE, ncases = 250, ncontrols = 250)

@@ -1,4 +1,4 @@
-getGinSettings <- function(...){
+get_shake_settings <- function(...){
 
   settings = list(...)
 

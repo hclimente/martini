@@ -7,6 +7,6 @@
 
 using namespace Rcpp;
 
-CSconesSettings getSettings(List);
+CSconesSettings get_settings(List);
 
 #endif //RSCONES2_GET_SETTINGS

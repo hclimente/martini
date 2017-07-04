@@ -1,6 +1,6 @@
-#include "getSettings.h"
+#include "get_settings.h"
 
-CSconesSettings getSettings(List userSettings) {
+CSconesSettings get_settings(List userSettings) {
 
   CSconesSettings settings;
   settings = CSconesSettings();

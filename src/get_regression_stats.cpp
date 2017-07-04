@@ -12,7 +12,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
+List get_regression_stats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
 
   double dBIC;
   double dAIC;
