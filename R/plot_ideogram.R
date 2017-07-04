@@ -1,0 +1,4 @@
+plotIdeogram <- function(){
+  library(OmicCircos)
+  
+}
