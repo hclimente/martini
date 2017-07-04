@@ -9,7 +9,7 @@
 #include "io/CSconesIO.h"
 #include "io/CPlinkParser.h"
 #include "globals.h"
-#include "getSettings.h"
+#include "get_settings.h"
 
 using namespace Rcpp;
 
@@ -17,7 +17,7 @@ using namespace Rcpp;
 List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
 
   CSconesSettings settings;
-  settings = getSettings(userSettings);
+  settings = get_settings(userSettings);
 
   CScones scones;
   scones = CScones(Y, X, network, settings);

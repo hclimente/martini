@@ -7,7 +7,7 @@
 #include <RcppEigen.h>
 #include "regression/CRegression.h"
 #include "globals.h"
-#include "getSettings.h"
+#include "get_settings.h"
 
 using namespace Rcpp;
 
