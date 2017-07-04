@@ -25,17 +25,17 @@ namespace martini {
         }
     }
 
-    inline List getRegressionStats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
-        typedef SEXP(*Ptr_getRegressionStats)(SEXP,SEXP);
-        static Ptr_getRegressionStats p_getRegressionStats = NULL;
-        if (p_getRegressionStats == NULL) {
-            validateSignature("List(*getRegressionStats)(Eigen::MatrixXd,Eigen::VectorXd)");
-            p_getRegressionStats = (Ptr_getRegressionStats)R_GetCCallable("martini", "_martini_getRegressionStats");
+    inline List get_regression_stats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
+        typedef SEXP(*Ptr_get_regression_stats)(SEXP,SEXP);
+        static Ptr_get_regression_stats p_get_regression_stats = NULL;
+        if (p_get_regression_stats == NULL) {
+            validateSignature("List(*get_regression_stats)(Eigen::MatrixXd,Eigen::VectorXd)");
+            p_get_regression_stats = (Ptr_get_regression_stats)R_GetCCallable("martini", "_martini_get_regression_stats");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_getRegressionStats(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)));
+            rcpp_result_gen = p_get_regression_stats(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -63,17 +63,17 @@ namespace martini {
         return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
     }
 
-    inline List readGWAS(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
-        typedef SEXP(*Ptr_readGWAS)(SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr_readGWAS p_readGWAS = NULL;
-        if (p_readGWAS == NULL) {
-            validateSignature("List(*readGWAS)(std::string,std::string,std::string,unsigned int,double)");
-            p_readGWAS = (Ptr_readGWAS)R_GetCCallable("martini", "_martini_readGWAS");
+    inline List read_gwas(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
+        typedef SEXP(*Ptr_read_gwas)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_read_gwas p_read_gwas = NULL;
+        if (p_read_gwas == NULL) {
+            validateSignature("List(*read_gwas)(std::string,std::string,std::string,unsigned int,double)");
+            p_read_gwas = (Ptr_read_gwas)R_GetCCallable("martini", "_martini_read_gwas");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_readGWAS(Shield<SEXP>(Rcpp::wrap(pedBasename)), Shield<SEXP>(Rcpp::wrap(phenoFile)), Shield<SEXP>(Rcpp::wrap(netPath)), Shield<SEXP>(Rcpp::wrap(encoding)), Shield<SEXP>(Rcpp::wrap(maf)));
+            rcpp_result_gen = p_read_gwas(Shield<SEXP>(Rcpp::wrap(pedBasename)), Shield<SEXP>(Rcpp::wrap(phenoFile)), Shield<SEXP>(Rcpp::wrap(netPath)), Shield<SEXP>(Rcpp::wrap(encoding)), Shield<SEXP>(Rcpp::wrap(maf)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -82,17 +82,17 @@ namespace martini {
         return Rcpp::as<List >(rcpp_result_gen);
     }
 
-    inline List runGin(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
-        typedef SEXP(*Ptr_runGin)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr_runGin p_runGin = NULL;
-        if (p_runGin == NULL) {
-            validateSignature("List(*runGin)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
-            p_runGin = (Ptr_runGin)R_GetCCallable("martini", "_martini_runGin");
+    inline List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
+        typedef SEXP(*Ptr_run_shake)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_run_shake p_run_shake = NULL;
+        if (p_run_shake == NULL) {
+            validateSignature("List(*run_shake)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
+            p_run_shake = (Ptr_run_shake)R_GetCCallable("martini", "_martini_run_shake");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_runGin(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)), Shield<SEXP>(Rcpp::wrap(network)), Shield<SEXP>(Rcpp::wrap(userSettings)));
+            rcpp_result_gen = p_run_shake(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)), Shield<SEXP>(Rcpp::wrap(network)), Shield<SEXP>(Rcpp::wrap(userSettings)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
