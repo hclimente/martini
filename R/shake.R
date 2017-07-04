@@ -25,9 +25,9 @@ shake <- function(gwas, net, ...) {
   # order according to order in map
   W <- W[gwas$map$snp.names, gwas$map$snp.names]
   
-  settings <- get_gin_settings(...)
+  settings <- get_shake_settings(...)
   
-  gin <- run_gin(X, Y, W, settings)
+  gin <- run_shake(X, Y, W, settings)
   
   gwas$map$ginscore <- gin$scores
   gwas$map$ginpicked <- as.logical(gin$indicator)

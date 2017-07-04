@@ -10,7 +10,7 @@ License: MIT
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.8),
-    RcppEigen (>= 0.3.2.9.0)
+    RcppEigen (= 0.3.3.3.0)
 Depends:
     Matrix (>= 1.2-7.1),
     igraph (>= 1.0.1),
