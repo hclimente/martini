@@ -17,7 +17,7 @@ namespace martini {
             require("martini", Rcpp::Named("quietly") = true);
             typedef int(*Ptr_validate)(const char*);
             static Ptr_validate p_validate = (Ptr_validate)
-                R_GetCCallable("martini", "martini_RcppExport_validate");
+                R_GetCCallable("martini", "_martini_RcppExport_validate");
             if (!p_validate(sig)) {
                 throw Rcpp::function_not_exported(
                     "C++ function with signature '" + std::string(sig) + "' not found in martini");
@@ -30,12 +30,12 @@ namespace martini {
         static Ptr_getRegressionStats p_getRegressionStats = NULL;
         if (p_getRegressionStats == NULL) {
             validateSignature("List(*getRegressionStats)(Eigen::MatrixXd,Eigen::VectorXd)");
-            p_getRegressionStats = (Ptr_getRegressionStats)R_GetCCallable("martini", "martini_getRegressionStats");
+            p_getRegressionStats = (Ptr_getRegressionStats)R_GetCCallable("martini", "_martini_getRegressionStats");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_getRegressionStats(Rcpp::wrap(X), Rcpp::wrap(Y));
+            rcpp_result_gen = p_getRegressionStats(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -49,12 +49,12 @@ namespace martini {
         static Ptr_maxflow p_maxflow = NULL;
         if (p_maxflow == NULL) {
             validateSignature("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
-            p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "martini_maxflow");
+            p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_maxflow(Rcpp::wrap(lW), Rcpp::wrap(c));
+            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(lW)), Shield<SEXP>(Rcpp::wrap(c)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -68,12 +68,12 @@ namespace martini {
         static Ptr_readGWAS p_readGWAS = NULL;
         if (p_readGWAS == NULL) {
             validateSignature("List(*readGWAS)(std::string,std::string,std::string,unsigned int,double)");
-            p_readGWAS = (Ptr_readGWAS)R_GetCCallable("martini", "martini_readGWAS");
+            p_readGWAS = (Ptr_readGWAS)R_GetCCallable("martini", "_martini_readGWAS");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_readGWAS(Rcpp::wrap(pedBasename), Rcpp::wrap(phenoFile), Rcpp::wrap(netPath), Rcpp::wrap(encoding), Rcpp::wrap(maf));
+            rcpp_result_gen = p_readGWAS(Shield<SEXP>(Rcpp::wrap(pedBasename)), Shield<SEXP>(Rcpp::wrap(phenoFile)), Shield<SEXP>(Rcpp::wrap(netPath)), Shield<SEXP>(Rcpp::wrap(encoding)), Shield<SEXP>(Rcpp::wrap(maf)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -87,12 +87,12 @@ namespace martini {
         static Ptr_runGin p_runGin = NULL;
         if (p_runGin == NULL) {
             validateSignature("List(*runGin)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
-            p_runGin = (Ptr_runGin)R_GetCCallable("martini", "martini_runGin");
+            p_runGin = (Ptr_runGin)R_GetCCallable("martini", "_martini_runGin");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_runGin(Rcpp::wrap(X), Rcpp::wrap(Y), Rcpp::wrap(network), Rcpp::wrap(userSettings));
+            rcpp_result_gen = p_runGin(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)), Shield<SEXP>(Rcpp::wrap(network)), Shield<SEXP>(Rcpp::wrap(userSettings)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
