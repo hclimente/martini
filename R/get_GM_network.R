@@ -1,3 +1,12 @@
+#' Get GM network.
+#' 
+#' @description Creates a network of SNPs where each SNP is connected as in the GS network and, in addition, to all the other SNPs pertaining to the same gene. Corresponds to the GM network described by Azencott et al.
+#' 
+#' @param map A map object with the SNP position information.
+#' @param snp2gene A data frame with two columns: snp and gene. The first column contains the id of the SNP; the second, the gene which is mapped to.
+#' @return An igraph network of the GM network of the SNPs.
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171–179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @export
 get_GM_network <- function(map, snp2gene)  {
   
   genes <- read.delim2(snp2gene)
