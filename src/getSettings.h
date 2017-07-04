@@ -3,7 +3,7 @@
 
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include "CEasyGWAS/gwas/CScones.h"
+#include "gwas/CScones.h"
 
 using namespace Rcpp;
 
