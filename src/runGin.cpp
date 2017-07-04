@@ -5,10 +5,10 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include "CEasyGWAS/gwas/CScones.h"
-#include "CEasyGWAS/io/CSconesIO.h"
-#include "CEasyGWAS/io/CPlinkParser.h"
-#include "CEasyGWAS/globals.h"
+#include "gwas/CScones.h"
+#include "io/CSconesIO.h"
+#include "io/CPlinkParser.h"
+#include "globals.h"
 #include "getSettings.h"
 
 using namespace Rcpp;
