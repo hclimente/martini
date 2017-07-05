@@ -34,8 +34,7 @@ get_GI_network <- function(gwas, snp2gene, ppi)  {
   
   gi <- graph_from_data_frame(snp2snp, directed = FALSE)
   gm <- get_GM_network(gwas, snp2gene)
-  gi <- union(gm, gi)
-  gi <- simplify(gi)
+  gi <- simplify(gm + gi)
   
   return(gi)
   

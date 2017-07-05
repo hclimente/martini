@@ -27,8 +27,7 @@ get_GM_network <- function(gwas, snp2gene)  {
   gm <- do.call("rbind", gm)
   gm <- graph_from_data_frame(gm, directed = FALSE)
   gs <- get_GS_network(gwas)
-  gm <- union(gm, gs)
-  gm <- simplify(gm)
+  gm <- simplify(gm + gs)
 
   return(gm)
 }
