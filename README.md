@@ -1,5 +1,7 @@
 # martini
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.824643.svg)](https://doi.org/10.5281/zenodo.824643)
+
 martini is an R interface of [gin](https://github.com/hclimente/gin). gin performs GWAS incorporating prior knowledge, namely biological networks. martini provides an R interface for gin's signature `shake` function, and extends it useful functions for data preprocessing, and plotting and analyzing the results.
 
 # Installation
