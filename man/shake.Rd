@@ -18,6 +18,7 @@ A copy of the SnpMatrix$map object, with the following additions:
 \itemize{
 \item{C: contains the univariate association score for every single SNP.}
 \item{selected: logical vector indicating if the SNP was selected by shake or not.}
+\item{cluster: integer with the number of the cluster the SNP belongs to.}
 }
 }
 \description{

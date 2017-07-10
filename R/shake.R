@@ -9,6 +9,7 @@
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
 #' \item{selected: logical vector indicating if the SNP was selected by shake or not.}
+#' \item{cluster: integer with the number of the cluster the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171–179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
@@ -33,6 +34,8 @@ shake <- function(gwas, net, ...) {
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   map$C <- gin$scores
   map$selected <- as.logical(gin$indicator)
+  
+  map <- cluster_snps(map, net)
   
   return(map)
   
