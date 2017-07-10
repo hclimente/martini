@@ -2,7 +2,7 @@
 #' 
 #' @description Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs.
 #' 
-#' @param X A numeric matrix, rows are samples, columns are SNPs.
+#' @param gwas A SnpMatrix object with the GWAS information.
 #' @param snps Boolean vector identifying the causal SNPs. Its length must be equal to the number of columns of X.
 #' @param h2 Heritability of the phenotype (between 0 and 1).
 #' @param model String specifying the genetic model under the phenotype. Accepted values: "additive".
@@ -13,7 +13,7 @@
 #' @return A vector with the simulated phenotype for each sample.
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @export
-simulate_phenotype <- function(X, snps, h2, model = "additive", effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols){
+simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols){
   # check correspondence with gcta implementation
   
   if (ncol(X) != length(snps))
@@ -21,6 +21,7 @@ simulate_phenotype <- function(X, snps, h2, model = "additive", effectSize = rno
   if (h2 < 0 | h2 > 1)
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
   
+  X <- as(gwas$genotypes, "numeric")
   X <- X[, snps]
   
   # get effect sizes u and weights w

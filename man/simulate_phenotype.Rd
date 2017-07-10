@@ -4,11 +4,11 @@
 \alias{simulate_phenotype}
 \title{Simulate phenotype}
 \usage{
-simulate_phenotype(X, snps, h2, model = "additive",
+simulate_phenotype(gwas, snps, h2, model = "additive",
   effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols)
 }
 \arguments{
-\item{X}{A numeric matrix, rows are samples, columns are SNPs.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{snps}{Boolean vector identifying the causal SNPs. Its length must be equal to the number of columns of X.}
 
