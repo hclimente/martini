@@ -15,11 +15,7 @@ simulate_causal_snps <- function(gwas, net, n) {
   
   # randomly select snps
   causalIds <- sample(myClique, n)
-  
-  if ("snp.names" %in% colnames(gwas$map))
-    causal <- gwas$map$snp.names %in% names(causalIds)
-  else if ("snp" %in% colnames(gwas$map))
-    causal <- gwas$map$snp %in% names(causalIds)
+  causal <- gwas$map$snp.names %in% names(causalIds)
   
   return(causal)
 }

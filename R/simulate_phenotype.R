@@ -19,7 +19,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   X <- as(gwas$genotypes, "numeric")
   
   if (ncol(X) != length(snps))
-    stop(paste0("Different number of SNPs in X and the causal SNP vector."))
+    stop("Different number of SNPs in X and the causal SNP vector.")
   if (h2 < 0 | h2 > 1)
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
   
