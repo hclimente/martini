@@ -18,44 +18,34 @@ devtools::install_github("hclimente/martini")
 
 ```{r}
 library(martini)
-data(simplegwas)
+data(examplegwas)
 ```
 The example data contains two variables:
 
-- `geno`: genotype information, created with read.pedfile (`snpStats` package)
-- `net`: dataframe with edge information.
-
-```{r}
-graph <- graph_from_data_frame(net, directed = F )
-```
+- `gwas`: a `snpMatrix` structure, containing the genotype information (e.g. created by `read.pedfile()`, from the `snpStats` package).
+- `net`: an `igraph` network, containing the SNP-network (e.g. created by `get_GS_network()`).
 
 martini uses igraph networks of SNPs. The user can connect them according to gene membership, sequence contiguity, protein-protein interactions, etc.
 
 ```{r}
-g <- shake(geno, graph)
+g <- shake(gwas, net)
 ```
 
-`shake` is the main function in martini. Additional arguments can be passed. `shake` creates a copy from the `geno` object with two modifications:
+`shake` is the main function in martini. Additional arguments can be passed. `shake` returns a copy of the `map` from the `gwas` object, which contain information of the SNPs (name, chromosome, genomic position...). `shake` adds three columns.
 
-- `g$map` is modified to include two extra columns: one with the statistic and other informing if the feature got selected.
-- `g$gin` contains the best gin parameters found in the gridsearch.
+- `C` is a numeric vector with the association scone for each SNP.
+- `selected` is a boolean vector informing about if the SNP was selected or not by `shake`.
+- `cluster` is a integer vector with information about which SNPs is adjacent to which SNP in the network. The integer is the identifier of that cluster (NA if the SNP is disconnected from any other selected SNP).
 
 ```{r}
-head(g$map)
-#   V1 snp.names V3 V4 allele.1 allele.2  ginscore ginpicked
-# 1  1       1_1  0  1        A        T 361.13735     FALSE
-# 2  1       1_2  0  2        T        A 344.29586     FALSE
-# 3  1       1_3  0  3        T        A 894.68186     FALSE
-# 4  1       1_4  0  4        T        A 180.98245     FALSE
-# 5  1       1_5  0  5        A        T 402.55416     FALSE
-# 6  1       1_6  0  6        A        T  21.54136     FALSE
-
-g$gin
-# $lambda
-# [1] 278.2559
-# 
-# $eta
-# [1] 16681.01
+head(g)
+#   V1 snp.names V3 V4 allele.1 allele.2         C  selected  cluster
+# 1  1       1_1  0  1        A        T 361.13735     FALSE       NA
+# 2  1       1_2  0  2        T        A 344.29586     FALSE       NA
+# 3  1       1_3  0  3        T        A 894.68186     FALSE        1
+# 4  1       1_4  0  4        T        A 180.98245     FALSE        1
+# 5  1       1_5  0  5        A        T 402.55416     FALSE        1
+# 6  1       1_6  0  6        A        T  21.54136     FALSE        1
 
 ```
 
@@ -63,22 +53,22 @@ g$gin
 
 ```{r}
 library(martini)
-data(toyGWAS)
+data(examplegwas)
 
-simulation <- data.frame(causal = logical(1000) )
+simulation <- data.frame(causal = logical(1800) )
 
 # simulate 20 causal SNPs, interconnected in the PPI network
-simulation$causal <- simulate_causal_snps(toyGWAS$net, 20)
+simulation$causal <- simulate_causal_snps(net, 20)
 
 # get their effect sizes from a normal distribution and simulate the phenotype
 simulation$effectSize[simulation$causal] <- rnorm(sum(simulation$causal))
-Y.simu <- simulate_phenotype(toyGWAS$X, simulation$causal, 
+Y.simu <- simulate_phenotype(gwas, simulation$causal, 
                             h2 = 1, 
                             effectSize = simulation$effectSize[simulation$causal], 
                             qualitative = TRUE, ncases = 250, ncontrols = 250)
 
 # study the association between the SNPs and the phenotype
-simulation$pval <- apply(toyGWAS$X, 2, function(x){
+simulation$pval <- apply(as(gwas$genotypes, "numeric"), 2, function(x){
     df <- data.frame(p = Y.simu, g = x)
     chsq <- chisq.test(table(df))
     chsq$p.value
