@@ -14,14 +14,15 @@
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols){
-  # check correspondence with gcta implementation
+  # TODO check correspondence with gcta implementation
+  
+  X <- as(gwas$genotypes, "numeric")
   
   if (ncol(X) != length(snps))
     stop(paste0("Different number of SNPs in X and the causal SNP vector."))
   if (h2 < 0 | h2 > 1)
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
   
-  X <- as(gwas$genotypes, "numeric")
   X <- X[, snps]
   
   # get effect sizes u and weights w

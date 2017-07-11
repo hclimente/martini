@@ -6,19 +6,20 @@
 #' @param n Number of causal SNPs to return.
 #' @return A boolean vector with as many elements as SNPs.
 #' @export
-simulate_causal_snps <- function(net, n) {
+simulate_causal_snps <- function(gwas, net, n) {
 
   idx <- 1
   
-  graph <- graph_from_adjacency_matrix(net, mode = "undirected", diag = FALSE)
-  cliques <- largest_cliques(graph)
-  cliqueIdx <- cliques[[idx]]
+  cliques <- largest_cliques(net)
+  myClique <- cliques[[idx]]
   
   # randomly select snps
-  causalSnpIdx <- sample(as.numeric(cliqueIdx), n)
+  causalIds <- sample(myClique, n)
   
-  causalSnp <- rep(FALSE, nrow(net))
-  causalSnp[causalSnpIdx] <- TRUE
+  if ("snp.names" %in% colnames(gwas$map))
+    causal <- gwas$map$snp.names %in% names(causalIds)
+  else if ("snp" %in% colnames(gwas$map))
+    causal <- gwas$map$snp %in% names(causalIds)
   
-  return(causalSnp)
+  return(causal)
 }
