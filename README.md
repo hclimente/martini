@@ -6,10 +6,11 @@ martini is an R interface of [gin](https://github.com/hclimente/gin). gin perfor
 
 # Installation
 
-If you haven't, first, install [`gin`](https://github.com/hclimente/gin). Then open an R terminal and write,
+If you haven't, first, install [`gin`](https://github.com/hclimente/gin). Then open an R terminal and install it like any Bioconductor package (requires `devtools`, do `install.package('devtools')` if you don`t have it):
 
 ```
-devtools::install_github("hclimente/martini")
+source("https://bioconductor.org/biocLite.R")
+biocLite("hclimente/martini")
 ```
 
 # Usage
