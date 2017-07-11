@@ -1,5 +1,9 @@
 get_snp_track <- function(map, selected, name = "SNP"){
-  library(Gviz)
+
+  if (!requireNamespace("Gviz", quietly = TRUE)) {
+    stop("Gviz needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   s <- which(selected)
   f <- head(s, n=1) - 5

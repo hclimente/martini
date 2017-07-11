@@ -8,7 +8,10 @@
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. Bioinformatics (Oxford, England), 30(19), 2811–2. \url{https://doi.org/10.1093/bioinformatics/btu393}
 #' @export
 plot_ideogram <- function(results, net){
-  library(circlize)
+  if (!requireNamespace("circlize", quietly = TRUE)) {
+    stop("circlize needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   circos.initializeWithIdeogram()
   

@@ -1,5 +1,9 @@
 plot_selected_snps <- function(map){
-  library(Gviz)
+  
+  if (!requireNamespace("Gviz", quietly = TRUE)) {
+    stop("Gviz needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   s <- which(map$selected)
   f <- head(s, n=1) - 5
@@ -17,7 +21,7 @@ plot_selected_snps <- function(map){
   itrack <- IdeogramTrack(genome = genome(snpRange), chromosome = names(genome(snpRange)))
   gtrack <- GenomeAxisTrack()
   
-  biomTrack <-BiomartGeneRegionTrack(genome = "hg19", 
+  biomTrack <- BiomartGeneRegionTrack(genome = "hg19", 
                                      chromosome = names(genome(snpRange)),
                                      start = head(snpPlot$gpos, n = 1), 
                                      end = tail(snpPlot$gpos, n = 1), 

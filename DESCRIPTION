@@ -20,4 +20,7 @@ LinkingTo:
     RcppEigen
 SystemRequirements: gin
 RoxygenNote: 6.0.1
-Suggests: testthat
+Suggests: 
+    testthat,
+    circlize (>= 0.4.0),
+    Gviz (>= 1.18.2)
