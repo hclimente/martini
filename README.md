@@ -6,7 +6,7 @@ martini is an R interface of [gin](https://github.com/hclimente/gin). gin perfor
 
 # Installation
 
-First, install [gin](https://github.com/hclimente/gin). Then,
+If you haven't, first, install [`gin`](https://github.com/hclimente/gin). Then open an R terminal and write,
 
 ```
 devtools::install_github("hclimente/martini")
