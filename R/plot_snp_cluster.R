@@ -1,4 +1,4 @@
-plot_selected_snps <- function(map){
+plot_snp_cluster <- function(map){
   
   if (!requireNamespace("Gviz", quietly = TRUE)) {
     stop("Gviz needed for this function to work. Please install it.",
