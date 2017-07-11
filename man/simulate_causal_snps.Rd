@@ -4,7 +4,7 @@
 \alias{simulate_causal_snps}
 \title{Simulate causal SNPs}
 \usage{
-simulate_causal_snps(net, n)
+simulate_causal_snps(gwas, net, n)
 }
 \arguments{
 \item{net}{An igraph network that connects the SNPs.}
