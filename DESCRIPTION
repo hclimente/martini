@@ -20,3 +20,4 @@ LinkingTo:
     RcppEigen
 SystemRequirements: gin
 RoxygenNote: 6.0.1
+Suggests: testthat
