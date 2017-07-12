@@ -5,8 +5,8 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include "regression/CRegression.h"
-#include "globals.h"
+#include "gin/regression/CRegression.h"
+#include "gin/globals.h"
 #include "get_settings.h"
 
 using namespace Rcpp;

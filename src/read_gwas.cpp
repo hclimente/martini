@@ -2,8 +2,8 @@
 // [[Rcpp::depends(RcppEigen)]]
 #include <Rcpp.h>
 #include <RcppEigen.h>
-#include "io/CPlinkParser.h"
-#include "io/CSconesIO.h"
+#include "gin/io/CPlinkParser.h"
+#include "gin/io/CSconesIO.h"
 
 using namespace Rcpp;
 
