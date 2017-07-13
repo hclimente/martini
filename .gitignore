@@ -9,3 +9,4 @@ src/*.dll
 .Rbuildignore
 .idea/*
 martini.Rproj
+inst/doc

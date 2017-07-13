@@ -20,9 +20,12 @@ LinkingTo:
     RcppEigen
 SystemRequirements: gin
 RoxygenNote: 6.0.1
-Suggests: 
+Suggests:
     testthat,
     circlize (>= 0.4.0),
-    Gviz (>= 1.18.2)
+    Gviz (>= 1.18.2),
+    knitr,
+    rmarkdown
 BiocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
     FeatureExtraction, GraphAndNetwork, Network
+VignetteBuilder: knitr

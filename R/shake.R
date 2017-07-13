@@ -28,7 +28,7 @@ shake <- function(gwas, net, ...) {
   settings <- get_shake_settings(...)
   
   gin <- run_shake(X, Y, W, settings)
-  cat("eta =", gin$eta, "\nlambda =", gin$lambda)
+  cat("eta =", gin$eta, "\nlambda =", gin$lambda, "\n")
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
