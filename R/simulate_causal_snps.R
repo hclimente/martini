@@ -1,6 +1,6 @@
 #' Simulate causal SNPs
 #' 
-#' @description Takes the biggest clique of the network, and randomly picks n SNPs from it.
+#' @description Selects randomly a set of loosely interconnected SNPs
 #' 
 #' @param net An igraph network that connects the SNPs.
 #' @param n Number of causal SNPs to return.
@@ -8,14 +8,14 @@
 #' @export
 simulate_causal_snps <- function(gwas, net, n) {
 
-  idx <- 1
+  k <- estimate_closeness(net, sample(V(net), floor(length(V(net)) * 0.05)), cutoff=20)
   
-  cliques <- largest_cliques(net)
-  myClique <- cliques[[idx]]
+  seed <- names(tail(sort(k), n=1))
+  x <- lapply(seq(100), function(x) {
+    names(random_walk(net, seed, 2*n) )
+  })
   
-  # randomly select snps
-  causalIds <- sample(myClique, n)
-  causal <- gwas$map$snp.names %in% names(causalIds)
-  
-  return(causal)
+  causalIds <- names(head(sort(table(do.call("c", x)), decreasing=T), n=n))
+
+  return(causalIds)
 }
