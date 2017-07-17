@@ -28,6 +28,8 @@ get_GM_network <- function(gwas, snp2gene)  {
   gm <- graph_from_data_frame(gm, directed = FALSE)
   gs <- get_GS_network(gwas)
   gm <- simplify(gm + gs)
+  
+  gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
 
   return(gm)
 }

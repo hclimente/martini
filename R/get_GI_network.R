@@ -28,9 +28,6 @@ get_GI_network <- function(gwas, snp2gene, ppi)  {
   snp2snp <- merge(snp2snp, snp2gene, by.x = "gene2", by.y = "gene")
   snp2snp <- merge(snp2snp, map, by.x = "snp.x", by.y = "snp")
   snp2snp <- merge(snp2snp, map, by.x = "snp.y", by.y = "snp")
-
-  # remove self-interactions
-  snp2snp <- subset(snp2snp, chr.x != chr.y & pos.x != pos.y, select = c("snp.x", "snp.y"))
   
   gi <- graph_from_data_frame(snp2snp, directed = FALSE)
   gm <- get_GM_network(gwas, snp2gene)
