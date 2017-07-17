@@ -1,21 +1,34 @@
 #' Simulate causal SNPs
 #' 
-#' @description Selects randomly a set of loosely interconnected SNPs
+#' @description Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
 #' 
 #' @param net An igraph network that connects the SNPs.
 #' @param n Number of causal SNPs to return.
-#' @return A boolean vector with as many elements as SNPs.
+#' @return A vector with the ids of the simulated causal SNPs.
 #' @export
-simulate_causal_snps <- function(gwas, net, n) {
-
-  k <- estimate_closeness(net, sample(V(net), floor(length(V(net)) * 0.05)), cutoff=20)
+simulate_causal_snps <- function(net, n) {
   
-  seed <- names(tail(sort(k), n=1))
-  x <- lapply(seq(100), function(x) {
-    names(random_walk(net, seed, 2*n) )
-  })
+  if (! is.null(vertex_attr(net, "gene"))) {
+    genes <- unique(na.omit(V(net)$gene))
+    
+    repeat {
+      g <- sample(genes, 1)
+      seed <- V(net)[which(V(net)$gene == g)][1]
+      neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
+      
+      if ( any(neighboringGenes != g) ) {
+        causal <- V(net)$gene %in% neighboringGenes %>% which %>% V(net)[.] %>% sample(n)
+        genesInvolved <- unique(causal$gene)
+        
+        if (length(genesInvolved) > 1)
+          break
+      }
+    }
+    
+  } else {
+    largestClique <- largest_cliques(net)[[1]]
+    causal <- sample(largestClique, n)
+  }
   
-  causalIds <- names(head(sort(table(do.call("c", x)), decreasing=T), n=n))
-
-  return(causalIds)
+  return(causal)
 }
