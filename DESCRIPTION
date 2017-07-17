@@ -14,7 +14,8 @@ Imports:
 Depends:
     Matrix (>= 1.2-7.1),
     igraph (>= 1.0.1),
-    snpStats (>= 1.20.0)
+    snpStats (>= 1.20.0),
+      GenomeInfoDbData (>= 0.99.0)
 LinkingTo:
     Rcpp,
     RcppEigen
