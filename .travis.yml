@@ -1,7 +1,13 @@
 language: r
-cache: packages
+
 os: linux
 dist: trusty
+addons:
+  apt:
+    packages:
+      - libboost-program-options1.55-dev
+
+cache: packages
 r: 
   - bioc-devel
 
