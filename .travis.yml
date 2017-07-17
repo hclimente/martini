@@ -1,14 +1,18 @@
+sudo: false
+
 language: r
 cache: packages
-r: bioc-release
+r: 
+  - bioc-devel
+  - release
+  
+r_packages:
+  - covr
 
 os:
   - osx
   
 before_script: git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
-
-r_packages:
-  - covr
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
