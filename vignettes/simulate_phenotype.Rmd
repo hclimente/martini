@@ -14,9 +14,8 @@ library(martini)
 library(tidyverse)
 data("examplegwas")
 
-causal <- simulate_causal_snps(gwas, net, 20)
+causal <- simulate_causal_snps(net, 20)
 
-causalSnps <- gwas$map$snp.names[causal]
-plot(induced_subgraph(net, causalSnps))
+plot(causal)
 
 ```
