@@ -11,7 +11,7 @@ vignette: >
 
 ```{r}
 library(martini)
-library(tidyverse)
+#library(tidyverse)
 data("examplegwas")
 
 causal <- simulate_causal_snps(net, 20)
