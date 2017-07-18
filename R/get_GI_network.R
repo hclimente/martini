@@ -29,6 +29,9 @@ get_GI_network <- function(gwas, snp2gene, ppi)  {
   snp2snp <- merge(snp2snp, map, by.x = "snp.x", by.y = "snp")
   snp2snp <- merge(snp2snp, map, by.x = "snp.y", by.y = "snp")
   
+  if (nrow(snp2snp) == 0)
+    warning("There was no matches between genes in snp2gene and PPI. No information about PPI will be added.")
+  
   gi <- graph_from_data_frame(snp2snp, directed = FALSE)
   gm <- get_GM_network(gwas, snp2gene)
   gi <- simplify(gm + gi)
