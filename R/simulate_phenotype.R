@@ -18,12 +18,12 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   
   X <- as(gwas$genotypes, "numeric")
   
-  if (any(! snps %in% gwas$map$snp.names))
-    stop("Different number of SNPs in X and the causal SNP vector.")
+  if (any(! names(snps) %in% gwas$map$snp.names))
+    stop(paste("The following causal SNPs are not in the SNP list:", setdiff(names(snps), gwas$map$snp.names)))
   if (h2 < 0 | h2 > 1)
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
   
-  X <- X[, gwas$map$snp.names %in% snps]
+  X <- X[, gwas$map$snp.names %in% names(snps)]
   
   # get effect sizes u and weights w
   u <- effectSize
