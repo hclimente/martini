@@ -1,12 +1,5 @@
 library(martini)
-
-gwas <- list()
-gwas$map <- data.frame(chr = c(1, 1, 1, 2, 2, 2),
-                       snp.names = paste0("rs", 1:6),
-                       cm = rep(0, 6),
-                       gpos = c(10, 20, 30, 15, 25, 35),
-                       allele.1 = rep("A", 6),
-                       allele.2 = rep("T", 6))
+source("minimum_data.R")
 
 net <- get_GS_network(gwas)
 
