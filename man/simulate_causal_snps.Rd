@@ -4,7 +4,7 @@
 \alias{simulate_causal_snps}
 \title{Simulate causal SNPs}
 \usage{
-simulate_causal_snps(gwas, net, n)
+simulate_causal_snps(net, n)
 }
 \arguments{
 \item{net}{An igraph network that connects the SNPs.}
@@ -12,8 +12,8 @@ simulate_causal_snps(gwas, net, n)
 \item{n}{Number of causal SNPs to return.}
 }
 \value{
-A boolean vector with as many elements as SNPs.
+A vector with the ids of the simulated causal SNPs.
 }
 \description{
-Takes the biggest clique of the network, and randomly picks n SNPs from it.
+Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
 }

@@ -4,12 +4,12 @@
 \alias{plot_ideogram}
 \title{Ideogram of shake results.}
 \usage{
-plot_ideogram(results, net)
+plot_ideogram(map, net)
 }
 \arguments{
-\item{results}{Results from \code{shake}.}
+\item{map}{Output from \code{shake}.}
 
-\item{net}{The same SNP network provided to \code{shake}.}
+\item{net}{The SNP network provided to \code{shake}.}
 }
 \value{
 A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.

@@ -5,12 +5,12 @@
 \title{Simulate phenotype}
 \usage{
 simulate_phenotype(gwas, snps, h2, model = "additive",
-  effectSize = rnorm(sum(snps)), qualitative = FALSE, ncases, ncontrols)
+  effectSize = rnorm(length(snps)), qualitative = FALSE, ncases, ncontrols)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{snps}{Boolean vector identifying the causal SNPs. Its length must be equal to the number of columns of X.}
+\item{snps}{Character vector with the SNP ids of the causal SNPs. Must match SNPs in gwas$map$snp.names.}
 
 \item{h2}{Heritability of the phenotype (between 0 and 1).}
 

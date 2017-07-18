@@ -1,13 +1,13 @@
-#' Calculate an empirical p-value for shake results.
+#' Calculate an empirical p-value for \code{find_snps} results.
 #' 
 #' @description Do a permutation-based test to assess the statistical significance of each of the clusters obtained through shake. For a cluster of size k, k interconnected SNPs are picked N times, and their joint association score is calculated to come up with an estimation of the distribution.
 #' 
-#' @param map Results from \code{shake}.
-#' @param net The same SNP network provided to \code{shake}.
+#' @param map Results from \code{find_snps}.
+#' @param net The same SNP network provided to \code{find_snps}.
 #' @param N Integer with the name of permutations.
 #' @return An empirical p-value for each of the SNP clusters. Please, note that the minimum possible p-value from an empirical distribution is set to 1/(N+1). Clusters composed by a single SNP will not have a empirical p-value.
 #' @export
-shake_test <- function(map, net, N = 100000) {
+test_snp_clusters <- function(map, net, N = 100000) {
   
   numSNPs <- vcount(net)
   selected <- subset(map, selected)
