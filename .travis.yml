@@ -15,9 +15,10 @@ r_packages:
   - covr
   
 before_script: 
-  - git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
+  - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
   - export CPLUS_INCLUDE_PATH=`pwd`/gin/build/include:${CPLUS_INCLUDE_PATH}
   - export LIBRARY_PATH=`pwd`/gin/build/lib:${LIBRARY_PATH}
+  - cd martini
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
