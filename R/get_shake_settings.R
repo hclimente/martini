@@ -6,50 +6,52 @@
 #' @return A list of \code{shake} settings.
 get_shake_settings <- function(...){
 
-  settings = list(...)
+  settings <- list(...)
+  
+  # unsigned int
+  if (! "nParameters" %in% names(settings))
+    settings[["nParameters"]] = 10;
 
   # unsigned int
-  if (! "nParameters" %in% settings)
-    settings["nParameters"] = 10;
-
-  # unsigned int
-  if (! "folds" %in% settings)
-    settings["folds"] = 10
+  if (! "folds" %in% names(settings))
+    settings[["folds"]] = 10
 
   # bool, VectorXd, VectorXd
-  if (! "autoParameters" %in% settings & "lambdas" %in% settings & "etas" %in% settings) {
-    settings["autoParameters"] = TRUE
-    settings["lambdas"] = rep(0, settings["nParameters"])
-    settings["etas"] = rep(0, settings["nParameters"])
+  if (! ("autoParameters" %in% names(settings) & "lambdas" %in% names(settings) & "etas" %in% names(settings)) ) {
+    settings[["autoParameters"]] = TRUE
+    settings[["lambdas"]] = numeric()
+    settings[["lambdas"]] = rep(0, settings[["nParameters"]])
+    settings[["etas"]] = numeric()
+    settings[["etas"]] = rep(0, settings[["nParameters"]])
   }
 
   # unsigned int
-  if (! "test_statistic" %in% settings)
-    settings["test_statistic"] = 0
+  if (! "test_statistic" %in% names(settings))
+    settings[["test_statistic"]] = 0
 
   # unsigned int
-  if (! "gridsearch_depth" %in% settings)
-    settings["gridsearch_depth"] = 1
+  if (! "gridsearch_depth" %in% names(settings))
+    settings[["gridsearch_depth"]] = 1
 
   # unsigned int
-  if (! "selection_criterion" %in% settings)
-    settings["selection_criterion"] = 1
+  if (! "selection_criterion" %in% names(settings))
+    settings[["selection_criterion"]] = 1
 
   # double
-  if (! "seed" %in% settings)
-    settings["seed"] = 0
+  if (! "seed" %in% names(settings))
+    settings[["seed"]] = 0
 
   # double
-  if (! "selection_ratio" %in% settings)
-    settings["selection_ratio"] = 0.8
+  if (! "selection_ratio" %in% names(settings))
+    settings[["selection_ratio"]] = 0.8
 
   # bool
-  if (! "dump_intermediate_results" %in% settings)
-    settings["dump_intermediate_results"] = TRUE
+  if (! "dump_intermediate_results" %in% names(settings))
+    settings[["dump_intermediate_results"]] = TRUE
 
   # bool
-  if (! "evaluateObjective" %in% settings)
-    settings["evaluateObjective"] = FALSE
+  if (! "evaluateObjective" %in% names(settings))
+    settings[["evaluateObjective"]] = FALSE
 
   return(settings);
 }
