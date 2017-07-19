@@ -1,1 +1,18 @@
-Héctor Climente-González. (2017, July 9). hclimente/martini v0.1-alpha. Zenodo. http://doi.org/10.5281/zenodo.824643
+citHeader("To cite martini in publications use:")
+
+citEntry(entry = "Misc",
+  title        = "martini: GWAS incorporating networks in R",
+  author       = personList(as.person("Héctor Climente"),
+                   as.person("Chloé-Agathe Azencott")),
+  journal      = "Zenodo",
+  year         = "2017",
+  url          = "http://doi.org/10.5281/zenodo.824643/",
+
+  textVersion  =
+  paste("Héctor Climente-González, Chloé-Agathe Azencott (2017)."
+        "hclimente/martini v0.1-alpha."
+        "Zenodo."
+        "URL http://doi.org/10.5281/zenodo.824643/")
+
+)
+
