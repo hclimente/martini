@@ -4,14 +4,12 @@
 \alias{plot_ideogram}
 \title{Ideogram of shake results.}
 \usage{
-plot_ideogram(map, net, species = "hg19")
+plot_ideogram(map, net)
 }
 \arguments{
 \item{map}{Output from \code{shake}.}
 
 \item{net}{The SNP network provided to \code{shake}.}
-
-\item{species}{Abbreviations of species. e.g. hg19 for human, mm10 for mouse, dm6 for fruit fly.}
 }
 \value{
 A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.

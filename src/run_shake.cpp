@@ -31,10 +31,10 @@ List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
   CScones scones;
   scones = CScones(Y, X, network, settings);
 
-  cout << "Testing associations.\n";
+  Rcout << "Testing associations.\n";
   scones.test_associations();
 
-  cout << "Collecting results.\n";
+  Rcout << "Collecting results.\n";
   VectorXd indicator = scones.getIndicatorVector();
   double objectiveScore = scones.getObjectiveScore();
   VectorXd scores = scones.getScoreStatistic();
