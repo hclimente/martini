@@ -9,9 +9,9 @@ citEntry(entry = "Misc",
   url          = "http://doi.org/10.5281/zenodo.824643/",
 
   textVersion  =
-  paste("Hector Climente-Gonzalez, Chloe-Agathe Azencott (2017)."
-        "hclimente/martini v0.1-alpha."
-        "Zenodo."
+  paste("Hector Climente-Gonzalez, Chloe-Agathe Azencott (2017).",
+        "hclimente/martini v0.1-alpha.",
+        "Zenodo.",
         "URL http://doi.org/10.5281/zenodo.824643/")
 
 )

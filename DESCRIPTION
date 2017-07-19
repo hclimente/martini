@@ -1,8 +1,8 @@
 Package: martini
 Type: Package
-Title: User-friendly version of GIN (GWAS Incorporating Networks).
+Title: GWAS Incorporating Networks in R
 Version: 0.1.1
-Authors@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
+Author@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
                   role = c("aut", "cre"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
 Description: User-friendly version of GIN (GWAS Incorporating Networks).
