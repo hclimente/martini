@@ -47,6 +47,16 @@ plot_ideogram <- function(map, net){
   
 }
 
+#' Converts a MAP data.frame to a BED data.frame
+#' 
+#' @description Takes a map file and:
+#'  \itemize{
+#' \item{column 1: Used as the chromosome column in the BED file..}
+#' \item{column 4: Used as start and end in the BED data.frame (as we work with SNPs).}
+#' }
+#' 
+#' @param map A MAP data.frame.
+#' @return A BED data.frame.
 map2bed <- function(map) {
   
   bed <- map[,c(1,4)]

@@ -1,5 +1,5 @@
-#ifndef RSCONES2_TEST_ASSOCIATIONS
-#define RSCONES2_TEST_ASSOCIATIONS
+#ifndef SHAKE_TEST_ASSOCIATIONS
+#define SHAKE_TEST_ASSOCIATIONS
 
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::depends(RcppEigen)]]
@@ -13,6 +13,15 @@
 
 using namespace Rcpp;
 
+//' Run shake.
+//' 
+//' @description Run shake.
+//' 
+//' @param X A matrix with the genotypes.
+//' @param Y A vector with the phenptypes.
+//' @param network A sparse matrix containing the adjacency matrix of the network.
+//' @param userSettings A named list with the settings.
+//' @return An object with the shake results.
 // [[Rcpp::export]]
 List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
 
@@ -40,4 +49,4 @@ List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
                             Rcpp::Named("eta") = scones.getBestEta());
 }
 
-#endif //RSCONES2_TEST_ASSOCIATIONS
+#endif //SHAKE_TEST_ASSOCIATIONS
