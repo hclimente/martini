@@ -6,7 +6,7 @@
 #' @param snp2gene A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).
 #' @param ppi A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of the interacting proteins.
 #' @return An igraph network of the GI network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171–179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
 get_GI_network <- function(gwas, snp2gene, ppi)  {
   

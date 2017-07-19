@@ -5,7 +5,7 @@
 #' @param map Output from \code{shake}.
 #' @param net The SNP network provided to \code{shake}.
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
-#' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. Bioinformatics (Oxford, England), 30(19), 2811–2. \url{https://doi.org/10.1093/bioinformatics/btu393}
+#' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
 #' @export
 plot_ideogram <- function(map, net){
   

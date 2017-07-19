@@ -5,7 +5,7 @@
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param snp2gene A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).
 #' @return An igraph network of the GM network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171–179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
 get_GM_network <- function(gwas, snp2gene)  {
   
