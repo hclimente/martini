@@ -14,7 +14,7 @@ library(martini)
 #library(tidyverse)
 data("examplegwas")
 
-causal <- simulate_causal_snps(net, 20)
+causal <- simulate_causal_snps(examplegwas$net, 20)
 
 plot(causal)
 
