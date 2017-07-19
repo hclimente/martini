@@ -6,7 +6,7 @@
 #' @param k Id of the cluster to plot.
 #' @param genome Genome to use (by default hg19).
 #' @return An ideogram per chromosome showing the selected SNPs and the genes in the region.
-#' @references Hahne F. and Ivanek R. (2016). “Statistical Genomics: Methods and Protocols.” In Mathé E and Davis S (eds.), chapter Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 10.1007/978-1-4939-3578-9_16, \url{http://dx.doi.org/10.1007/978-1-4939-3578-9_16}. 
+#' @references Hahne F. and Ivanek R. (2016). "Statistical Genomics: Methods and Protocols." In Mathe E and Davis S (eds.), chapter Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 10.1007/978-1-4939-3578-9_16, \url{http://dx.doi.org/10.1007/978-1-4939-3578-9_16}. 
 #' @export
 plot_snp_cluster <- function(map, k, genome = "hg19") {
   
