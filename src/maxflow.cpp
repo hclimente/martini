@@ -6,7 +6,6 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
 Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::VectorXd c) {
 
   CScones scones;

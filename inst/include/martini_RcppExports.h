@@ -25,63 +25,6 @@ namespace martini {
         }
     }
 
-    inline List get_regression_stats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
-        typedef SEXP(*Ptr_get_regression_stats)(SEXP,SEXP);
-        static Ptr_get_regression_stats p_get_regression_stats = NULL;
-        if (p_get_regression_stats == NULL) {
-            validateSignature("List(*get_regression_stats)(Eigen::MatrixXd,Eigen::VectorXd)");
-            p_get_regression_stats = (Ptr_get_regression_stats)R_GetCCallable("martini", "_martini_get_regression_stats");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_get_regression_stats(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<List >(rcpp_result_gen);
-    }
-
-    inline Eigen::VectorXd maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> lW, Eigen::VectorXd c) {
-        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
-        static Ptr_maxflow p_maxflow = NULL;
-        if (p_maxflow == NULL) {
-            validateSignature("Eigen::VectorXd(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor>,Eigen::VectorXd)");
-            p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(lW)), Shield<SEXP>(Rcpp::wrap(c)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
-    }
-
-    inline List read_gwas(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
-        typedef SEXP(*Ptr_read_gwas)(SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr_read_gwas p_read_gwas = NULL;
-        if (p_read_gwas == NULL) {
-            validateSignature("List(*read_gwas)(std::string,std::string,std::string,unsigned int,double)");
-            p_read_gwas = (Ptr_read_gwas)R_GetCCallable("martini", "_martini_read_gwas");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_read_gwas(Shield<SEXP>(Rcpp::wrap(pedBasename)), Shield<SEXP>(Rcpp::wrap(phenoFile)), Shield<SEXP>(Rcpp::wrap(netPath)), Shield<SEXP>(Rcpp::wrap(encoding)), Shield<SEXP>(Rcpp::wrap(maf)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<List >(rcpp_result_gen);
-    }
-
     inline List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
         typedef SEXP(*Ptr_run_shake)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_run_shake p_run_shake = NULL;

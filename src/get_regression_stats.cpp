@@ -11,7 +11,6 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
 List get_regression_stats(Eigen::MatrixXd X, Eigen::VectorXd Y) {
 
   double dBIC;

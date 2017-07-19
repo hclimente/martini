@@ -7,7 +7,6 @@
 
 using namespace Rcpp;
 
-//[[Rcpp::export]]
 List read_gwas(std::string pedBasename, std::string phenoFile, std::string netPath, unsigned int encoding, double maf) {
   GWASData data;
   GWASData tmpData;
