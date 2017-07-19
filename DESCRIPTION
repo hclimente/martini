@@ -2,7 +2,7 @@ Package: martini
 Type: Package
 Title: User-friendly version of GIN (GWAS Incorporating Networks).
 Version: 0.1.1
-Author@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
+Authors@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
                   role = c("aut", "cre"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
 Description: User-friendly version of GIN (GWAS Incorporating Networks).
