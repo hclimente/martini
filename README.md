@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.824643.svg)](https://doi.org/10.5281/zenodo.824643)
 [![Build Status](https://travis-ci.org/hclimente/martini.svg?branch=master)](https://travis-ci.org/hclimente/martini)
 
-martini is an R interface of [gin](https://github.com/hclimente/gin). gin performs GWAS incorporating prior knowledge, namely biological networks. martini provides an R interface for gin's signature `shake` function, and extends it useful functions for data preprocessing, and plotting and analyzing the results.
+martini is an R interface of [gin](https://github.com/hclimente/gin). gin performs GWAS incorporating prior knowledge, namely biological networks. martini provides an R interface for gin's signature `find_cones` function, and extends it useful functions for data preprocessing, and plotting and analyzing the results.
 
 # Installation
 
@@ -30,13 +30,13 @@ The example data contains two variables:
 martini uses igraph networks of SNPs. The user can connect them according to gene membership, sequence contiguity, protein-protein interactions, etc.
 
 ```{r}
-g <- shake(gwas, net)
+g <- find_cones(gwas, net)
 ```
 
-`shake` is the main function in martini. Additional arguments can be passed. `shake` returns a copy of the `map` from the `gwas` object, which contain information of the SNPs (name, chromosome, genomic position...). `shake` adds three columns.
+`find_cones` is the main function in martini. Additional arguments can be passed. `find_cones` returns a copy of the `map` from the `gwas` object, which contain information of the SNPs (name, chromosome, genomic position...). `find_cones` adds three columns.
 
 - `C` is a numeric vector with the association scone for each SNP.
-- `selected` is a boolean vector informing about if the SNP was selected or not by `shake`.
+- `selected` is a boolean vector informing about if the SNP was selected or not by `find_cones`.
 - `cluster` is a integer vector with information about which SNPs is adjacent to which SNP in the network. The integer is the identifier of that cluster (NA if the SNP is disconnected from any other selected SNP).
 
 ```{r}
