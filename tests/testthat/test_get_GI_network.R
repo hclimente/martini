@@ -26,3 +26,20 @@ test_that("we add gene information to the vertices", {
   expect_output(get.vertex.attribute(gi, "gene", match("rs3", V(gi)$name) ), NA )
   expect_output(get.vertex.attribute(gi, "gene", match("rs4", V(gi)$name) ), NA )
 })
+
+test_that("we are simplifying the network", { 
+  
+  s2g <- data.frame(snp = c("rs1", "rs2", "rs3", "rs4"),
+                    gene = c("A", "A", "B", "B"), stringsAsFactors = FALSE)
+  p <- data.frame(gene1 = "A", gene2 = "B", stringsAsFactors = FALSE)
+  x <- as_adj(get_GI_network(gwas, s2g, p))
+  
+  expect_equal(sum(x != 0 & x != 1), 0)
+  })
+
+test_that("warns if ppi is insufficient to create a GI network", {
+  expect_warning(get_GI_network(gwas, snp2gene, data.frame(gene1 = "A", gene2 = "A", stringsAsFactors = FALSE)), 
+                 "no matches between genes in snp2gene and PPI. No information about PPI will be added.")
+  expect_warning(get_GI_network(gwas, snp2gene, data.frame(gene1 = c("A", "B"), gene2 = c("A", "B"), stringsAsFactors = FALSE)), 
+                 "no matches between genes in snp2gene and PPI. No information about PPI will be added.")
+})

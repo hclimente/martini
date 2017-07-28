@@ -7,8 +7,9 @@ test_that("we interconnect snps from a gene", {
   expect_false(are_adjacent(get_GM_network(gwas, data.frame(snp = c("rs1", "rs2", "rs6"), gene = c("1","1","2"))), "rs1", "rs6"))
 })
 
-test_that("crash if snp2gene is insufficient to create a GM network", {
-  expect_error(get_GM_network(gwas, data.frame(snp = "rs1", gene = "A")), "the data frame should contain at least two columns")
+test_that("warns if snp2gene is insufficient to create a GM network", {
+  expect_warning(get_GM_network(gwas, data.frame(snp = "rs1", gene = "A")), "insufficient information to add gene information")
+  expect_warning(get_GM_network(gwas, data.frame(snp = c("rs1", "rs2"), gene = c("A", "B"))), "insufficient information to add gene information")
 })
 
 test_that("we add genomic information to the vertices", {
@@ -23,4 +24,13 @@ test_that("we add gene information to the vertices", {
   expect_equal(get.vertex.attribute(gm, "gene", match(c("rs5", "rs6"), V(gm)$name) ), rep("B", 2) )
   expect_output(get.vertex.attribute(gm, "gene", match("rs3", V(gm)$name) ), NA )
   expect_output(get.vertex.attribute(gm, "gene", match("rs4", V(gm)$name) ), NA )
+})
+
+test_that("we are simplifying the network", { 
+  
+  s2g <- data.frame(snp = c("rs1", "rs2", "rs3", "rs4"),
+                    gene = c("A", "A", "B", "B"), stringsAsFactors = FALSE)
+  x <- as_adj(get_GM_network(gwas, s2g))
+  
+  expect_equal(sum(x != 0 & x != 1), 0)
 })

@@ -21,11 +21,11 @@ get_GS_network <- function(gwas)  {
     data.frame(snp1 = snp1, snp2 = snp2)
   })
   gs <- do.call("rbind", gs)
-  gs <- graph_from_data_frame(gs, directed = FALSE)
-  gs <- simplify(gs)
+  gs <- igraph::graph_from_data_frame(gs, directed = FALSE)
+  gs <- igraph::simplify(gs)
   
-  gs <- set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
-  gs <- set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
+  gs <- igraph::set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
+  gs <- igraph::set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
 
   return(gs)
   

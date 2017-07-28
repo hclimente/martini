@@ -25,11 +25,17 @@ get_GM_network <- function(gwas, snp2gene)  {
     }
   })
   gm <- do.call("rbind", gm)
-  gm <- graph_from_data_frame(gm, directed = FALSE)
-  gs <- get_GS_network(gwas)
-  gm <- simplify(gm + gs)
   
-  gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
+  gs <- get_GS_network(gwas)
+  
+  if (! is.null(gm)) {
+    gm <- igraph::graph_from_data_frame(gm, directed = FALSE)
+    gm <- igraph::simplify(gm + gs)
+    gm <- igraph::set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
+  } else {
+    warning("insufficient information to add gene information")
+    gm <- gs
+  }
 
   return(gm)
 }
