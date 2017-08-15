@@ -37,7 +37,7 @@ snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
   
   by(map, map$chr, function(x) {
     grange <- paste(unique(x$chr), min(x$gpos), max(x$gpos), sep = ":")
-    getBM(attributes = c("ensembl_gene_id"),
+    getBM(attributes = c("external_gene_name"),
           filters = c("chromosomal_region"),
           values = grange, 
           mart = ensembl)
