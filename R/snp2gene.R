@@ -35,23 +35,19 @@ snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
     }
   })
   
-  by(map, map$chr, function(x) {
-    grange <- paste(unique(x$chr), min(x$gpos), max(x$gpos), sep = ":")
-    getBM(attributes = c("external_gene_name"),
-          filters = c("chromosomal_region"),
-          values = grange, 
-          mart = ensembl)
-  })
-  
   snp2gene <- by(map, map$chr, function(snps) {
     
     # get genes in the range defined by the snps
     grange <- paste(unique(snps$chr), min(snps$gpos), max(snps$gpos), sep = ":")
-    genes <- getBM(attributes = c("ensembl_gene_id","start_position", "end_position"),
+    genes <- getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
                    filters = "chromosomal_region",
                    values = grange, 
                    mart = ensembl)
     
+    if(nrow(genes) == 0) {
+      return()
+    }
+      
     # add a buffer before and after the gene
     chrEnd <- max(genes$end_position)
     genes$start_position <- genes$start_position - flank
@@ -64,7 +60,8 @@ snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
     igenes <- with(genes, IRanges(start_position, end_position, names=ensembl_gene_id))
     olaps <- findOverlaps(isnps, igenes)
     s2g <- cbind(snps[queryHits(olaps),], genes[subjectHits(olaps),])
-    subset(s2g, select = c("snp", "ensembl_gene_id"))
+    s2g$gene <- ifelse(s2g$external_gene_name == "" | is.na(s2g$external_gene_name), s2g$ensembl_gene_id, s2g$external_gene_name)
+    subset(s2g, select = c("snp", "gene"))
     
   })
   snp2gene <- do.call("rbind", snp2gene)
