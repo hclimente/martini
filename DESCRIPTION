@@ -26,6 +26,7 @@ Suggests:
     Gviz (>= 1.18.2),
     biomaRt (>= 2.30.0),
     IRanges (>= 2.8.2),
+    httr (>= 1.2.1),
     knitr,
     rmarkdown
 BiocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
