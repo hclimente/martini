@@ -9,9 +9,6 @@
 #' @export
 plot_ideogram <- function(map, net){
   
-  if (!requireNamespace("circlize", quietly = TRUE))
-    stop("circlize needed for this function to work. Please install it.", call. = FALSE)
-  
   circlize::circos.initializeWithIdeogram()
   
   bed <- map2bed(map)

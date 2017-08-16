@@ -10,9 +10,6 @@
 #' @export
 plot_snp_cluster <- function(map, k, genome = "hg19") {
   
-  if (!requireNamespace("Gviz", quietly = TRUE))
-    stop("Gviz needed for this function to work. Please install it.", call. = FALSE)
-  
   cluster <- subset(map, cluster == k)
   
   by(cluster, cluster$chr, function(snps2plot) {
