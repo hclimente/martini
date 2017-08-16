@@ -33,20 +33,20 @@ athal_mapped <- snp2gene(athal, organism=3702)
 test_that("output is as expected", {
   # dimensions
   expect_equal(dim(brca_mapped), c(3,2))
-  
+
   # column order
   expect_equal(length(intersect(brca$map$snp.names, brca_mapped[,1])), 3)
   expect_equal(length(unique(brca_mapped[,2])),2)
 })
 
 test_that("we map snps to their known genes", {
-  
+
   # correct mapping in humans
   expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981579"], "FGFR2")
   expect_equal(brca_mapped$gene[brca_mapped$snp == "rs3803662"], "CASC16")
   expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981582"], "FGFR2")
   expect_equal(length(brca_mapped$gene[brca_mapped$snp == "rs13387042"]), 0)
-  
+
   # correct mapping in arabidopsis
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297892"], "ACD6")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297535"], "ACD6")
@@ -55,7 +55,7 @@ test_that("we map snps to their known genes", {
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"], "AT5G03065")
-  
+
   # check flanks
   red <- list()
   red$map <- read.table(text = "
@@ -63,7 +63,7 @@ test_that("we map snps to their known genes", {
                        2 rs13387042 0 217041109 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
   red$map$gpos <- as.numeric(red$map$gpos)
-  
+
   expect_equal(nrow(snp2gene(red, flank = 44619)), 1)
   expect_equal(nrow(snp2gene(red, flank = 44618)), NULL)
 

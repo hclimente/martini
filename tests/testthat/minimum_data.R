@@ -9,7 +9,7 @@ gwas$map <- read.table(text = "
                        2 rs6 0 35 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
 
-snp2gene <- read.table(text = "
+snpMapping <- read.table(text = "
                        snp gene
                        rs1 A
                        rs2 A
@@ -22,8 +22,8 @@ ppi <- read.table(text = "
                   ", header = TRUE, stringsAsFactors = FALSE)
 
 gs <- get_GS_network(gwas)
-gm <- get_GM_network(gwas, snp2gene)
-gi <- get_GI_network(gwas, snp2gene, ppi)
+gm <- get_GM_network(gwas, snpMapping = snpMapping)
+gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
 
 result <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2 selected C cluster
