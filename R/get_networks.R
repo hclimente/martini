@@ -36,17 +36,17 @@ get_GS_network <- function(gwas)  {
 #' @description Creates a network of SNPs where each SNP is connected as in the GS network and, in addition, to all the other SNPs pertaining to the same gene. Corresponds to the GM network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
-#' @param snp2gene A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).
+#' @param snpMapping A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).
 #' @return An igraph network of the GM network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
-get_GM_network <- function(gwas, snp2gene)  {
+get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism, 50000))  {
   
-  colnames(snp2gene) <- c("snp","gene")
+  colnames(snpMapping) <- c("snp","gene")
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  map <- merge(map, snp2gene)
+  map <- merge(map, snpMapping)
   map <- subset(map, select = c("snp","gene"))
   # in some cases the same position is linked to two different variants
   map <- unique(map)
@@ -78,14 +78,14 @@ get_GM_network <- function(gwas, snp2gene)  {
 #' @description Creates a network of SNPs where each SNP is connected as in the GM network and, in addition, to all the other SNPs pertaining to any interactor of the gene it is mapped to. Corresponds to the GI network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
-#' @param snp2gene A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).
+#' @param snpMapping A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).
 #' @param ppi A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of the interacting proteins.
 #' @return An igraph network of the GI network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
-get_GI_network <- function(gwas, snp2gene, ppi)  {
+get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism, 50000), ppi = get_ppi(organism))  {
   
-  colnames(snp2gene) <- c("snp","gene")
+  colnames(snpMapping) <- c("snp","gene")
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
@@ -99,16 +99,16 @@ get_GI_network <- function(gwas, snp2gene, ppi)  {
   ppi <- subset(ppi, gene1 != gene2)
   
   # match all SNPs to pairwise PPI
-  snp2snp <- merge(ppi, snp2gene, by.x = "gene1", by.y = "gene")
-  snp2snp <- merge(snp2snp, snp2gene, by.x = "gene2", by.y = "gene")
+  snp2snp <- merge(ppi, snpMapping, by.x = "gene1", by.y = "gene")
+  snp2snp <- merge(snp2snp, snpMapping, by.x = "gene2", by.y = "gene")
   snp2snp <- merge(snp2snp, map, by.x = "snp.x", by.y = "snp")
   snp2snp <- merge(snp2snp, map, by.x = "snp.y", by.y = "snp")
   
   if (nrow(snp2snp) == 0)
-    warning("no matches between genes in snp2gene and PPI. No information about PPI will be added.")
+    warning("no matches between genes in snpMapping and PPI. No information about PPI will be added.")
   
   gi <- igraph::graph_from_data_frame(snp2snp, directed = FALSE)
-  gm <- get_GM_network(gwas, snp2gene)
+  gm <- get_GM_network(gwas, snpMapping=snpMapping)
   gi <- igraph::simplify(gm + gi)
   
   return(gi)
