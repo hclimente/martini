@@ -30,12 +30,12 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     datasetName <- paste0(organism, "_gene_ensembl")
     biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
   }, error = function(e){
-    if (e$call == "useDataset(mart = mart, dataset = dataset, verbose = verbose)") {
+    tryCatch({
       datasetName <- paste0(organism, "_eg_gene")
       biomaRt::useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
-    } else {
+    }, error = function(e) {
       stop(e)
-    }
+    })
   })
   
   snp2gene <- by(map, map$chr, function(snps) {
