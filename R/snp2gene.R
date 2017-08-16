@@ -9,27 +9,30 @@
 #' @return A dataframe with two columns: one for the SNP and another for the gene it has been 
 #' mapped to.
 #' @export
-snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
-  
-  if (!requireNamespace("biomaRt", quietly = TRUE))
-    stop("biomaRt needed for this function to work. Please install it.", call. = FALSE)
-  if (!requireNamespace("IRanges", quietly = TRUE))
-    stop("IRanges needed for this function to work. Please install it.", call. = FALSE)
+snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
   # get map in appropriate format
   map <- gwas$map
   colnames(map) <- c("chr", "snp", "cm", "gpos", "allele1", "allele2")
   map$chr <- gsub("[Cc]hr", "", map$chr)
   
+  # convert taxid to ensembl species name e.g. human databases are hsapiens_*
+  query <- paste0("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=", organism,"&rettype=docsum")
+  organism <- GET(query)
+  organism <- content(organism, as="text", encoding="UTF-8")
+  organism <- unlist(strsplit(organism, "\n"))[1]
+  organism <- unlist(strsplit(gsub("1. ", "", organism), " "))
+  organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
+  
   # create mart from ENSEMBL
   # consider vertebrates and plants
   ensembl <- tryCatch({
     datasetName <- paste0(organism, "_gene_ensembl")
-    useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
+    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
   }, error = function(e){
     if (e$call == "useDataset(mart = mart, dataset = dataset, verbose = verbose)") {
       datasetName <- paste0(organism, "_eg_gene")
-      useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
+      biomaRt::useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
     } else {
       stop(e)
     }
@@ -38,8 +41,8 @@ snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
   snp2gene <- by(map, map$chr, function(snps) {
     
     # get genes in the range defined by the snps
-    grange <- paste(unique(snps$chr), min(snps$gpos), max(snps$gpos), sep = ":")
-    genes <- getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
+    grange <- paste(unique(snps$chr), min(snps$gpos) - flank, max(snps$gpos) + flank, sep = ":")
+    genes <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
                    filters = "chromosomal_region",
                    values = grange, 
                    mart = ensembl)
@@ -49,17 +52,15 @@ snp2gene <- function(gwas, organism = "hsapiens", flank = 0) {
     }
       
     # add a buffer before and after the gene
-    chrEnd <- max(genes$end_position)
     genes$start_position <- genes$start_position - flank
     genes$start_position <- ifelse(genes$start_position < 0, 0, genes$start_position)
-    genes$end_position = genes$end_position + flank
-    genes$end_position <- ifelse(genes$end_position > chrEnd, chrEnd, genes$end_position)
+    genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
-    isnps <- with(snps, IRanges(gpos, width=1, names=snp))
-    igenes <- with(genes, IRanges(start_position, end_position, names=ensembl_gene_id))
-    olaps <- findOverlaps(isnps, igenes)
-    s2g <- cbind(snps[queryHits(olaps),], genes[subjectHits(olaps),])
+    isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
+    igenes <- with(genes, IRanges::IRanges(start_position, end_position, names=ensembl_gene_id))
+    olaps <- IRanges::findOverlaps(isnps, igenes)
+    s2g <- cbind(snps[S4Vectors::queryHits(olaps),], genes[S4Vectors::subjectHits(olaps),])
     s2g$gene <- ifelse(s2g$external_gene_name == "" | is.na(s2g$external_gene_name), s2g$ensembl_gene_id, s2g$external_gene_name)
     subset(s2g, select = c("snp", "gene"))
     

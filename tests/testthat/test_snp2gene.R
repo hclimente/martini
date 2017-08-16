@@ -28,7 +28,7 @@ athal$map <- read.table(text = "
                        ", header = TRUE, stringsAsFactors = FALSE)
 
 athal$map$gpos <- as.numeric(athal$map$gpos)
-athal_mapped <- snp2gene(athal, organism="athaliana")
+athal_mapped <- snp2gene(athal, organism=3702)
 
 test_that("output is as expected", {
   # dimensions
@@ -55,7 +55,16 @@ test_that("we map snps to their known genes", {
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"], "AT5G03065")
-
-  # TODO with extended flanks
+  
+  # check flanks
+  red <- list()
+  red$map <- read.table(text = "
+                       chr snp.names cm gpos allele.1 allele.2
+                       2 rs13387042 0 217041109 A G
+                       ", header = TRUE, stringsAsFactors = FALSE)
+  red$map$gpos <- as.numeric(red$map$gpos)
+  
+  expect_equal(nrow(snp2gene(red, flank = 44619)), 1)
+  expect_equal(nrow(snp2gene(red, flank = 44618)), NULL)
 
 })
