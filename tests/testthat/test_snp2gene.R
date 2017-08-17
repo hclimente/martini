@@ -15,6 +15,7 @@ brca$map$gpos <- as.numeric(brca$map$gpos)
 brca_mapped <- snp2gene(brca)
 
 # 7 snps from https://easygwas.ethz.ch/gwas/results/manhattan/view/4d00706f-ad0f-4f57-9f4e-ac3099b15b94/
+# the last one was not assigned to any gene
 athal <- list()
 athal$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
@@ -32,18 +33,17 @@ athal_mapped <- snp2gene(athal, organism=3702)
 
 test_that("output is as expected", {
   # dimensions
-  expect_equal(dim(brca_mapped), c(3,2))
+  expect_equal(ncol(brca_mapped), 2)
 
   # column order
-  expect_equal(length(intersect(brca$map$snp.names, brca_mapped[,1])), 3)
-  expect_equal(length(unique(brca_mapped[,2])),2)
+  expect_equal(length(intersect(brca$map$snp.names, brca_mapped[,1])), 2)
+  expect_equal(length(unique(brca_mapped[,2])), 1)
 })
 
 test_that("we map snps to their known genes", {
 
   # correct mapping in humans
   expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981579"], "FGFR2")
-  expect_equal(brca_mapped$gene[brca_mapped$snp == "rs3803662"], "CASC16")
   expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981582"], "FGFR2")
   expect_equal(length(brca_mapped$gene[brca_mapped$snp == "rs13387042"]), 0)
 
@@ -54,17 +54,18 @@ test_that("we map snps to their known genes", {
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8300836"], "BHLH104")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"], "AT5G03065")
+  expect_equal(length(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"]), 0)
 
   # check flanks
+  # off by one base to FGFR2 10: 121,478,334-121,598,458 
   red <- list()
   red$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
-                       2 rs13387042 0 217041109 A G
+                       10 outbound 0 121478333 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
   red$map$gpos <- as.numeric(red$map$gpos)
 
-  expect_equal(nrow(snp2gene(red, flank = 44619)), 1)
-  expect_equal(nrow(snp2gene(red, flank = 44618)), NULL)
+  expect_equal(nrow(snp2gene(red, flank = 1)), 1)
+  expect_equal(nrow(snp2gene(red)), NULL)
 
 })

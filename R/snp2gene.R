@@ -17,11 +17,11 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   map$chr <- gsub("[Cc]hr", "", map$chr)
   
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
-  query <- paste0("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=", organism,"&rettype=docsum")
+  urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
+  query <- paste0(urlTaxonomy, "/id/", organism, "?content-type=application/json")
   organism <- GET(query)
-  organism <- content(organism, as="text", encoding="UTF-8")
-  organism <- unlist(strsplit(organism, "\n"))[1]
-  organism <- unlist(strsplit(gsub("1. ", "", organism), " "))
+  organism <- content(organism, type ="application/json", encoding="UTF-8")
+  organism <- unlist(strsplit(organism$name, " "))
   organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
   
   # create mart from ENSEMBL
@@ -43,8 +43,8 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     # get genes in the range defined by the snps
     grange <- paste(unique(snps$chr), min(snps$gpos) - flank, max(snps$gpos) + flank, sep = ":")
     genes <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
-                   filters = "chromosomal_region",
-                   values = grange, 
+                   filters = c("chromosomal_region", "biotype"),
+                   values = list(chromosomal_region=grange, biotype="protein_coding"), 
                    mart = ensembl)
     
     if(nrow(genes) == 0) {
