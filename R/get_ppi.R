@@ -8,8 +8,9 @@
 get_ppi <- function(organism = 9606) {
   
   # construct query: all interactions in the requested organism
-  baseUrl <- "http://webservice.thebiogrid.org/interactions/?accessKey=912520d90dba1547c01abf31a18bcc94"
-  query <- paste(baseUrl, 
+  baseUrl <- "http://webservice.thebiogrid.org/interactions/?"
+  query <- paste(baseUrl,
+                 "accessKey=912520d90dba1547c01abf31a18bcc94",
                  "interSpeciesExcluded=true", 
                  "includeHeader=true", 
                  paste0("taxId=", organism), sep = "&")
@@ -19,7 +20,7 @@ get_ppi <- function(organism = 9606) {
   N <- as.numeric(content(N, type="text/csv", encoding="UTF-8", col_types="i"))
   
   # retrieve results in batches
-  ppi <- bplapply(seq(1, N, 10000), function(i){
+  ppi <- lapply(seq(1, N, 10000), function(i){
     q <- paste(query, paste0("start=", i), sep = "&")
     req <- GET(q)
     
