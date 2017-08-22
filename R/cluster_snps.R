@@ -9,7 +9,7 @@
 cluster_snps <- function(map, net) {
   
   selected <- subset(map, selected)
-  subnet <- induced_subgraph(net, selected$snp)
+  subnet <- igraph::induced_subgraph(net, selected$snp)
   
   clusters <- components(subnet)
   map$cluster <- NA

@@ -16,16 +16,16 @@ get_ppi <- function(organism = 9606) {
                  paste0("taxId=", organism), sep = "&")
   
   # number of results
-  N <- GET(paste(query, "format=count", sep = "&"))
-  N <- as.numeric(content(N, type="text/csv", encoding="UTF-8", col_types="i"))
+  N <- httr::GET(paste(query, "format=count", sep = "&"))
+  N <- as.numeric(httr::content(N, type="text/csv", encoding="UTF-8", col_types="i"))
   
   # retrieve results in batches
   ppi <- lapply(seq(1, N, 10000), function(i){
     q <- paste(query, paste0("start=", i), sep = "&")
-    req <- GET(q)
+    req <- httr::GET(q)
     
     # parse results
-    biogrid <- content(req, type="text/tab-separated-values", encoding="UTF-8", col_types="cccccccccccccccccccccccc")
+    biogrid <- httr::content(req, type="text/tab-separated-values", encoding="UTF-8", col_types="cccccccccccccccccccccccc")
     p <- subset(biogrid, select=c("Official Symbol Interactor A", "Official Symbol Interactor B"))
     colnames(p) <- c("geneA","geneB")
     return(p)

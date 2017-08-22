@@ -24,8 +24,8 @@ get_GS_network <- function(gwas)  {
   gs <- igraph::graph_from_data_frame(gs, directed = FALSE)
   gs <- igraph::simplify(gs)
   
-  gs <- igraph::set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
-  gs <- igraph::set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
+  gs <- igraph::set_vertex_attr(gs, "chr", index = match(map$snp, igraph::V(gs)$name), map$chr)
+  gs <- igraph::set_vertex_attr(gs, "pos", index = match(map$snp, igraph::V(gs)$name), map$pos)
 
   return(gs)
   
