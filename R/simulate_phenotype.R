@@ -55,8 +55,8 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
     
     Y <- numeric(length(trait))
     Y <- NA
-    Y[cases] <- 1
-    Y[controls] <- 0
+    Y[cases] <- 2
+    Y[controls] <- 1
   } else {
     Y <- trait
   }
