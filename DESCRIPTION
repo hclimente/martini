@@ -10,8 +10,7 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.8),
-    RcppEigen (>= 0.3.3.3.0)
-Depends:
+    RcppEigen (>= 0.3.3.3.0),
     Matrix (>= 1.2-7.1),
     igraph (>= 1.0.1),
     snpStats (>= 1.20.0),
@@ -21,6 +20,7 @@ Depends:
     biomaRt (>= 2.30.0),
     IRanges (>= 2.8.2),
     BiocParallel (>= 1.8.2)
+Depends: R (>= 2.10.0)
 LinkingTo:
     Rcpp,
     RcppEigen
