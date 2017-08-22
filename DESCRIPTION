@@ -19,7 +19,8 @@ Depends:
     circlize (>= 0.4.0),
     Gviz (>= 1.18.2),
     biomaRt (>= 2.30.0),
-    IRanges (>= 2.8.2)
+    IRanges (>= 2.8.2),
+    BiocParallel (>= 1.8.2)
 LinkingTo:
     Rcpp,
     RcppEigen

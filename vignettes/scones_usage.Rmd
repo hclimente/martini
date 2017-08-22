@@ -13,20 +13,25 @@ vignette: >
 library(martini)
 ```
 
-```{r read genotypes, cache = TRUE, eval=FALSE}
-setwd("~/Downloads/AtPolyDB_(call_method_75__Horton_et_al)/")
+```{r athaliana generation, eval = FALSE}
+library(martini)
+
+# fetch the data
+tmp <- tempfile()
+download.file("https://easygwas.ethz.ch/down/dataset/download/1/",tmp)
+unzip(tmp)
+unlink(tmp)
+
+# read gwas experiment
 gwas <- read.pedfile("genotype.ped", snps = "genotype.map")
-```
 
-```{r create network, eval=FALSE}
-net <- get_GS_network(gwas)
-```
+# create GM network
+net <- get_GM_network(gwas, 3702)
 
-```{r, eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("TxDb.Athaliana.BioMart.plantsmart28")
-```
+# generate simulated phenotypes
+causal <- simulate_causal_snps(net, 60)
+y <- simulate_phenotype(gwas, causal, h2=1, ncases=653, ncontrols=654, qualitative=T)
 
-```{r, eval=FALSE}
-library(TxDb.Athaliana.BioMart.plantsmart28)
+## write back into the SnpMatrix object
+gwas$fam$affected <- y
 ```

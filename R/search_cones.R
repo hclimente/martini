@@ -13,7 +13,7 @@
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @export
-find_cones <- function(gwas, net, ...) {
+search_cones <- function(gwas, net, ...) {
 
   X <- as(gwas$genotypes, "numeric")
   Y <- gwas$fam$affected
@@ -25,15 +25,15 @@ find_cones <- function(gwas, net, ...) {
   # order according to order in map
   W <- W[gwas$map$snp.names, gwas$map$snp.names]
   
-  settings <- get_shake_settings(...)
+  settings <- get_evo_settings(...)
   
-  gin <- run_shake(X, Y, W, settings)
-  cat("eta =", gin$eta, "\nlambda =", gin$lambda, "\n")
+  test <- evo(X, Y, W, settings)
+  cat("eta =", test$eta, "\nlambda =", test$lambda, "\n")
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  map$C <- gin$scores
-  map$selected <- as.logical(gin$indicator)
+  # map$C <- test$scores
+  map$selected <- as.logical(test$selected)
   
   map <- cluster_snps(map, net)
   
