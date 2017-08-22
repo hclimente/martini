@@ -25,6 +25,25 @@ namespace martini {
         }
     }
 
+    inline List run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+        typedef SEXP(*Ptr_run_scones)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_run_scones p_run_scones = NULL;
+        if (p_run_scones == NULL) {
+            validateSignature("List(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
+            p_run_scones = (Ptr_run_scones)R_GetCCallable("martini", "_martini_run_scones");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_run_scones(Shield<SEXP>(Rcpp::wrap(c)), Shield<SEXP>(Rcpp::wrap(eta)), Shield<SEXP>(Rcpp::wrap(lambda)), Shield<SEXP>(Rcpp::wrap(W)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<List >(rcpp_result_gen);
+    }
+
     inline List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
         typedef SEXP(*Ptr_run_shake)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_run_shake p_run_shake = NULL;
