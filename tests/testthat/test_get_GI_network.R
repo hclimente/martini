@@ -2,9 +2,9 @@ library(martini)
 source("minimum_data.R")
 
 test_that("we interconnect the right genes", {
-  expect_true(are_adjacent(gi, "rs1", "rs5"))
+  expect_true(igraph::are_adjacent(gi, "rs1", "rs5"))
   expect_false(
-    are_adjacent(
+    igraph::are_adjacent(
       get_GI_network(gwas, 
                      snpMapping = data.frame(snp = c("rs1", "rs2", "rs5", "rs6"),
                                              gene = c("A", "A", "C", "B"), 
@@ -14,17 +14,17 @@ test_that("we interconnect the right genes", {
 })
 
 test_that("we add genomic information to the vertices", {
-  expect_equal(get.vertex.attribute(gi, "chr", match(c("rs1", "rs2", "rs3"), V(gi)$name) ), rep(1, 3) )
-  expect_equal(get.vertex.attribute(gi, "chr", match(c("rs4", "rs5", "rs6"), V(gi)$name) ), rep(2, 3) )
-  expect_equal(get.vertex.attribute(gi, "pos", match(c("rs1", "rs2", "rs3"), V(gi)$name) ), c(10, 20, 30) )
-  expect_equal(get.vertex.attribute(gi, "pos", match(c("rs4", "rs5", "rs6"), V(gi)$name) ), c(15, 25, 35) )
+  expect_equal(igraph::get.vertex.attribute(gi, "chr", match(c("rs1", "rs2", "rs3"), igraph::V(gi)$name) ), rep(1, 3) )
+  expect_equal(igraph::get.vertex.attribute(gi, "chr", match(c("rs4", "rs5", "rs6"), igraph::V(gi)$name) ), rep(2, 3) )
+  expect_equal(igraph::get.vertex.attribute(gi, "pos", match(c("rs1", "rs2", "rs3"), igraph::V(gi)$name) ), c(10, 20, 30) )
+  expect_equal(igraph::get.vertex.attribute(gi, "pos", match(c("rs4", "rs5", "rs6"), igraph::V(gi)$name) ), c(15, 25, 35) )
 })
 
 test_that("we add gene information to the vertices", {
-  expect_equal(get.vertex.attribute(gi, "gene", match(c("rs1", "rs2"), V(gi)$name) ), rep("A", 2) )
-  expect_equal(get.vertex.attribute(gi, "gene", match(c("rs5", "rs6"), V(gi)$name) ), rep("B", 2) )
-  expect_output(get.vertex.attribute(gi, "gene", match("rs3", V(gi)$name) ), NA )
-  expect_output(get.vertex.attribute(gi, "gene", match("rs4", V(gi)$name) ), NA )
+  expect_equal(igraph::get.vertex.attribute(gi, "gene", match(c("rs1", "rs2"), igraph::V(gi)$name) ), rep("A", 2) )
+  expect_equal(igraph::get.vertex.attribute(gi, "gene", match(c("rs5", "rs6"), igraph::V(gi)$name) ), rep("B", 2) )
+  expect_output(igraph::get.vertex.attribute(gi, "gene", match("rs3", igraph::V(gi)$name) ), NA )
+  expect_output(igraph::get.vertex.attribute(gi, "gene", match("rs4", igraph::V(gi)$name) ), NA )
 })
 
 test_that("we are simplifying the network", { 
@@ -32,7 +32,7 @@ test_that("we are simplifying the network", {
   s2g <- data.frame(snp = c("rs1", "rs2", "rs3", "rs4"),
                     gene = c("A", "A", "B", "B"), stringsAsFactors = FALSE)
   p <- data.frame(gene1 = "A", gene2 = "B", stringsAsFactors = FALSE)
-  x <- as_adj(get_GI_network(gwas, snpMapping = s2g, ppi = p))
+  x <- igraph::as_adj(get_GI_network(gwas, snpMapping = s2g, ppi = p))
   
   expect_equal(sum(x != 0 & x != 1), 0)
   })

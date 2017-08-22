@@ -9,7 +9,7 @@
 #' @export
 test_cones_clusters <- function(map, net, N = 100000) {
   
-  numSNPs <- vcount(net)
+  numSNPs <- igraph::vcount(net)
   selected <- subset(map, selected)
   
   # calculate one ecdf for each cluster size
@@ -20,7 +20,7 @@ test_cones_clusters <- function(map, net, N = 100000) {
     if (n > 1){
       sampled_C <- lapply(1:N, function(i){
         v <- sample(1:numSNPs, 1)
-        snpCluster_i <- random_walk(net, v, n)
+        snpCluster_i <- igraph::random_walk(net, v, n)
         map_cluster <- subset(map, snp %in% snpCluster_i)
         sum(map_cluster$C)
       })
@@ -29,7 +29,6 @@ test_cones_clusters <- function(map, net, N = 100000) {
       ecdf(sampled_C)
     }
   })
-  
   
   clusters <- by(selected, selected$cluster, function(k){
     n <- nrow(k)

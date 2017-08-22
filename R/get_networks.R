@@ -65,7 +65,7 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
   if (! is.null(gm)) {
     gm <- igraph::graph_from_data_frame(gm, directed = FALSE)
     gm <- igraph::simplify(gm + gs)
-    gm <- igraph::set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
+    gm <- igraph::set_vertex_attr(gm, "gene", index = match(map$snp, igraph::V(gm)$name), map$gene)
   } else {
     warning("insufficient information to add gene information")
     gm <- gs

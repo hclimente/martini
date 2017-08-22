@@ -11,7 +11,7 @@ cluster_snps <- function(map, net) {
   selected <- subset(map, selected)
   subnet <- igraph::induced_subgraph(net, selected$snp)
   
-  clusters <- components(subnet)
+  clusters <- igraph::components(subnet)
   map$cluster <- NA
   map$cluster[map$selected] <- clusters$membership[order(match(names(clusters$membership), map$snp))]
   
