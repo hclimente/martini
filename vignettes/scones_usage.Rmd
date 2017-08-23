@@ -45,5 +45,5 @@ data("athal")
 ```
 
 ```{r search cones, eval=FALSE}
-search_cones(athal$gwas, athal$gm)
+search_cones(athal$gwas, athal$gm, associationScore = "chi2")
 ```

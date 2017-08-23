@@ -4,7 +4,7 @@
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
-#' @param ... Extra arguments for shake.
+#' @param ... Extra arguments for \code{\link{get_evo_settings}}.
 #' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}

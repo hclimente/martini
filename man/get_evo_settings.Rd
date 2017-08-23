@@ -7,7 +7,11 @@
 get_evo_settings(...)
 }
 \arguments{
-\item{...}{Any \code{shake} option.}
+\item{associationScore}{Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, trend.}
+
+\item{modelScore}{Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.}
+
+\item{encoding}{SNP encoding. Possible values: additive (default), resessive, dominant, codominant.}
 }
 \value{
 A list of \code{shake} settings.

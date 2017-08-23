@@ -11,7 +11,7 @@ search_cones(gwas, net, ...)
 
 \item{net}{An igraph network that connects the SNPs.}
 
-\item{...}{Extra arguments for shake.}
+\item{...}{Extra arguments for \code{\link{get_evo_settings}}.}
 }
 \value{
 A copy of the SnpMatrix$map object, with the following additions:

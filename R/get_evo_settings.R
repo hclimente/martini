@@ -1,61 +1,65 @@
 #' Get shake settings.
 #' 
 #' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is provided.
-#' 
-#' @param ... Any \code{shake} option.
+#' @param associationScore Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, trend.
+#' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
+#' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
 #' @return A list of \code{shake} settings.
 get_evo_settings <- function(...){
 
   settings <- list(...)
-  
-  # unsigned int
-  if (! "nParameters" %in% names(settings))
-    settings[["nParameters"]] = 10;
-  
-  # unsigned int
-  if (! "encoding" %in% names(settings))
-    settings[["encoding"]] = 0;
 
   # unsigned int
-  if (! "folds" %in% names(settings))
-    settings[["folds"]] = 10
-
-  # bool, VectorXd, VectorXd
-  if (! ("autoParameters" %in% names(settings) & "lambdas" %in% names(settings) & "etas" %in% names(settings)) ) {
-    settings[["autoParameters"]] = TRUE
-    settings[["lambdas"]] = numeric()
-    settings[["lambdas"]] = rep(0, settings[["nParameters"]])
-    settings[["etas"]] = numeric()
-    settings[["etas"]] = rep(0, settings[["nParameters"]])
+  if (! "associationScore" %in% names(settings)) {
+    settings[["associationScore"]] = 0
+  } else if (settings[["associationScore"]] == "skat") {
+    settings[["associationScore"]] = 0
+  } else if (settings[["associationScore"]] == "chi2") {
+    settings[["associationScore"]] = 1
+  } else if (settings[["associationScore"]] == "trend") {
+    settings[["associationScore"]] = 2
+  } else {
+    stop(paste("Error: invalid associationScore", settings[["associationScore"]]))
   }
 
   # unsigned int
-  if (! "associationScore" %in% names(settings))
-    settings[["associationScore"]] = 0
-
-  # unsigned int
-  if (! "gridsearch_depth" %in% names(settings))
-    settings[["gridsearch_depth"]] = 1
-
-  # unsigned int
-  if (! "modelScore" %in% names(settings))
+  if (! "modelScore" %in% names(settings)) {
     settings[["modelScore"]] = 1
-
-  # double
-  if (! "seed" %in% names(settings))
-    settings[["seed"]] = 0
-
-  # double
-  if (! "selection_ratio" %in% names(settings))
-    settings[["selection_ratio"]] = 0.8
-
-  # bool
-  if (! "dump_intermediate_results" %in% names(settings))
-    settings[["dump_intermediate_results"]] = TRUE
-
-  # bool
-  if (! "evaluateObjective" %in% names(settings))
-    settings[["evaluateObjective"]] = FALSE
+  } else if (settings[["modelScore"]] == "consistency") {
+    settings[["modelScore"]] = 0
+  } else if (settings[["modelScore"]] == "bic") {
+    settings[["modelScore"]] = 1
+  } else if (settings[["modelScore"]] == "aic") {
+    settings[["modelScore"]] = 2
+  } else if (settings[["modelScore"]] == "aicc") {
+    settings[["modelScore"]] = 3
+  } else if (settings[["modelScore"]] == "mbic") {
+    settings[["modelScore"]] = 4
+  } else {
+    stop(paste("Error: invalid modelScore", settings[["modelScore"]]))
+  }
+  
+  
+  #define CONSISTENCY 0
+  #define BIC 1
+  #define AIC 2
+  #define AICc 3
+  #define mBIC 4
+  
+  # unsigned int
+  if (! "encoding" %in% names(settings)) {
+    settings[["encoding"]] = 0;
+  } else if (settings[["encoding"]] == "additive") {
+    settings[["encoding"]] = 0
+  } else if (settings[["encoding"]] == "recessive") {
+    settings[["encoding"]] = 1
+  } else if (settings[["encoding"]] == "dominant") {
+    settings[["encoding"]] = 2
+  } else if (settings[["encoding"]] == "codominant") {
+    settings[["encoding"]] = 3
+  } else {
+    stop(paste("Error: invalid encoding", settings[["encoding"]]))
+  }
 
   return(settings);
 }
