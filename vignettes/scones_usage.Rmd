@@ -9,11 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r load martini, warning = FALSE}
+```{r load martini}
 library(martini)
 ```
 
-```{r athaliana generation, eval = FALSE}
+```{r athaliana generation, eval=FALSE}
 library(martini)
 
 # fetch the data
@@ -34,4 +34,16 @@ y <- simulate_phenotype(gwas, causal, h2=1, ncases=653, ncontrols=654, qualitati
 
 ## write back into the SnpMatrix object
 gwas$fam$affected <- y
+```
+
+```{r read athaliana}
+data("athal")
+```
+
+```{r}
+
+```
+
+```{r search cones, eval=FALSE}
+search_cones(athal$gwas, athal$gm)
 ```

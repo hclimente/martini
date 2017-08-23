@@ -20,7 +20,8 @@ Imports:
     biomaRt (>= 2.30.0),
     IRanges (>= 2.8.2),
     BiocParallel (>= 1.8.2),
-    S4Vectors (>= 0.12.2)
+    S4Vectors (>= 0.12.2),
+    GenomicRanges (>= 1.26.4)
 Depends: R (>= 2.10.0)
 LinkingTo:
     Rcpp,

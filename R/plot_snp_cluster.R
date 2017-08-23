@@ -7,6 +7,8 @@
 #' @param genome Genome to use (by default hg19).
 #' @return An ideogram per chromosome showing the selected SNPs and the genes in the region.
 #' @references Hahne F. and Ivanek R. (2016). "Statistical Genomics: Methods and Protocols." In Mathe E and Davis S (eds.), chapter Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 10.1007/978-1-4939-3578-9_16, \url{http://dx.doi.org/10.1007/978-1-4939-3578-9_16}. 
+#' @importFrom GenomicRanges GRanges
+#' @importFrom Gviz AnnotationTrack IdeogramTrack GenomeAxisTrack BiomartGeneRegionTrack plotTracks
 #' @export
 plot_snp_cluster <- function(map, k, genome = "hg19") {
   
@@ -27,7 +29,7 @@ plot_snp_cluster <- function(map, k, genome = "hg19") {
                                         chromosome = names(genome(snpRange)),
                                         start = head(snps2plot$pos, n = 1), 
                                         end = tail(snps2plot$pos, n = 1), 
-                                        name="Ensembl")
+                                        name = "Ensembl")
     
     plotTracks(list(itrack, gtrack, biomTrack, snpTrack), showId = TRUE)
   })

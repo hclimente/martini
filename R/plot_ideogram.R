@@ -6,10 +6,12 @@
 #' @param net The SNP network provided to \code{shake}.
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
+#' @importFrom circlize circos.initializeWithIdeogram circos.genomicTrackPlotRegion circos.genomicPoints circos.genomicLink circos.clear
+#' @importFrom igraph get.data.frame delete_vertices
 #' @export
 plot_ideogram <- function(map, net){
   
-  circlize::circos.initializeWithIdeogram()
+  circos.initializeWithIdeogram()
   
   bed <- map2bed(map)
   bed$C <- map$C
@@ -17,13 +19,13 @@ plot_ideogram <- function(map, net){
   # order to put the selected snps in fron in the plot
   bed <- bed[with(bed, order(selected)),]
   
-  circlize::circos.genomicTrackPlotRegion(bed, 
-                                          ylim = c(0, 1.1 * max(bed$C)), 
-                                          panel.fun = function(region, value, ...) {
-                                            # color according to selection/non-selection
-                                            col = ifelse(value[[2]], "orange", "gray70")
-                                            circlize::circos.genomicPoints(region, value, col = col, cex = 0.5, pch = 16)
-                                          }, track.height = 0.3)
+  circos.genomicTrackPlotRegion(bed, 
+                                ylim = c(0, 1.1 * max(bed$C)), 
+                                panel.fun = function(region, value, ...) {
+                                  # color according to selection/non-selection
+                                  col = ifelse(value[[2]], "orange", "gray70")
+                                  circos.genomicPoints(region, value, col = col, cex = 0.5, pch = 16)
+                                }, track.height = 0.3)
   
   # create links
   # remove unselected SNPs from the graph
@@ -38,9 +40,9 @@ plot_ideogram <- function(map, net){
     subset(select = c("chr", "to", "cm", "pos")) %>%
     map2bed
   
-  circlize::circos.genomicLink(region1, region2)
+  circos.genomicLink(region1, region2)
   
-  circlize::circos.clear()
+  circos.clear()
   
 }
 
