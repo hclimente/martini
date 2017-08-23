@@ -12,6 +12,7 @@
 #' \item{cluster: integer with the number of the cluster the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @importFrom  igraph simplify as_adj
 #' @export
 find_cones <- function(gwas, net, ...) {
 
@@ -19,8 +20,8 @@ find_cones <- function(gwas, net, ...) {
   Y <- gwas$fam$affected
   
   # remove redundant edges and self-edges
-  net <- igraph::simplify(net)
-  W <- igraph::as_adj(net, type="both", sparse = TRUE)
+  net <- simplify(net)
+  W <- as_adj(net, type="both", sparse = TRUE)
   
   # order according to order in map
   W <- W[gwas$map$snp.names, gwas$map$snp.names]

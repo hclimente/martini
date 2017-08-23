@@ -5,19 +5,21 @@
 #' @param net An igraph network that connects the SNPs.
 #' @param n Number of causal SNPs to return.
 #' @return A vector with the ids of the simulated causal SNPs.
+#' @importFrom igraph vertex_attr V neighbors largest_cliques %>%
+#' @importFrom stats na.omit
 #' @export
 simulate_causal_snps <- function(net, n) {
   
-  if (! is.null(igraph::vertex_attr(net, "gene"))) {
-    genes <- names(which(table(igraph::V(net)$gene) > 1))
+  if (! is.null(vertex_attr(net, "gene"))) {
+    genes <- names(which(table(V(net)$gene) > 1))
     
     repeat {
       g <- sample(genes, 1)
-      seed <- igraph::V(net)[which(igraph::V(net)$gene == g)][1]
+      seed <- V(net)[which(V(net)$gene == g)][1]
       
-      neighboringGenes <- igraph::neighbors(net, seed)$gene %>% na.omit %>% unique
+      neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
       neighboringGenes <- intersect(genes, neighboringGenes)
-      neighbors <- igraph::V(net)$gene %in% neighboringGenes %>% which %>% igraph::V(net)[.]
+      neighbors <- V(net)$gene %in% neighboringGenes %>% which %>% V(net)[.]
       
       if ( length(neighbors) >= n & any(neighboringGenes != g) ) {
         causal <- sample(neighbors, n)
@@ -29,7 +31,7 @@ simulate_causal_snps <- function(net, n) {
     }
     
   } else {
-    largestClique <- igraph::largest_cliques(net)[[1]]
+    largestClique <- largest_cliques(net)[[1]]
     causal <- sample(largestClique, n)
   }
   

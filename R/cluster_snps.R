@@ -5,13 +5,14 @@
 #' @param map Results from \code{shake}.
 #' @param net The same SNP network provided to \code{shake}.
 #' @return A list with the clusters of selected SNPs.
+#' @importFrom igraph induced_subgraph components
 #' @export
 cluster_snps <- function(map, net) {
   
   selected <- subset(map, selected)
-  subnet <- igraph::induced_subgraph(net, selected$snp)
+  subnet <- induced_subgraph(net, selected$snp)
   
-  clusters <- igraph::components(subnet)
+  clusters <- components(subnet)
   map$cluster <- NA
   map$cluster[map$selected] <- clusters$membership[order(match(names(clusters$membership), map$snp))]
   

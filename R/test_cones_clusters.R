@@ -6,10 +6,12 @@
 #' @param net The same SNP network provided to \code{find_cones}.
 #' @param N Integer with the name of permutations.
 #' @return An empirical p-value for each of the SNP clusters. Please, note that the minimum possible p-value from an empirical distribution is set to 1/(N+1). Clusters composed by a single SNP will not have a empirical p-value.
+#' @importFrom stats ecdf
+#' @importFrom igraph vcount random_walk
 #' @export
 test_cones_clusters <- function(map, net, N = 100000) {
   
-  numSNPs <- igraph::vcount(net)
+  numSNPs <- vcount(net)
   selected <- subset(map, selected)
   
   # calculate one ecdf for each cluster size
@@ -20,7 +22,7 @@ test_cones_clusters <- function(map, net, N = 100000) {
     if (n > 1){
       sampled_C <- lapply(1:N, function(i){
         v <- sample(1:numSNPs, 1)
-        snpCluster_i <- igraph::random_walk(net, v, n)
+        snpCluster_i <- random_walk(net, v, n)
         map_cluster <- subset(map, snp %in% snpCluster_i)
         sum(map_cluster$C)
       })

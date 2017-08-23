@@ -12,6 +12,8 @@
 #' @param ncontrols Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.
 #' @return A vector with the simulated phenotype for each sample.
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
+#' @importFrom utils head tail
+#' @importFrom stats rnorm var
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), qualitative = FALSE, ncases, ncontrols){
   # TODO check correspondence with gcta implementation

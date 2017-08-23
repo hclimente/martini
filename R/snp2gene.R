@@ -8,7 +8,8 @@
 #' i.e. SNPs mapped to them will be considered mapped to the gene.
 #' @return A dataframe with two columns: one for the SNP and another for the gene it has been 
 #' mapped to.
-#' @export
+#' @importFrom httr GET content
+#' @importFrom IRanges IRanges findOverlaps
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
   # get map in appropriate format
@@ -19,8 +20,8 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
   urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy, "/id/", organism, "?content-type=application/json")
-  organism <- httr::GET(query)
-  organism <- httr::content(organism, type ="application/json", encoding="UTF-8")
+  organism <- GET(query)
+  organism <- content(organism, type ="application/json", encoding="UTF-8")
   organism <- unlist(strsplit(organism$name, " "))
   organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
   
@@ -57,9 +58,9 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
-    isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
-    igenes <- with(genes, IRanges::IRanges(start_position, end_position, names=ensembl_gene_id))
-    olaps <- IRanges::findOverlaps(isnps, igenes)
+    isnps <- with(snps, IRanges(gpos, width=1, names=snp))
+    igenes <- with(genes, IRanges(start_position, end_position, names=ensembl_gene_id))
+    olaps <- findOverlaps(isnps, igenes)
     s2g <- cbind(snps[S4Vectors::queryHits(olaps),], genes[S4Vectors::subjectHits(olaps),])
     s2g$gene <- ifelse(s2g$external_gene_name == "" | is.na(s2g$external_gene_name), s2g$ensembl_gene_id, s2g$external_gene_name)
     subset(s2g, select = c("snp", "gene"))
