@@ -1,5 +1,5 @@
 ---
-title: "Using SConES to analyze an *A.thaliana* simulated phenotype"
+title: "Analyze an *A.thaliana* simulated phenotype"
 author: "Héctor Climente-González"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -20,10 +20,17 @@ unzip(tmp)
 unlink(tmp)
 ```
 
-We start by loading the `martini`. `martini` imports the package `snpStats`. We will use its functions to read the GWAS data.
+We start by loading the `martini`. 
+
+```{r load martini}
+library(martini)
+```
+
+`martini` imports the package `snpStats`. We will use its functions to read the GWAS data.
+
 
 ```{r read data, eval=FALSE}
-library(martini)
+library(snpStats)
 gwas <- read.pedfile("genotype.ped", snps = "genotype.map")
 ```
 
@@ -41,7 +48,7 @@ causal <- simulate_causal_snps(net, 60)
 
 We will use these SNPs to simulate a qualitative phenotype. Other than the desired number of cases and the number of controls, we pick the heritability of the disease. In this example we work with a fully heritable phenotype.
 
-```{r simulate causal SNPs, eval=FALSE}
+```{r simulate phenotypes, eval=FALSE}
 y <- simulate_phenotype(gwas, causal, h2=1, qualitative=T, ncases=653, ncontrols=654)
 ```
 
@@ -55,4 +62,31 @@ We can proceed to search for cones (CONnected Explanatory SNPs). We will choose 
 
 ```{r search cones, eval=FALSE}
 cones <- search_cones(athal$gwas, athal$gm, associationScore = "chi2")
+```
+
+```{r check overlap}
+data(athal)
+cones <- athal$cones
+cones$causal <- cones$snp %in% names(athal$causal)
+table(subset(cones, select = c("selected","causal")))
+```
+We recover all causal 60 SNPs, and 129 false positives. Let's see why they were selected.
+
+```{r manhattan}
+library(tidyverse)
+
+filter(cones, selected) %>%
+  ggplot(aes(y = c, x = ifelse(causal, "Yes", "No"))) +
+  geom_violin(alpha = 0.5) +
+  geom_jitter(position = position_jitter(width = 0.1, height = 0),
+              alpha = 0.3) +
+  labs(x = "Causal", y = "Association score")
+```
+
+A significant proportion of the causal SNPs do not have a strong association with the phenotype. 
+
+```{r subnetwork}
+library(igraph)
+
+subnet <- subgraph(athal$net, which(names(V(athal$gm)) %in% names(athal$causal)))
 ```
