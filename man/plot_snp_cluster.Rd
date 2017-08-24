@@ -4,14 +4,14 @@
 \alias{plot_snp_cluster}
 \title{Ideogram of a SNP cluster.}
 \usage{
-plot_snp_cluster(map, k, genome = "hg19")
+plot_snp_cluster(cones, k, genome = "hg19")
 }
 \arguments{
-\item{map}{Results from \code{shake}.}
+\item{cones}{Results from \code{shake}.}
 
 \item{k}{Id of the cluster to plot.}
 
-\item{genome}{Genome to use (by default hg19).}
+\item{genome}{Abbreviations of the genome to use: hg19 for human (default),  mm10 for mouse, etc. Argument to be passed to \code{\link{IdeogramTrack}}.}
 }
 \value{
 An ideogram per chromosome showing the selected SNPs and the genes in the region.

@@ -31,13 +31,13 @@ search_cones <- function(gwas, net, ...) {
   test <- evo(X, Y, W, settings)
   cat("eta =", test$eta, "\nlambda =", test$lambda, "\n")
   
-  map <- gwas$map
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  map$c <- test$c
-  map$selected <- as.logical(test$selected)
+  cones <- gwas$map
+  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  cones$c <- test$c
+  cones$selected <- as.logical(test$selected)
   
-  map <- cluster_snps(map, net)
+  cones <- cluster_snps(cones, net)
   
-  return(map)
+  return(cones)
   
 }

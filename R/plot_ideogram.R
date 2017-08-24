@@ -2,25 +2,26 @@
 #' 
 #' @description Create a circular ideogram of the \code{shake} results using the circlize package (Gu et al., 2014).
 #' 
-#' @param map Output from \code{shake}.
+#' @param cones Output from \code{shake}.
 #' @param net The SNP network provided to \code{shake}.
+#' @param genome Abbreviations of the genome to use: hg19 for human (default), mm10 for mouse, etc. Argument to be passed to \code{\link{circos.initializeWithIdeogram}} \code{species}.
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
 #' @importFrom circlize circos.initializeWithIdeogram circos.genomicTrackPlotRegion circos.genomicPoints circos.genomicLink circos.clear
 #' @importFrom igraph get.data.frame delete_vertices
 #' @export
-plot_ideogram <- function(map, net){
+plot_ideogram <- function(cones, net, genome = "hg19"){
   
-  circos.initializeWithIdeogram()
+  circos.initializeWithIdeogram(species = genome)
   
-  bed <- map2bed(map)
-  bed$C <- map$C
-  bed$selected <- map$selected
+  bed <- map2bed(cones)
+  bed$c <- cones$c
+  bed$selected <- cones$selected
   # order to put the selected snps in fron in the plot
   bed <- bed[with(bed, order(selected)),]
   
   circos.genomicTrackPlotRegion(bed, 
-                                ylim = c(0, 1.1 * max(bed$C)), 
+                                ylim = c(0, 1.1 * max(bed$c)), 
                                 panel.fun = function(region, value, ...) {
                                   # color according to selection/non-selection
                                   col = ifelse(value[[2]], "orange", "gray70")
@@ -29,14 +30,14 @@ plot_ideogram <- function(map, net){
   
   # create links
   # remove unselected SNPs from the graph
-  df <- delete_vertices(net, as.character(map$snp[! map$selected])) %>%
+  df <- delete_vertices(net, as.character(cones$snp[! cones$selected])) %>%
     get.data.frame %>%
     subset(select = c("from", "to"))
   
-  region1 <- merge(df, map, by.x = "from", by.y = "snp", sort = F) %>%
+  region1 <- merge(df, cones, by.x = "from", by.y = "snp", sort = F) %>%
     subset(select = c("chr", "from", "cm", "pos")) %>%
     map2bed
-  region2 <- merge(df, map, by.x = "to", by.y = "snp", sort = F) %>%
+  region2 <- merge(df, cones, by.x = "to", by.y = "snp", sort = F) %>%
     subset(select = c("chr", "to", "cm", "pos")) %>%
     map2bed
   

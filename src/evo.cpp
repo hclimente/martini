@@ -23,8 +23,8 @@ Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
   Settings s("", "", userSettings["encoding"], userSettings["modelScore"], userSettings["associationScore"],"");
   
   Shake experiment(X, Y, network);
-  experiment.searchHyperparameters(10, s.modelScore(), s.associationScore());
-  experiment.selectSnps();
+  experiment.selectHyperparameters(10, s.modelScore(), s.associationScore());
+  experiment.selectSNPs();
   
   return Rcpp::List::create(Rcpp::Named("selected") = experiment.selectedSnps(),
                             Rcpp::Named("c") = experiment.c(),

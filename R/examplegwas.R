@@ -7,6 +7,6 @@
 #' \describe{
 #'   \item{gwas}{Genotype and phenotype information.}
 #'   \item{net}{Simulated network.}
-#'   \item{map}{Result of runing \code{find_cones} with gwas and net.}
+#'   \item{cones}{Result of runing \code{find_cones} with gwas and net.}
 #' }
 NULL

@@ -4,10 +4,10 @@
 \alias{test_cones_clusters}
 \title{Calculate an empirical p-value for \code{find_cones} results.}
 \usage{
-test_cones_clusters(map, net, N = 1e+05)
+test_cones_clusters(cones, net, N = 1e+05)
 }
 \arguments{
-\item{map}{Results from \code{find_cones}.}
+\item{cones}{Results from \code{find_cones}.}
 
 \item{net}{The same SNP network provided to \code{find_cones}.}
 
