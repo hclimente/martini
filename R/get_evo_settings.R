@@ -4,6 +4,7 @@
 #' @param associationScore Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, trend.
 #' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
 #' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
+#' @param debug Display additional information. Possible values: TRUE, FALSE (default).
 #' @return A list of \code{shake} settings.
 get_evo_settings <- function(...){
 
@@ -39,13 +40,6 @@ get_evo_settings <- function(...){
     stop(paste("Error: invalid modelScore", settings[["modelScore"]]))
   }
   
-  
-  #define CONSISTENCY 0
-  #define BIC 1
-  #define AIC 2
-  #define AICc 3
-  #define mBIC 4
-  
   # unsigned int
   if (! "encoding" %in% names(settings)) {
     settings[["encoding"]] = 0;
@@ -59,6 +53,13 @@ get_evo_settings <- function(...){
     settings[["encoding"]] = 3
   } else {
     stop(paste("Error: invalid encoding", settings[["encoding"]]))
+  }
+  
+  # bool
+  if (! "debug" %in% names(settings)) {
+    settings[["debug"]] = FALSE;
+  } else if (! is.logical(settings[["debug"]])) {
+    stop("Error: debug must be logical.")
   }
 
   return(settings);

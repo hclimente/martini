@@ -7,6 +7,7 @@ test_that("default args are being set", {
   expect_equal(get_evo_settings()$encoding, 0)
   expect_equal(get_evo_settings()$modelScore, 1)
   expect_equal(get_evo_settings()$associationScore, 0)
+  expect_equal(get_evo_settings()$debug, FALSE)
 })
 
 test_that("default we can change values", {
@@ -24,4 +25,7 @@ test_that("default we can change values", {
   expect_equal(get_evo_settings(associationScore = "chi2")$associationScore, 1)
   expect_equal(get_evo_settings(associationScore = "trend")$associationScore, 2)
   expect_error(get_evo_settings(associationScore = "kk"))
+  expect_equal(get_evo_settings(debug = FALSE)$debug, FALSE)
+  expect_equal(get_evo_settings(debug = TRUE)$debug, TRUE)
+  expect_error(get_evo_settings(debug = 3))
 })

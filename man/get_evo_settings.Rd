@@ -12,6 +12,8 @@ get_evo_settings(...)
 \item{modelScore}{Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.}
 
 \item{encoding}{SNP encoding. Possible values: additive (default), resessive, dominant, codominant.}
+
+\item{debug}{Display additional information. Possible values: TRUE, FALSE (default).}
 }
 \value{
 A list of \code{shake} settings.
