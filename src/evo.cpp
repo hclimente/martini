@@ -27,6 +27,7 @@ Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
   experiment.selectSnps();
   
   return Rcpp::List::create(Rcpp::Named("selected") = experiment.selectedSnps(),
+                            Rcpp::Named("c") = experiment.c(),
                             Rcpp::Named("lambda") = experiment.bestLambda(),
                             Rcpp::Named("eta") = experiment.bestEta());
   

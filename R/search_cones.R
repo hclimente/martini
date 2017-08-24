@@ -33,7 +33,7 @@ search_cones <- function(gwas, net, ...) {
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  # map$C <- test$scores
+  map$c <- test$c
   map$selected <- as.logical(test$selected)
   
   map <- cluster_snps(map, net)
