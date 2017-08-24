@@ -1,3 +1,43 @@
+#' Simulate causal SNPs
+#' 
+#' @description Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
+#' 
+#' @param net An igraph network that connects the SNPs.
+#' @param n Number of causal SNPs to return.
+#' @return A vector with the ids of the simulated causal SNPs.
+#' @importFrom igraph vertex_attr V neighbors largest_cliques %>%
+#' @importFrom stats na.omit
+#' @export
+simulate_causal_snps <- function(net, n) {
+  
+  if (! is.null(vertex_attr(net, "gene"))) {
+    genes <- names(which(table(V(net)$gene) > 1))
+    
+    repeat {
+      g <- sample(genes, 1)
+      seed <- V(net)[which(V(net)$gene == g)][1]
+      
+      neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
+      neighboringGenes <- intersect(genes, neighboringGenes)
+      neighbors <- V(net)$gene %in% neighboringGenes %>% which %>% V(net)[.]
+      
+      if ( length(neighbors) >= n & any(neighboringGenes != g) ) {
+        causal <- sample(neighbors, n)
+        genesInvolved <- unique(causal$gene)
+        
+        if (length(genesInvolved) > 1)
+          break
+      }
+    }
+    
+  } else {
+    largestClique <- largest_cliques(net)[[1]]
+    causal <- sample(largestClique, n)
+  }
+  
+  return(causal)
+}
+
 #' Simulate phenotype
 #' 
 #' @description Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs.
@@ -50,7 +90,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
       stop("Specify ncontrols if qualitative = TRUE.")
     else if ( length(trait) < (ncases + ncontrols) )
       stop("Cases and controls requested exceed number of samples provided.")
-
+    
     trait.sorted <- sort(trait, index.return = TRUE)
     cases <- head(trait.sorted$ix, n = ncases)
     controls <- tail(trait.sorted$ix, n = ncontrols)
