@@ -88,5 +88,5 @@ A significant proportion of the causal SNPs do not have a strong association wit
 ```{r subnetwork}
 library(igraph)
 
-subnet <- subgraph(athal$net, which(names(V(athal$gm)) %in% names(athal$causal)))
+# subnet <- subgraph(athal$net, which(names(V(athal$gm)) %in% names(athal$causal)))
 ```

@@ -1,6 +1,7 @@
 #' Get shake settings.
 #' 
-#' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is provided.
+#' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is 
+#' provided.
 #' 
 #' @param ... Any \code{shake} option.
 #' @return A list of \code{shake} settings.

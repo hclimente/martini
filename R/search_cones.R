@@ -11,7 +11,8 @@
 #' \item{selected: logical vector indicating if the SNP was selected by shake or not.}
 #' \item{cluster: integer with the number of the cluster the SNP belongs to.}
 #' }
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
 #' @export
 search_cones <- function(gwas, net, ...) {
@@ -64,8 +65,10 @@ cluster_snps <- function(map, net) {
 
 #' Get shake settings.
 #' 
-#' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is provided.
-#' @param associationScore Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, trend.
+#' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is 
+#' provided.
+#' @param associationScore Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, 
+#' trend.
 #' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
 #' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
 #' @param debug Display additional information. Possible values: TRUE, FALSE (default).

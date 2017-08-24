@@ -13,5 +13,6 @@ get_shake_settings(...)
 A list of \code{shake} settings.
 }
 \description{
-Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is provided.
+Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is 
+provided.
 }

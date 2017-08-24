@@ -1,10 +1,12 @@
 #' Get GS network.
 #' 
-#' @description Creates a network of SNPs where each SNP is connected to its adjacent SNPs in the genome sequence. Corresponds to the GS network described by Azencott et al.
+#' @description Creates a network of SNPs where each SNP is connected to its adjacent SNPs in the genome sequence. Corresponds to the GS 
+#' network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @return An igraph network of the GS network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V
 #' @importFrom utils combn head tail
 #' @export
@@ -35,13 +37,15 @@ get_GS_network <- function(gwas)  {
 
 #' Get GM network.
 #' 
-#' @description Creates a network of SNPs where each SNP is connected as in the GS network and, in addition, to all the other SNPs pertaining to the same gene. Corresponds to the GM network described by Azencott et al.
+#' @description Creates a network of SNPs where each SNP is connected as in the GS network and, in addition, to all the other SNPs 
+#' pertaining to the same gene. Corresponds to the GM network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not provided.
 #' @param snpMapping A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).
 #' @return An igraph network of the GM network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V
 #' @importFrom utils combn
 #' @export
@@ -80,14 +84,17 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
 
 #' Get GI network.
 #' 
-#' @description Creates a network of SNPs where each SNP is connected as in the GM network and, in addition, to all the other SNPs pertaining to any interactor of the gene it is mapped to. Corresponds to the GI network described by Azencott et al.
+#' @description Creates a network of SNPs where each SNP is connected as in the GM network and, in addition, to all the other SNPs 
+#' pertaining to any interactor of the gene it is mapped to. Corresponds to the GI network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not provided.
 #' @param snpMapping A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).
-#' @param ppi A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of the interacting proteins.
+#' @param ppi A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of 
+#' the interacting proteins.
 #' @return An igraph network of the GI network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph graph_from_data_frame simplify
 #' @export
 get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism), ppi = get_ppi(organism))  {

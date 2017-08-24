@@ -14,8 +14,11 @@ test_cones_clusters(cones, net, N = 1e+05)
 \item{N}{Integer with the name of permutations.}
 }
 \value{
-An empirical p-value for each of the SNP clusters. Please, note that the minimum possible p-value from an empirical distribution is set to 1/(N+1). Clusters composed by a single SNP will not have a empirical p-value.
+An empirical p-value for each of the SNP clusters. Please, note that the minimum possible p-value from an empirical distribution 
+is set to 1/(N+1). Clusters composed by a single SNP will not have a empirical p-value.
 }
 \description{
-Do a permutation-based test to assess the statistical significance of each of the clusters obtained through shake. For a cluster of size k, k interconnected SNPs are picked N times, and their joint association score is calculated to come up with an estimation of the distribution.
+Do a permutation-based test to assess the statistical significance of each of the clusters obtained through shake. For a 
+cluster of size k, k interconnected SNPs are picked N times, and their joint association score is calculated to come up with an 
+estimation of the distribution.
 }

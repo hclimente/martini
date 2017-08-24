@@ -1,6 +1,7 @@
 #' Simulate causal SNPs
 #' 
-#' @description Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
+#' @description Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick 
+#' SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
 #' 
 #' @param net An igraph network that connects the SNPs.
 #' @param n Number of causal SNPs to return.
@@ -46,7 +47,8 @@ simulate_causal_snps <- function(net, n) {
 #' @param snps Character vector with the SNP ids of the causal SNPs. Must match SNPs in gwas$map$snp.names.
 #' @param h2 Heritability of the phenotype (between 0 and 1).
 #' @param model String specifying the genetic model under the phenotype. Accepted values: "additive".
-#' @param effectSize Numeric vector with the same lenght as the number of causal SNPs. It indicates the effect size of each of the SNPs; if absent, they are sampled fron a normal distribution.
+#' @param effectSize Numeric vector with the same lenght as the number of causal SNPs. It indicates the effect size of each of the SNPs; 
+#' if absent, they are sampled fron a normal distribution.
 #' @param qualitative Bool indicating if the phenotype is qualitative or not (quantitative).
 #' @param ncases Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.
 #' @param ncontrols Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.
@@ -55,7 +57,8 @@ simulate_causal_snps <- function(net, n) {
 #' @importFrom utils head tail
 #' @importFrom stats rnorm var
 #' @export
-simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), qualitative = FALSE, ncases, ncontrols){
+simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
+                               qualitative = FALSE, ncases, ncontrols){
   # TODO check correspondence with gcta implementation
   
   X <- as(gwas$genotypes, "numeric")
