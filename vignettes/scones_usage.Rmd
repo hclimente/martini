@@ -9,41 +9,50 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r load martini}
-library(martini)
-```
+# Running SConES
 
-```{r athaliana generation, eval=FALSE}
-library(martini)
+In this example we will analyze GWAS data from *Arabidopsis thaliana*. (reference) This data is publicly available from [easyGWAS](https://easygwas.ethz.ch/):
 
-# fetch the data
+```{r fetch data, eval=FALSE}
 tmp <- tempfile()
 download.file("https://easygwas.ethz.ch/down/dataset/download/1/",tmp)
 unzip(tmp)
 unlink(tmp)
+```
 
-# read gwas experiment
+We start by loading the `martini`. `martini` imports the package `snpStats`. We will use its functions to read the GWAS data.
+
+```{r read data, eval=FALSE}
+library(martini)
 gwas <- read.pedfile("genotype.ped", snps = "genotype.map")
+```
 
-# create GM network
+Other than the GWAS data, we need a network of SNPs to work on. We can create those with the family of `get_G*_network` function. In this vignette, we will work with a GM network, a network where SNPs are connected if they belong to the same gene. We provide the `get_GM_network` function with the SNP data and the tax ID of *Arabidopsis thaliana*. Sit comfortably, this step might take a while.
+
+```{r create GM network, eval=FALSE}
 net <- get_GM_network(gwas, 3702)
+```
 
-# generate simulated phenotypes
+The dataset provides several phenotypes in `phenotype.pheno`. However, most of these phenotypes were only measured for a small subset of the subjects. In consequence, in this example we will work with a simulated phenotype. First we will simulate 60 causal SNPs taking 60 SNPs tightly interconnected in the GM network.
+
+```{r simulate causal SNPs, eval=FALSE}
 causal <- simulate_causal_snps(net, 60)
-y <- simulate_phenotype(gwas, causal, h2=1, ncases=653, ncontrols=654, qualitative=T)
+```
 
-## write back into the SnpMatrix object
+We will use these SNPs to simulate a qualitative phenotype. Other than the desired number of cases and the number of controls, we pick the heritability of the disease. In this example we work with a fully heritable phenotype.
+
+```{r simulate causal SNPs, eval=FALSE}
+y <- simulate_phenotype(gwas, causal, h2=1, qualitative=T, ncases=653, ncontrols=654)
+```
+
+We need to overwritte the original phenotype column from the PED file with the new phenotype.
+
+```{r overwrite affected, eval=FALSE}
 gwas$fam$affected <- y
 ```
 
-```{r read athaliana}
-data("athal")
-```
-
-```{r}
-
-```
+We can proceed to search for cones (CONnected Explanatory SNPs). We will choose chi-squared as association score, as we are working with a qualitative genotype.
 
 ```{r search cones, eval=FALSE}
-search_cones(athal$gwas, athal$gm, associationScore = "chi2")
+cones <- search_cones(athal$gwas, athal$gm, associationScore = "chi2")
 ```
