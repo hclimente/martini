@@ -2,7 +2,7 @@
 % Please edit documentation in R/evo.R
 \name{get_evo_settings}
 \alias{get_evo_settings}
-\title{Get shake settings.}
+\title{Get evo settings.}
 \usage{
 get_evo_settings(associationScore = "chi2", modelScore = "bic",
   encoding = "additive", etas = numeric(), lambdas = numeric(),
@@ -25,9 +25,9 @@ association scores.}
 \item{debug}{Display additional information. Possible values: TRUE, FALSE (default).}
 }
 \value{
-A list of \code{shake} settings.
+A list of \code{evo} settings.
 }
 \description{
-Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is 
+Creates a list composed by all \code{evo} settings, with the values provided by the user, or the default ones if none is 
 provided.
 }

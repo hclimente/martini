@@ -8,7 +8,7 @@
 #' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by shake or not.}
+#' \item{selected: logical vector indicating if the SNP was selected by evo or not.}
 #' \item{cluster: integer with the number of the cluster the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
@@ -47,25 +47,25 @@ search_cones <- function(gwas, net, ...) {
 #' 
 #' @description Find clusters composed by interconnected SNPs.
 #' 
-#' @param map Results from \code{shake}.
-#' @param net The same SNP network provided to \code{shake}.
+#' @param cones Results from \code{evo}.
+#' @param net The same SNP network provided to \code{evo}.
 #' @return A list with the clusters of selected SNPs.
 #' @importFrom igraph induced_subgraph components
-cluster_snps <- function(map, net) {
+cluster_snps <- function(cones, net) {
   
-  selected <- subset(map, selected)
+  selected <- subset(cones, selected)
   subnet <- induced_subgraph(net, selected$snp)
   
   clusters <- components(subnet)
-  map$cluster <- NA
-  map$cluster[map$selected] <- clusters$membership[order(match(names(clusters$membership), map$snp))]
+  cones$cluster <- NA
+  cones$cluster[cones$selected] <- clusters$membership[order(match(names(clusters$membership), cones$snp))]
   
-  return(map)
+  return(cones)
 }
 
-#' Get shake settings.
+#' Get evo settings.
 #' 
-#' @description Creates a list composed by all \code{shake} settings, with the values provided by the user, or the default ones if none is 
+#' @description Creates a list composed by all \code{evo} settings, with the values provided by the user, or the default ones if none is 
 #' provided.
 #' @param associationScore Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
 #' trend.
@@ -76,7 +76,7 @@ cluster_snps <- function(map, net) {
 #' @param lambdas Numeric vector with the lambdas to explore in the grid search. If ommited, it's automatically created based on the 
 #' association scores.
 #' @param debug Display additional information. Possible values: TRUE, FALSE (default).
-#' @return A list of \code{shake} settings.
+#' @return A list of \code{evo} settings.
 get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", encoding = "additive", etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){
   

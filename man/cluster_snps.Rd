@@ -4,12 +4,12 @@
 \alias{cluster_snps}
 \title{Return groups of interconnected SNPs.}
 \usage{
-cluster_snps(map, net)
+cluster_snps(cones, net)
 }
 \arguments{
-\item{map}{Results from \code{shake}.}
+\item{cones}{Results from \code{evo}.}
 
-\item{net}{The same SNP network provided to \code{shake}.}
+\item{net}{The same SNP network provided to \code{evo}.}
 }
 \value{
 A list with the clusters of selected SNPs.
