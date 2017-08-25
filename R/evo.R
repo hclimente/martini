@@ -71,9 +71,14 @@ cluster_snps <- function(map, net) {
 #' trend.
 #' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
 #' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
+#' @param etas Numeric vector with the etas to explore in the grid search. If ommited, it's automatically created based on the association
+#' scores.
+#' @param lambdas Numeric vector with the lambdas to explore in the grid search. If ommited, it's automatically created based on the 
+#' association scores.
 #' @param debug Display additional information. Possible values: TRUE, FALSE (default).
 #' @return A list of \code{shake} settings.
-get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", encoding = "additive", debug = FALSE){
+get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", encoding = "additive", etas = numeric(), lambdas = numeric(), 
+                             debug = FALSE){
   
   settings <- list()
   
@@ -121,6 +126,20 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", enco
     stop("Error: debug must be logical.")
   } else {
     settings$debug = debug;
+  }
+  
+  # VectorXd
+  if (!is.numeric(etas)){
+    stop("Error: etas must be numeric")
+  } else {
+    settings$etas = etas
+  }
+  
+  # VectorXd
+  if (!is.numeric(lambdas)){
+    stop("Error: lambdas must be numeric")
+  } else {
+    settings$lambdas = lambdas
   }
   
   return(settings);
