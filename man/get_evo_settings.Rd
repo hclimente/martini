@@ -4,10 +4,11 @@
 \alias{get_evo_settings}
 \title{Get shake settings.}
 \usage{
-get_evo_settings(...)
+get_evo_settings(associationScore = "chi2", modelScore = "bic",
+  encoding = "additive", debug = FALSE)
 }
 \arguments{
-\item{associationScore}{Association score to measure association between genotype and phenotype. Possible values: skat (default), chi2, 
+\item{associationScore}{Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
 trend.}
 
 \item{modelScore}{Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.}

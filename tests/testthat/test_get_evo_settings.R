@@ -6,7 +6,7 @@ set.seed(0)
 test_that("default args are being set", {
   expect_equal(get_evo_settings()$encoding, 0)
   expect_equal(get_evo_settings()$modelScore, 1)
-  expect_equal(get_evo_settings()$associationScore, 0)
+  expect_equal(get_evo_settings()$associationScore, 1)
   expect_equal(get_evo_settings()$debug, FALSE)
 })
 
