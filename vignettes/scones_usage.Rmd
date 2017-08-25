@@ -76,11 +76,13 @@ We recover all causal 60 SNPs, and 129 false positives. Let's see why they were 
 library(tidyverse)
 
 filter(cones, selected) %>%
-  ggplot(aes(y = c, x = ifelse(causal, "Yes", "No"))) +
+  ggplot(aes(y = c, x = ifelse(causal, "Yes", "No"), fill = causal)) +
   geom_violin(alpha = 0.5) +
   geom_jitter(position = position_jitter(width = 0.1, height = 0),
               alpha = 0.3) +
-  labs(x = "Causal", y = "Association score")
+  scale_fill_manual(values=c("TRUE"="firebrick", "FALSE"="gray")) +
+  labs(x = "Causal", y = "Association score") +
+  theme(legend.position="none")
 ```
 
 A significant proportion of the causal SNPs do not have a strong association with the phenotype. 
@@ -88,5 +90,12 @@ A significant proportion of the causal SNPs do not have a strong association wit
 ```{r subnetwork}
 library(igraph)
 
-# subnet <- subgraph(athal$net, which(names(V(athal$gm)) %in% names(athal$causal)))
+selected <- subset(cones,selected)
+selected$snp <- as.character(selected$snp)
+
+g <- induced.subgraph(graph = athal$gm, selected$snp)
+g <- set_vertex_attr(g, "color", index = match(selected$snp, V(g)$name), selected$causal)
+V(g)$color <- ifelse(V(g)$color, "firebrick", "grey")
+
+plot.igraph(g, vertex.label = NA, layout = layout.fruchterman.reingold)
 ```
