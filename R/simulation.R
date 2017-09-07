@@ -56,6 +56,7 @@ simulate_causal_snps <- function(net, n) {
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importFrom utils head tail
 #' @importFrom stats rnorm var
+#' @importFrom methods as
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
                                qualitative = FALSE, ncases, ncontrols){
