@@ -152,6 +152,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy, "/id/", organism, "?content-type=application/json")
   organism <- GET(query)
+  stop_for_status(organism)
   organism <- content(organism, type ="application/json", encoding="UTF-8")
   organism <- unlist(strsplit(organism$name, " "))
   organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
@@ -222,12 +223,14 @@ get_ppi <- function(organism = 9606) {
   
   # number of results
   N <- GET(paste(query, "format=count", sep = "&"))
+  stop_for_status(N)
   N <- as.numeric(content(N, type="text/csv", encoding="UTF-8", col_types="i"))
   
   # retrieve results in batches
   ppi <- lapply(seq(1, N, 10000), function(i){
     q <- paste(query, paste0("start=", i), sep = "&")
     req <- GET(q)
+    stop_for_status(req)
     
     # parse results
     biogrid <- content(req, type="text/tab-separated-values", encoding="UTF-8", col_types="cccccccccccccccccccccccc")
