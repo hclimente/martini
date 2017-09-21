@@ -11,7 +11,7 @@
 #' @export
 simulate_causal_snps <- function(net, n) {
   
-  if (! is.null(vertex_attr(net, "gene"))) {
+  if (! is.null(vertex_attr(net, "gene")) && max(degree(net)) > 2) {
     genes <- names(which(table(V(net)$gene) > 1))
     
     repeat {
