@@ -6,7 +6,7 @@
 #' @param net An igraph network that connects the SNPs.
 #' @param n Number of causal SNPs to return.
 #' @return A vector with the ids of the simulated causal SNPs.
-#' @importFrom igraph vertex_attr V neighbors largest_cliques %>%
+#' @importFrom igraph vertex_attr V neighbors largest_cliques %>% degree make_ego_graph
 #' @importFrom stats na.omit
 #' @export
 simulate_causal_snps <- function(net, n) {
@@ -30,6 +30,24 @@ simulate_causal_snps <- function(net, n) {
           break
       }
     }
+    
+  } else if (max(degree(net)) == 2) {
+    
+    repeat {
+      seed <- sample(V(net), 1)
+      causal <- make_ego_graph(net, n, nodes = seed)[[1]]
+      
+      if (length(V(causal)) >= n) {
+        break
+      }
+    }
+    
+    while (length(V(causal)) > n) {
+      endnode <- degree(causal) %>% sort %>% head(n = 1) %>% names
+      causal <- causal - endnode
+    }
+    
+    causal <- V(causal)$name
     
   } else {
     largestClique <- largest_cliques(net)[[1]]
