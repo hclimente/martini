@@ -139,7 +139,7 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
 #' i.e. SNPs mapped to them will be considered mapped to the gene.
 #' @return A dataframe with two columns: one for the SNP and another for the gene it has been 
 #' mapped to.
-#' @importFrom httr GET content
+#' @importFrom httr GET content stop_for_status
 #' @importFrom IRanges IRanges findOverlaps
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
@@ -210,7 +210,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' 
 #' @param organism Organism: human represents human, arabidopsis for Arabidopsis thaliana, etc.
 #' @return A dataframe with two columns with pairs of interacting proteins.
-#' @importFrom httr GET content
+#' @importFrom httr GET content stop_for_status
 get_ppi <- function(organism = 9606) {
   
   # construct query: all interactions in the requested organism
@@ -243,5 +243,39 @@ get_ppi <- function(organism = 9606) {
   ppi <- unique(ppi)
   
   return(ppi)
+  
+}
+
+#' Get GS network.
+#' 
+#' @description Creates a network of SNPs where each SNP is connected to its adjacent SNPs in the genome sequence. Corresponds to the GS 
+#' network described by Azencott et al.
+#' 
+#' @param net A SNP network.
+#' @return An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
+#' @importFrom igraph E V
+#' @importFrom httr GET content stop_for_status
+#' @export
+weight_edges_ld <- function(net, organism = 9606) {
+  
+  baseUrl <- paste0("https://rest.ensembl.org/ld/", organism, "/")
+  outputType <- "/1000GENOMES:phase_3:KHV?content-type=application/json"
+  
+  ldInfo <- lapply(names(V(net)), function(snp) {
+    r <- GET(paste0(baseUrl, snp, outputType))
+    stop_for_status(r)
+    r <- content(r, type="application/json", encoding="UTF-8", simplifyDataFrame = T)
+    
+    if (length(r) > 0) {
+      subset(r, variation2 %in% names(V(net))) 
+    }
+  })
+  ldInfo <- do.call(rbind, ldInfo)
+  
+  ld <- as.numeric(ldInfo$r2)
+  snps <- subset(ldInfo, select = c("variation1", "variation2"))
+  snps <- do.call(c, lapply(1:nrow(snps), function(x) t(snps[x,])))
+  
+  E(net, P = snps)$weight <- E(net, P = snps)$weight - ld
   
 }
