@@ -46,6 +46,9 @@ simulate_causal_snps <- function(net, n) {
       endnode <- degree(causal) %>% sort %>% head(n = 1) %>% names
       causal <- causal - endnode
     }
+    
+    causal <- V(causal)
+    
   } else {
     largestClique <- largest_cliques(net)[[1]]
     causal <- sample(largestClique, n)
