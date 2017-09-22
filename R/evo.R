@@ -22,8 +22,8 @@ search_cones <- function(gwas, net, ...) {
   Y <- gwas$fam$affected
   
   # remove redundant edges and self-edges
-  net <- igraph::simplify(net)
-  W <- igraph::as_adj(net, type="both", sparse = TRUE)
+  net <- simplify(net)
+  W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
   
   # order according to order in map
   W <- W[gwas$map$snp.names, gwas$map$snp.names]

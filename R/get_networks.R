@@ -7,7 +7,7 @@
 #' @return An igraph network of the GS network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V
+#' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V set_edge_attr
 #' @importFrom utils combn head tail
 #' @export
 get_GS_network <- function(gwas)  {
@@ -30,6 +30,7 @@ get_GS_network <- function(gwas)  {
   
   gs <- set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
   gs <- set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
+  set_edge_attr(gs, "weight", value = 1)
 
   return(gs)
   
@@ -46,7 +47,7 @@ get_GS_network <- function(gwas)  {
 #' @return An igraph network of the GM network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V
+#' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V set_edge_attr
 #' @importFrom utils combn
 #' @export
 get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))  {
@@ -79,6 +80,8 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
     gm <- gs
   }
   
+  set_edge_attr(gm, "weight", value = 1)
+  
   return(gm)
 }
 
@@ -95,7 +98,7 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
 #' @return An igraph network of the GI network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph graph_from_data_frame simplify
+#' @importFrom igraph graph_from_data_frame simplify set_edge_attr
 #' @export
 get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism), ppi = get_ppi(organism))  {
   
@@ -125,6 +128,8 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
   gm <- get_GM_network(gwas, snpMapping=snpMapping)
   gi <- simplify(gm + gi)
   
+  set_edge_attr(gi, "weight", value = 1)
+  
   return(gi)
   
 }
@@ -140,6 +145,7 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
 #' @return A dataframe with two columns: one for the SNP and another for the gene it has been 
 #' mapped to.
 #' @importFrom httr GET content stop_for_status
+#' @importFrom biomaRt useMart getBM
 #' @importFrom IRanges IRanges findOverlaps
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
@@ -161,11 +167,11 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   # consider vertebrates and plants
   ensembl <- tryCatch({
     datasetName <- paste0(organism, "_gene_ensembl")
-    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
+    useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
   }, error = function(e){
     tryCatch({
       datasetName <- paste0(organism, "_eg_gene")
-      biomaRt::useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
+      useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
     }, error = function(e) {
       stop(e)
     })
@@ -175,10 +181,10 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     
     # get genes in the range defined by the snps
     grange <- paste(unique(snps$chr), min(snps$gpos) - flank, max(snps$gpos) + flank, sep = ":")
-    genes <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
-                            filters = c("chromosomal_region", "biotype"),
-                            values = list(chromosomal_region=grange, biotype="protein_coding"), 
-                            mart = ensembl)
+    genes <- getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
+                   filters = c("chromosomal_region", "biotype"),
+                   values = list(chromosomal_region=grange, biotype="protein_coding"), 
+                   mart = ensembl)
     
     if(nrow(genes) == 0) {
       return()
@@ -243,39 +249,5 @@ get_ppi <- function(organism = 9606) {
   ppi <- unique(ppi)
   
   return(ppi)
-  
-}
-
-#' Get GS network.
-#' 
-#' @description Creates a network of SNPs where each SNP is connected to its adjacent SNPs in the genome sequence. Corresponds to the GS 
-#' network described by Azencott et al.
-#' 
-#' @param net A SNP network.
-#' @return An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
-#' @importFrom igraph E V
-#' @importFrom httr GET content stop_for_status
-#' @export
-weight_edges_ld <- function(net, organism = 9606) {
-  
-  baseUrl <- paste0("https://rest.ensembl.org/ld/", organism, "/")
-  outputType <- "/1000GENOMES:phase_3:KHV?content-type=application/json"
-  
-  ldInfo <- lapply(names(V(net)), function(snp) {
-    r <- GET(paste0(baseUrl, snp, outputType))
-    stop_for_status(r)
-    r <- content(r, type="application/json", encoding="UTF-8", simplifyDataFrame = T)
-    
-    if (length(r) > 0) {
-      subset(r, variation2 %in% names(V(net))) 
-    }
-  })
-  ldInfo <- do.call(rbind, ldInfo)
-  
-  ld <- as.numeric(ldInfo$r2)
-  snps <- subset(ldInfo, select = c("variation1", "variation2"))
-  snps <- do.call(c, lapply(1:nrow(snps), function(x) t(snps[x,])))
-  
-  E(net, P = snps)$weight <- E(net, P = snps)$weight - ld
   
 }
