@@ -54,5 +54,9 @@ test_cones_clusters <- function(cones, net, N = 100000) {
   clusters$p[clusters$p == 0] = 1 / (N + 1)
   
   return(clusters)
+  
+}
 
+go_analysis <- function(gwas, cones, snp2gene) {
+  
 }
