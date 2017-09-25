@@ -17,7 +17,7 @@
 #' @export
 plot_snp_cluster <- function(cones, k, genome = "hg19") {
   
-  cluster <- subset(cones, cluster == k)
+  cluster <- subset(cones, cluster %in% k)
   
   by(cluster, cluster$chr, function(snps2plot) {
 
