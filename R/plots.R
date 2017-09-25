@@ -11,6 +11,8 @@
 #' Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 
 #' 10.1007/978-1-4939-3578-9_16, \url{http://dx.doi.org/10.1007/978-1-4939-3578-9_16}. 
 #' @importFrom GenomicRanges GRanges
+#' @importFrom GenomeInfoDb genome genome<-
+#' @importFrom IRanges IRanges
 #' @importFrom Gviz AnnotationTrack IdeogramTrack GenomeAxisTrack BiomartGeneRegionTrack plotTracks
 #' @export
 plot_snp_cluster <- function(cones, k, genome = "hg19") {
@@ -23,21 +25,22 @@ plot_snp_cluster <- function(cones, k, genome = "hg19") {
                         ranges = IRanges(start = snps2plot$pos, 
                                          end = snps2plot$pos) )
     genome(snpRange) <- genome
-    snpTrack <- AnnotationTrack(snpRange, name = "SNP", stacking ="dense")
+    tsnp <- AnnotationTrack(snpRange, name = "SNP", stacking ="dense")
 
-    itrack <- IdeogramTrack(genome = genome(snpRange), chromosome = names(genome(snpRange)))
-    gtrack <- GenomeAxisTrack()
+    tideo <- IdeogramTrack(genome = genome(snpRange), chromosome = names(genome(snpRange)))
+    tseq <- GenomeAxisTrack()
     
-    biomTrack <- BiomartGeneRegionTrack(genome = genome, 
-                                        chromosome = names(genome(snpRange)),
-                                        start = head(snps2plot$pos, n = 1), 
-                                        end = tail(snps2plot$pos, n = 1), 
-                                        name = "Ensembl")
+    tbio <- BiomartGeneRegionTrack(genome = genome, 
+                                   chromosome = names(genome(snpRange)),
+                                   start = head(snps2plot$pos, n = 1), 
+                                   end = tail(snps2plot$pos, n = 1), 
+                                   name = "Ensembl")
     
-    plotTracks(list(itrack, gtrack, biomTrack, snpTrack), showId = TRUE)
+    plotTracks(list(tideo, tseq, tbio, tsnp), showId = TRUE)
   })
   
   return(TRUE)
+
 }
 
 #' Ideogram of shake results.

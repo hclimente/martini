@@ -2,7 +2,7 @@ Package: martini
 Type: Package
 Title: GWAS Incorporating Networks in R
 Version: 0.1.1
-Authors@R: person("Hector", "Climente", email = "hector.climente@curie.fr",
+Authors@R: person("Hector", "Climente-Gonzalez", email = "hector.climente@curie.fr",
                   role = c("aut", "cre"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
 Description: User-friendly version of GIN (GWAS Incorporating Networks).
@@ -17,6 +17,7 @@ Imports:
     httr (>= 1.2.1),
     circlize (>= 0.4.0),
     Gviz (>= 1.18.2),
+    GenomeInfoDb (>= 1.10.3),
     biomaRt (>= 2.30.0),
     IRanges (>= 2.8.2),
     BiocParallel (>= 1.8.2),
