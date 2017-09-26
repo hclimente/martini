@@ -55,7 +55,7 @@ plot_snp_cluster <- function(cones, k, genome = "hg19") {
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. 
 #' Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
 #' @importFrom circlize circos.initializeWithIdeogram circos.genomicTrackPlotRegion circos.genomicPoints circos.genomicLink circos.clear
-#' @importFrom igraph get.data.frame delete_vertices
+#' @importFrom igraph %>%
 #' @export
 plot_ideogram <- function(cones, net, genome = "hg19"){
   
@@ -76,19 +76,21 @@ plot_ideogram <- function(cones, net, genome = "hg19"){
                                 }, track.height = 0.3)
   
   # create links
-  # remove unselected SNPs from the graph
-  df <- delete_vertices(net, as.character(cones$snp[! cones$selected])) %>%
-    get.data.frame %>%
-    subset(select = c("from", "to"))
+  selected <- subset(cones, selected)
   
-  region1 <- merge(df, cones, by.x = "from", by.y = "snp", sort = F) %>%
-    subset(select = c("chr", "from", "cm", "pos")) %>%
-    map2bed
-  region2 <- merge(df, cones, by.x = "to", by.y = "snp", sort = F) %>%
-    subset(select = c("chr", "to", "cm", "pos")) %>%
-    map2bed
+  regions <- by(selected, selected[,c("chr","cluster")], function(k) {
+    data.frame(chr = paste0("chr", unique(k$chr)),
+               cluster = unique(k$cluster),
+               start = min(k$pos),
+               end = max(k$pos))
+  }) %>% do.call(rbind, .)
   
-  circos.genomicLink(region1, region2)
+  links <- merge(regions, regions, by = "cluster")
+  
+  region1 <- subset(links, chr.x != chr.y, select = c("chr.x","start.x","end.x"))
+  region2 <- subset(links, chr.x != chr.y, select = c("chr.y","start.y","end.y"))
+  
+  circos.genomicLink(region1, region2, col = sample(1:5, nrow(region1), replace = TRUE))
   
   circos.clear()
   
