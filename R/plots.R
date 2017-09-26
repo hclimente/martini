@@ -68,7 +68,7 @@ plot_ideogram <- function(cones, net, genome = "hg19"){
   bed <- bed[with(bed, order(selected)),]
   
   circos.genomicTrackPlotRegion(bed, 
-                                ylim = c(0, 1.1 * max(bed$c)), 
+                                ylim = c(0, 1.1 * max(bed$c, na.rm = T)), 
                                 panel.fun = function(region, value, ...) {
                                   # color according to selection/non-selection
                                   col = ifelse(value[[2]], "orange", "gray70")
