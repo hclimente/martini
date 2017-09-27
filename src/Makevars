@@ -1,1 +1,1 @@
-PKG_LIBS=-lgin -rpath /usr/local/lib/
+PKG_LIBS=-lgin
