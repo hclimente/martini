@@ -1,5 +1,5 @@
-#ifndef MARTINI_GWASDATA
-#define MARTINI_GWASDATA
+#ifndef MARTINI_EVO
+#define MARTINI_EVO
 
 #include <Rcpp.h>
 #include <RcppEigen.h>
@@ -44,4 +44,4 @@ Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
   
 }
 
-#endif //MARTINI_GWASDATA
+#endif //MARTINI_EVO

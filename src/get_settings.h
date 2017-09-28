@@ -1,5 +1,5 @@
-#ifndef RSCONES2_GET_SETTINGS
-#define RSCONES2_GET_SETTINGS
+#ifndef MARTINI_SETTINGS
+#define MARTINI_SETTINGS
 
 #include <Rcpp.h>
 #include <RcppEigen.h>
@@ -9,4 +9,4 @@ using namespace Rcpp;
 
 CSconesSettings get_settings(List);
 
-#endif //RSCONES2_GET_SETTINGS
+#endif //MARTINI_SETTINGS
