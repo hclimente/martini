@@ -9,7 +9,7 @@
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
 #' \item{selected: logical vector indicating if the SNP was selected by evo or not.}
-#' \item{cluster: integer with the number of the cluster the SNP belongs to.}
+#' \item{module: integer with the number of the module the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
@@ -38,7 +38,7 @@ search_cones <- function(gwas, net, ...) {
   cones$c <- test$c
   cones$selected <- as.logical(test$selected)
   
-  cones <- cluster_snps(cones, net)
+  cones <- get_snp_modules(cones, net)
   
   return(cones)
   
@@ -46,21 +46,24 @@ search_cones <- function(gwas, net, ...) {
 
 #' Return groups of interconnected SNPs.
 #' 
-#' @description Find clusters composed by interconnected SNPs.
+#' @description Find modules composed by interconnected SNPs.
 #' 
 #' @param cones Results from \code{evo}.
 #' @param net The same SNP network provided to \code{evo}.
-#' @return A list with the clusters of selected SNPs.
+#' @return A list with the modules of selected SNPs.
 #' @importFrom igraph induced_subgraph components
-cluster_snps <- function(cones, net) {
+get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
-  subnet <- induced_subgraph(net, selected$snp)
+  subnet <- induced_subgraph(net, as.character(selected$snp))
   
-  clusters <- components(subnet)
-  cones$cluster <- NA
-  cones$cluster[cones$selected] <- clusters$membership[order(match(names(clusters$membership), cones$snp))]
+  modules <- components(subnet)
+  modules <- as.data.frame(modules$membership)
+  colnames(modules) <- "module"
+  modules$snp <- rownames(modules)
   
+  cones <- merge(cones, modules, all.x = T)
+
   return(cones)
 }
 

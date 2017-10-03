@@ -1,9 +1,9 @@
-#' Ideogram of a SNP cluster.
+#' Ideogram of a SNP module.
 #' 
-#' @description Create a ideogram of a SNP cluster from \code{shake} results using the Gviz package (Hahne and Ivanek, 2016).
+#' @description Create a ideogram of a SNP module from \code{shake} results using the Gviz package (Hahne and Ivanek, 2016).
 #' 
 #' @param cones Results from \code{shake}.
-#' @param k Id of the cluster to plot.
+#' @param k Id of the module to plot.
 #' @param genome Abbreviations of the genome to use: hg19 for human (default),  mm10 for mouse, etc. Argument to be passed to 
 #' \code{\link{IdeogramTrack}}.
 #' @return An ideogram per chromosome showing the selected SNPs and the genes in the region.
@@ -15,11 +15,11 @@
 #' @importFrom IRanges IRanges
 #' @importFrom Gviz AnnotationTrack IdeogramTrack GenomeAxisTrack BiomartGeneRegionTrack plotTracks
 #' @export
-plot_snp_cluster <- function(cones, k, genome = "hg19") {
+plot_snp_module <- function(cones, k, genome = "hg19") {
   
-  cluster <- subset(cones, cluster %in% k)
+  module <- subset(cones, module %in% k)
   
-  by(cluster, cluster$chr, function(snps2plot) {
+  by(module, module$chr, function(snps2plot) {
 
     snpRange <- GRanges(seqnames = paste0("chr", snps2plot$chr), 
                         ranges = IRanges(start = snps2plot$pos, 
@@ -78,14 +78,14 @@ plot_ideogram <- function(cones, net, genome = "hg19"){
   # create links
   selected <- subset(cones, selected)
   
-  regions <- by(selected, selected[,c("chr","cluster")], function(k) {
+  regions <- by(selected, selected[,c("chr","module")], function(k) {
     data.frame(chr = paste0("chr", unique(k$chr)),
-               cluster = unique(k$cluster),
+               module = unique(k$module),
                start = min(k$pos),
                end = max(k$pos))
   }) %>% do.call(rbind, .)
   
-  links <- merge(regions, regions, by = "cluster")
+  links <- merge(regions, regions, by = "module")
   
   region1 <- subset(links, chr.x != chr.y, select = c("chr.x","start.x","end.x"))
   region2 <- subset(links, chr.x != chr.y, select = c("chr.y","start.y","end.y"))
