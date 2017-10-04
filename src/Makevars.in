@@ -1,0 +1,2 @@
+LIBGIN = @GIN_LIBS@
+PKG_LIBS=-lgin -rpath $(LIBGIN)
