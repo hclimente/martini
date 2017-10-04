@@ -10,3 +10,22 @@ src/*.dll
 .idea/*
 martini.Rproj
 inst/doc
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+/compile
+/config.guess
+/config.h.in
+/config.sub
+/config.status
+/config.log
+/configure
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
