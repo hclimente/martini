@@ -4,10 +4,14 @@
 \alias{ldweight_edges}
 \title{Include LD information in the network.}
 \usage{
-ldweight_edges(net, ld = get_ld(net))
+ldweight_edges(net, ld, method = "inverse")
 }
 \arguments{
 \item{net}{A SNP network.}
+
+\item{ld}{Data frame with linkage disequilibrium, like \code{get_ld} output.}
+
+\item{method}{How to incorporate LD values into the network.}
 }
 \value{
 An SNP network where the edges weight 1 - LD, measured as Pearson correlation.

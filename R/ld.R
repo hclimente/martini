@@ -3,17 +3,23 @@
 #' @description Include LD information in the SNP network. Only work for human SNPs.
 #' 
 #' @param net A SNP network.
+#' @param ld Data frame with linkage disequilibrium, like \code{get_ld} output.
+#' @param method How to incorporate LD values into the network.
 #' @return An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
 #' @importFrom igraph E %>% set_edge_attr delete_edges get.edgelist
 #' @export
-ldweight_edges <- function(net, ld = get_ld(net)) {
+ldweight_edges <- function(net, ld, method = "inverse") {
   
-  edges <- get.edgelist(net) %>% apply(1, sort) %>% t %>% apply(1, paste, collapse = "_")
+  edges <- get.edgelist(net) %>% apply(1, sort) %>% t %>% apply(1, paste, collapse = "-")
   ld <- subset(ld, key %in% edges)
   
-  snps <- strsplit(ld$key, "_") %>% unlist
+  snps <- strsplit(ld$key, "-") %>% unlist
   
-  net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = 1 - ld$r2)
+  if (method == "inverse") {
+    net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = 1 / (1 + ld$r2))
+  } else if (method == "subtraction") {
+    net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = 1 - ld$r2)
+  }
   
   if (any(is.na(E(net)$weight))) {
     stop("NA values as edge weights.")
@@ -29,100 +35,54 @@ ldweight_edges <- function(net, ld = get_ld(net)) {
   
 }
 
-get_ld <- function(net = NULL, gwas = NULL, organism = 9606, db = "1000GENOMES:phase_3:CEU") {
-  
-  if (!is.null(gwas)) {
-    ld <- get_ld_from_gwas(gwas, organism, db)
-  } else if (!is.null(net)) {
-    ld <- get_ld_from_net(net, organism, db)
-  } else {
-    stop("You must specify either gwas or net.")
-  }
-  
-  return(ld)
-}
-
-#' Retrieve LD information from Ensembl
+#' Calculate LD in the datasets
 #' 
-#' @description Retrieve LD information from Ensembl in the format required by ldweight_edges.
+#' @description Calculate LD as pairwise correlations in the GWAS dataset. Creates a sliding window for each SNP and calculates all the 
+#' pairwise correlations inside that window.
 #' 
 #' @param gwas A GWAS experiment, in snpMatrix form.
-#' @return An dataframe with a column key, with SNP ids separated by an underscore, and an r2 column, 
+#' @param window Window size.
+#' @return An dataframe with a column key, with SNP ids separated by a "-" character, and an r2 column, 
 #' containing the Pearson correlation.
-#' @importFrom httr GET content stop_for_status content_type
 #' @importFrom igraph %>%
-get_ld_from_gwas <- function(gwas, organism, db) {
+#' @export
+get_ld <- function(gwas, window = 1e4) {
   
-  baseUrl <- "https://rest.ensembl.org/ld"
-  map <- gwas$map
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  colnames(gwas$map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   
-  ld <- by(map, map$chr, function(C) {
+  X <- as(gwas$genotypes, "numeric")
+  
+  # select only controls
+  binary <- (unique(gwas$fam$affected) %>% length) == 2
+  if (binary) {
+    X <- X[gwas$fam$affected == 1, ]
+  }
+  
+  ld <- by(gwas$map, gwas$map$chr, function(chr) {
+    c <- unique(chr$chr)
+    start <- min(chr$pos)
+    end <- max(chr$pos)
     
-    start <- min(C$pos)
-    end <- max(C$pos)
-    chr <- unique(C$chr)
-    
-    lapply(seq(start, end, 1000000), function(chunk) {
+    lapply(seq(start, end - window, window/2), function(x){
+      mask <- gwas$map$chr == c & gwas$map$pos >= x & gwas$map$pos <= x + window
       
-      c <- subset(C, pos >= chunk & pos <= chunk + 1000000)
+      r <- cor(X[,mask])
+      r <- r[lower.tri(r)]
       
-      if (nrow(c) > 1) {
-        
-        region <- paste0(chr, ":", min(c$pos), "..", max(c$pos) )
-        q <- paste(baseUrl, organism, "region", region, db, sep = "/")
-        r <- GET(q, content_type("application/json"))
-        stop_for_status(r)
-        r <- content(r, type="application/json", encoding="UTF-8", simplifyDataFrame = T)
-        
-        r <- subset(r, variation1 %in% c$snp & variation2 %in% c$snp)
-        
-        if (nrow(r) > 0) {
-          r$key <- apply(r[,c("variation1","variation2")], 1, sort) %>% t %>% apply(1, paste, collapse = "_")
-          r <- subset(r, select = c("key", "r2"))
-          return(r)
-        }
-      }
+      snps <- as.character(gwas$map$snp[mask])
+      
+      keys <- lapply(1:(length(snps) - 1), function(x) {
+        this <- snps[x]
+        lapply(snps[(x+1):length(snps)], function(that) {
+          sort(c(this, that)) %>% paste(collapse = "-")
+        }) %>% unlist
+      }) %>% unlist
+      
+      data.frame(key = keys, r2 = r^2)
+      
     }) %>% do.call(rbind, .)
-  }) %>% do.call(rbind, .)
-
-  ld <- unique(ld)
-  ld$r2 <- as.numeric(ld$r2)
+  }) %>% do.call(rbind, .) %>%
+  unique
   
   return(ld)
-  
-}
-
-#' Retrieve LD information from Ensembl
-#' 
-#' @description Retrieve LD information from Ensembl in the format required by ldweight_edges.
-#' 
-#' @param net A SNP network.
-#' @return An dataframe with a column key, with SNP ids separated by an underscore, and an r2 column, 
-#' containing the Pearson correlation.
-#' @importFrom igraph V %>% get.edgelist
-#' @importFrom httr GET content stop_for_status content_type
-get_ld_from_net <- function(net, organism, db) {
-  
-  baseUrl <- "https://rest.ensembl.org/ld"
-  edges <- get.edgelist(net) %>% apply(1, sort) %>% t %>% apply(1, paste, collapse = "_")
-  
-  ld <- lapply(names(V(net)), function(snp) {
-    q <- paste(baseUrl, organism, snp, db, sep = "/")
-    r <- GET(q, content_type("application/json"))
-    stop_for_status(r)
-    r <- content(r, type="application/json", encoding="UTF-8", simplifyDataFrame = T)
-    
-    if (length(r) > 0) {
-      r$key <- apply(r[,c("variation1","variation2")], 1, sort) %>% t %>% apply(1, paste, collapse = "_")
-      r <- subset(r, key %in% edges, select = c("key", "r2"))
-      return(r)
-    }
-  }) %>% do.call(rbind, .)
-  
-  ld <- unique(ld)
-  ld$r2 <- as.numeric(ld$r2)
-  
-  return(ld)
-  
 }
