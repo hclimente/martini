@@ -46,7 +46,7 @@ ldweight_edges <- function(net, ld, method = "inverse") {
 #' containing the Pearson correlation.
 #' @importFrom igraph %>%
 #' @export
-get_ld <- function(gwas, window = 1e4) {
+get_ld <- function(gwas, window = 5e4) {
   
   colnames(gwas$map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   
