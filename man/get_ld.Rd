@@ -4,7 +4,7 @@
 \alias{get_ld}
 \title{Calculate LD in the datasets}
 \usage{
-get_ld(gwas, window = 10000)
+get_ld(gwas, window = 50000)
 }
 \arguments{
 \item{gwas}{A GWAS experiment, in snpMatrix form.}
