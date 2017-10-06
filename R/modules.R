@@ -56,7 +56,3 @@ test_cones_modules <- function(cones, net, N = 100000) {
   return(modules)
   
 }
-
-go_analysis <- function(gwas, cones, snp2gene) {
-  
-}

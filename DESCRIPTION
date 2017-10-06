@@ -22,7 +22,8 @@ Imports:
     IRanges (>= 2.8.2),
     BiocParallel (>= 1.8.2),
     S4Vectors (>= 0.12.2),
-    GenomicRanges (>= 1.26.4)
+    GenomicRanges (>= 1.26.4),
+    methods (>= 3.3.2)
 Depends: R (>= 2.10.0)
 LinkingTo:
     Rcpp,
