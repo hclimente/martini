@@ -17,6 +17,7 @@ r_packages:
   
 before_script: 
   - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
+  - export GIN_PATH=$INSTALL_PATH/lib
   - export CPLUS_INCLUDE_PATH=$PWD/gin/build/include:${CPLUS_INCLUDE_PATH}
   - export LIBRARY_PATH=$PWD/gin/build/lib:${LIBRARY_PATH}
   - export LD_LIBRARY_PATH=$PWD/gin/build/lib:${LD_LIBRARY_PATH}
