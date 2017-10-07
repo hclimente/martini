@@ -8,14 +8,28 @@ addons:
       - libboost-program-options1.55-dev
 
 cache: packages
-r: 
+r:
   - bioc-devel
 r_build_args: --resave-data
 r_packages:
   - covr
   - tidyverse
-  
-before_script: 
+  - Rcpp
+  - RcppEigen
+  - Matrix
+  - igraph
+  - snpStats
+  - httr
+  - circlize
+  - Gviz
+  - GenomeInfoDb
+  - biomaRt
+  - IRanges
+  - BiocParallel
+  - S4Vectors
+  - GenomicRanges
+
+before_script:
   - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
   - export GIN_PATH=$INSTALL_PATH/lib
   - export CPLUS_INCLUDE_PATH=$PWD/gin/build/include:${CPLUS_INCLUDE_PATH}
