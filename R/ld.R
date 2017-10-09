@@ -48,7 +48,8 @@ ldweight_edges <- function(net, ld, method = "inverse") {
 #' @export
 get_ld <- function(gwas, window = 5e4) {
   
-  colnames(gwas$map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  map <- gwas$map
+  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   
   X <- as(gwas$genotypes, "numeric")
   
@@ -58,18 +59,23 @@ get_ld <- function(gwas, window = 5e4) {
     X <- X[gwas$fam$affected == 1, ]
   }
   
-  ld <- by(gwas$map, gwas$map$chr, function(chr) {
+  ld <- by(map, map$chr, function(chr) {
     c <- unique(chr$chr)
     start <- min(chr$pos)
     end <- max(chr$pos)
     
-    lapply(seq(start, end - window, window/2), function(x){
-      mask <- gwas$map$chr == c & gwas$map$pos >= x & gwas$map$pos <= x + window
+    lapply(seq(start, end - window/2, window/2), function(x){
+      
+      mask <- map$chr == c & map$pos >= x & map$pos <= x + window
+      
+      if (sum(mask) < 2) {
+        return(NULL)
+      }
       
       r <- cor(X[,mask])
       r <- r[lower.tri(r)]
       
-      snps <- as.character(gwas$map$snp[mask])
+      snps <- as.character(map$snp[mask])
       
       keys <- lapply(1:(length(snps) - 1), function(x) {
         this <- snps[x]
@@ -80,9 +86,11 @@ get_ld <- function(gwas, window = 5e4) {
       
       data.frame(key = keys, r2 = r^2)
       
-    }) %>% do.call(rbind, .)
+    }) %>% invisible %>% do.call(rbind, .)
   }) %>% do.call(rbind, .) %>%
   unique
+  
+  ld$key <- as.character(ld$key)
   
   return(ld)
 }
