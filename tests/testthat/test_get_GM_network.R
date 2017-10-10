@@ -36,3 +36,7 @@ test_that("we are simplifying the network", {
   
   expect_equal(sum(x != 0 & x != 1), 0)
 })
+
+test_that("edges have weights", {
+  expect_false(is.null(igraph::E(gm)$weight))
+})

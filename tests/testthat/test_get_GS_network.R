@@ -13,3 +13,7 @@ test_that("we add genomic information to the vertices", {
   expect_equal(igraph::get.vertex.attribute(gs, "pos", match(c("rs1", "rs2", "rs3"), igraph::V(gs)$name) ), c(10, 20, 30) )
   expect_equal(igraph::get.vertex.attribute(gs, "pos", match(c("rs4", "rs5", "rs6"), igraph::V(gs)$name) ), c(15, 25, 35) )
 })
+
+test_that("edges have weights", {
+  expect_false(is.null(igraph::E(gs)$weight))
+})

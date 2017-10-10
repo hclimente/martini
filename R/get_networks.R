@@ -30,7 +30,7 @@ get_GS_network <- function(gwas)  {
   
   gs <- set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
   gs <- set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
-  set_edge_attr(gs, "weight", value = 1)
+  gs <- set_edge_attr(gs, "weight", value = 1)
 
   return(gs)
   
@@ -80,7 +80,7 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
     gm <- gs
   }
   
-  set_edge_attr(gm, "weight", value = 1)
+  gm <- set_edge_attr(gm, "weight", value = 1)
   
   return(gm)
 }
@@ -128,7 +128,7 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
   gm <- get_GM_network(gwas, snpMapping=snpMapping)
   gi <- simplify(gm + gi)
   
-  set_edge_attr(gi, "weight", value = 1)
+  gi <- set_edge_attr(gi, "weight", value = 1)
   
   return(gi)
   

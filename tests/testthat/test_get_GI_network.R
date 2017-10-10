@@ -47,3 +47,7 @@ test_that("warns if ppi is insufficient to create a GI network", {
                                 ppi = data.frame(gene1 = c("A", "B"), gene2 = c("A", "B"), stringsAsFactors = FALSE)), 
                  "no matches between genes in snpMapping and PPI. No information about PPI will be added.")
 })
+
+test_that("edges have weights", {
+  expect_false(is.null(igraph::E(gi)$weight))
+})
