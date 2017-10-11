@@ -9,7 +9,7 @@
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
 #' \item{selected: logical vector indicating if the SNP was selected by shake or not.}
-#' \item{cluster: integer with the number of the cluster the SNP belongs to.}
+#' \item{module: integer with the number of the module the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
@@ -38,7 +38,7 @@ find_cones <- function(gwas, net, ...) {
   map$C <- gin$scores
   map$selected <- as.logical(gin$indicator)
   
-  map <- cluster_snps(map, net)
+  map <- get_snp_modules(map, net)
   
   return(map)
   

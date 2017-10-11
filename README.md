@@ -38,11 +38,11 @@ g <- find_cones(gwas, net)
 
 - `C` is a numeric vector with the association scone for each SNP.
 - `selected` is a boolean vector informing about if the SNP was selected or not by `find_cones`.
-- `cluster` is a integer vector with information about which SNPs is adjacent to which SNP in the network. The integer is the identifier of that cluster (NA if the SNP is disconnected from any other selected SNP).
+- `module` is a integer vector with information about which SNPs is adjacent to which SNP in the network. The integer is the identifier of that module (NA if the SNP is disconnected from any other selected SNP).
 
 ```{r}
 head(g)
-#   V1 snp.names V3 V4 allele.1 allele.2         C  selected  cluster
+#   V1 snp.names V3 V4 allele.1 allele.2         C  selected   module
 # 1  1       1_1  0  1        A        T 361.13735     FALSE       NA
 # 2  1       1_2  0  2        T        A 344.29586     FALSE       NA
 # 3  1       1_3  0  3        T        A 894.68186     FALSE        1

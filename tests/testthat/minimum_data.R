@@ -26,7 +26,7 @@ gm <- get_GM_network(gwas, snpMapping = snpMapping)
 gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
 
 result <- read.table(text = "
-                       chr snp.names cm gpos allele.1 allele.2 selected C cluster
+                       chr snp.names cm gpos allele.1 allele.2 selected C module
                        1 rs1 0 10 A G TRUE 100 1
                        1 rs2 0 20 A G FALSE 10 NA
                        1 rs3 0 30 A G FALSE 10 NA
