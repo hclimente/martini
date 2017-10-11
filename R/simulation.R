@@ -1,57 +1,37 @@
 #' Simulate causal SNPs
 #' 
-#' @description Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick 
-#' SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
+#' @description Selects randomly interconnected genes as causal, then selects a proportion of them as causal.
 #' 
-#' @param net An igraph network that connects the SNPs.
-#' @param n Number of causal SNPs to return.
+#' @param net An igraph gene-interaction (GI) network that connects the SNPs.
+#' @param n Number of causal genes.
+#' @param p Number between 0 and 1, proportion of the SNPs in causal genes that are causal themselves.
 #' @return A vector with the ids of the simulated causal SNPs.
 #' @importFrom igraph vertex_attr V neighbors largest_cliques %>% degree make_ego_graph
 #' @importFrom stats na.omit
 #' @export
-simulate_causal_snps <- function(net, n) {
+simulate_causal_snps <- function(net, n=20, p=1) {
   
-  if (! is.null(vertex_attr(net, "gene")) && max(degree(net)) > 2) {
-    genes <- names(which(table(V(net)$gene) > 1))
+  # genes with more than 1 SNP
+  genes <- names(which(table(V(net)$gene) > 1))
+  
+  repeat {
+    g <- sample(genes, 1)
+    seed <- V(net)[which(V(net)$gene == g)][1]
     
-    repeat {
-      g <- sample(genes, 1)
-      seed <- V(net)[which(V(net)$gene == g)][1]
-      
-      neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
-      neighboringGenes <- intersect(genes, neighboringGenes)
-      neighbors <- V(net)$gene %in% neighboringGenes %>% which %>% V(net)[.]
-      
-      if ( length(neighbors) >= n & any(neighboringGenes != g) ) {
-        causal <- sample(neighbors, n)
-        genesInvolved <- unique(causal$gene)
-        
-        if (length(genesInvolved) > 1)
-          break
-      }
-    }
+    neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
+    neighboringGenes <- intersect(genes, neighboringGenes)
     
-  } else if (max(degree(net)) == 2) {
-    
-    repeat {
-      seed <- sample(V(net), 1)
-      causal <- make_ego_graph(net, n, nodes = seed)[[1]]
+    if ( length(neighboringGenes) >= n ) {
       
-      if (length(V(causal)) >= n) {
+      causalGenes <- sample(neighboringGenes, n)
+      neighbors <- V(net)$gene %in% causalGenes %>% which %>% V(net)[.]
+      
+      causal <- sample(neighbors, length(neighbors) * p)
+      genesInvolved <- unique(causal$gene)
+      
+      if (length(genesInvolved) == n)
         break
-      }
     }
-    
-    while (length(V(causal)) > n) {
-      endnode <- degree(causal) %>% sort %>% head(n = 1) %>% names
-      causal <- causal - endnode
-    }
-    
-    causal <- V(causal)
-    
-  } else {
-    largestClique <- largest_cliques(net)[[1]]
-    causal <- sample(largestClique, n)
   }
   
   return(causal)

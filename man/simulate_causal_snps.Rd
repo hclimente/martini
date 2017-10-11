@@ -4,17 +4,18 @@
 \alias{simulate_causal_snps}
 \title{Simulate causal SNPs}
 \usage{
-simulate_causal_snps(net, n)
+simulate_causal_snps(net, n = 20, p = 1)
 }
 \arguments{
-\item{net}{An igraph network that connects the SNPs.}
+\item{net}{An igraph gene-interaction (GI) network that connects the SNPs.}
 
-\item{n}{Number of causal SNPs to return.}
+\item{n}{Number of causal genes.}
+
+\item{p}{Number between 0 and 1, proportion of the SNPs in causal genes that are causal themselves.}
 }
 \value{
 A vector with the ids of the simulated causal SNPs.
 }
 \description{
-Selects randomly a clique of interconnected SNPs. If the SNP network contains a "gene" vertex attribute, it tries to pick 
-SNPs from the same gene and from, at least, one interactor. Else, it picks SNPs from the largest clique in the network.
+Selects randomly interconnected genes as causal, then selects a proportion of them as causal.
 }
