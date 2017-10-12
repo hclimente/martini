@@ -39,7 +39,8 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 
 #' Simulate phenotype
 #' 
-#' @description Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs.
+#' @description Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs. If the data is qualitative, only controls
+#' are used.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param snps Character vector with the SNP ids of the causal SNPs. Must match SNPs in gwas$map$snp.names.
@@ -50,7 +51,7 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' @param qualitative Bool indicating if the phenotype is qualitative or not (quantitative).
 #' @param ncases Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.
 #' @param ncontrols Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.
-#' @return A vector with the simulated phenotype for each sample.
+#' @return A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importFrom utils head tail
 #' @importFrom stats rnorm var
@@ -59,6 +60,13 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
                                qualitative = FALSE, ncases, ncontrols){
   # TODO check correspondence with gcta implementation
+  
+  # select only controls
+  binary <- (unique(gwas$fam$affected) %>% length) == 2
+  if (binary) {
+    gwas$genotypes <- gwas$genotypes[gwas$fam$affected == 1, ]
+    gwas$fam <- gwas$fam[gwas$fam$affected == 1, ]
+  }
   
   X <- as(gwas$genotypes, "numeric")
   
@@ -105,5 +113,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
     Y <- trait
   }
   
-  return(Y)
+  gwas$fam$affected <- Y
+  
+  return(gwas)
 }
