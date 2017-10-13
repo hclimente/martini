@@ -66,7 +66,7 @@ get_ld <- function(gwas, window = 5e4) {
     
     lapply(seq(start, end - window/2, window/2), function(x){
       
-      mask <- map$chr == c & map$pos >= x & map$pos <= x + window
+      mask <- (map$chr == c) & (map$pos >= x) & (map$pos <= x + window)
       
       if (sum(mask) < 2) {
         return(NULL)
@@ -91,6 +91,8 @@ get_ld <- function(gwas, window = 5e4) {
   unique
   
   ld$key <- as.character(ld$key)
+  # remove cases where LD cannot be calculated, because one SNP presents no variance
+  ld <- subset(ld, !is.na(r2))
   
   return(ld)
 }
