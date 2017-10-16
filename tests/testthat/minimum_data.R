@@ -11,6 +11,7 @@ gwas$map <- read.table(text = "
                        2 rs8 0 55 A G
                        2 rs9 0 65 A G
                        2 rs10 0 75 A G
+                       2 rs11 0 85 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
 
 snpMapping <- read.table(text = "
@@ -22,6 +23,8 @@ snpMapping <- read.table(text = "
                        rs8 C
                        rs9 C
                        rs10 D
+                       rs11 C
+                       rs11 D
                        ", header = TRUE, stringsAsFactors = FALSE)
 ppi <- read.table(text = "
                   gene1 gene2

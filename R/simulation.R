@@ -11,6 +11,8 @@
 #' @export
 simulate_causal_snps <- function(net, n=20, p=1) {
   
+  # SNPs with only one gene
+  net <- subnet(net, "nGenes", 1)
   # genes with more than 1 SNP
   genes <- names(which(table(V(net)$gene) > 1))
   

@@ -75,6 +75,10 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
     gm <- graph_from_data_frame(gm, directed = FALSE)
     gm <- simplify(gm + gs)
     gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
+    
+    nGenes <- aggregate(gene ~ ., data=snpMapping, length)
+    gm <- set_vertex_attr(gm, "nGenes", value = 0)
+    gm <- set_vertex_attr(gm, "nGenes", index = match(nGenes$snp, V(gm)$name), nGenes$gene)
   } else {
     warning("insufficient information to add gene information")
     gm <- gs

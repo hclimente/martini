@@ -10,6 +10,11 @@ test_that("we get causal SNPs from two different genes", {
   expect_equal(length(causal3$gene %>% unique), 3)
 })
 
+test_that("genes with less than 2 single-gene SNPs are discarded", {
+  expect_false("D" %in% causal2$gene)
+  expect_false("D" %in% causal3$gene)
+})
+
 test_that("SNPs are interconnected", {
   expect_equal((igraph::components(igraph::induced_subgraph(gi, names(causal2))) %>% 
                 .$membership %>% 

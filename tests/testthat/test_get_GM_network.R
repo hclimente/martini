@@ -26,6 +26,9 @@ test_that("we add gene information to the vertices", {
   expect_equal(igraph::get.vertex.attribute(gm, "gene", match(c("rs5", "rs6"), igraph::V(gm)$name) ), rep("B", 2) )
   expect_output(igraph::get.vertex.attribute(gm, "gene", match("rs3", igraph::V(gm)$name) ), NA )
   expect_output(igraph::get.vertex.attribute(gm, "gene", match("rs4", igraph::V(gm)$name) ), NA )
+  expect_equal(igraph::get.vertex.attribute(gm, "nGenes", match("rs3", igraph::V(gm)$name) ), 0 )
+  expect_equal(igraph::get.vertex.attribute(gm, "nGenes", match("rs10", igraph::V(gm)$name) ), 1 )
+  expect_equal(igraph::get.vertex.attribute(gm, "nGenes", match("rs11", igraph::V(gm)$name) ), 2 )
 })
 
 test_that("we are simplifying the network", { 
