@@ -7,7 +7,7 @@
 plot_snp_module(cones, k, genome = "hg19")
 }
 \arguments{
-\item{cones}{Results from \code{shake}.}
+\item{cones}{Results from \code{SConES}.}
 
 \item{k}{Id of the module to plot.}
 
@@ -18,7 +18,7 @@ plot_snp_module(cones, k, genome = "hg19")
 An ideogram per chromosome showing the selected SNPs and the genes in the region.
 }
 \description{
-Create a ideogram of a SNP module from \code{shake} results using the Gviz package (Hahne and Ivanek, 2016).
+Create a ideogram of a SNP module from \code{SConES} results using the Gviz package (Hahne and Ivanek, 2016).
 }
 \references{
 Hahne F. and Ivanek R. (2016). "Statistical Genomics: Methods and Protocols." In Mathe E and Davis S (eds.), chapter 

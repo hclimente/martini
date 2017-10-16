@@ -26,10 +26,11 @@ if absent, they are sampled fron a normal distribution.}
 \item{ncontrols}{Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.}
 }
 \value{
-A vector with the simulated phenotype for each sample.
+A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
 }
 \description{
-Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs.
+Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs. If the data is qualitative, only controls
+are used.
 }
 \references{
 Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.

@@ -2,14 +2,12 @@
 % Please edit documentation in R/plots.R
 \name{plot_ideogram}
 \alias{plot_ideogram}
-\title{Ideogram of shake results.}
+\title{Ideogram of SConES results.}
 \usage{
-plot_ideogram(cones, net, genome = "hg19")
+plot_ideogram(cones, genome = "hg19")
 }
 \arguments{
-\item{cones}{Output from \code{shake}.}
-
-\item{net}{The SNP network provided to \code{shake}.}
+\item{cones}{Output from \code{SConES}.}
 
 \item{genome}{Abbreviations of the genome to use: hg19 for human (default), mm10 for mouse, etc. Argument to be passed to 
 \code{\link{circos.initializeWithIdeogram}} \code{species}.}
@@ -18,7 +16,7 @@ plot_ideogram(cones, net, genome = "hg19")
 A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
 }
 \description{
-Create a circular ideogram of the \code{shake} results using the circlize package (Gu et al., 2014).
+Create a circular ideogram of the \code{SConES} results using the circlize package (Gu et al., 2014).
 }
 \references{
 Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. 

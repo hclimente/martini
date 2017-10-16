@@ -1,8 +1,8 @@
 #' Ideogram of a SNP module.
 #' 
-#' @description Create a ideogram of a SNP module from \code{shake} results using the Gviz package (Hahne and Ivanek, 2016).
+#' @description Create a ideogram of a SNP module from \code{SConES} results using the Gviz package (Hahne and Ivanek, 2016).
 #' 
-#' @param cones Results from \code{shake}.
+#' @param cones Results from \code{SConES}.
 #' @param k Id of the module to plot.
 #' @param genome Abbreviations of the genome to use: hg19 for human (default),  mm10 for mouse, etc. Argument to be passed to 
 #' \code{\link{IdeogramTrack}}.
@@ -43,12 +43,11 @@ plot_snp_module <- function(cones, k, genome = "hg19") {
 
 }
 
-#' Ideogram of shake results.
+#' Ideogram of SConES results.
 #' 
-#' @description Create a circular ideogram of the \code{shake} results using the circlize package (Gu et al., 2014).
+#' @description Create a circular ideogram of the \code{SConES} results using the circlize package (Gu et al., 2014).
 #' 
-#' @param cones Output from \code{shake}.
-#' @param net The SNP network provided to \code{shake}.
+#' @param cones Output from \code{SConES}.
 #' @param genome Abbreviations of the genome to use: hg19 for human (default), mm10 for mouse, etc. Argument to be passed to 
 #' \code{\link{circos.initializeWithIdeogram}} \code{species}.
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
@@ -57,7 +56,7 @@ plot_snp_module <- function(cones, k, genome = "hg19") {
 #' @importFrom circlize circos.initializeWithIdeogram circos.genomicTrackPlotRegion circos.genomicPoints circos.genomicLink circos.clear
 #' @importFrom igraph %>%
 #' @export
-plot_ideogram <- function(cones, net, genome = "hg19"){
+plot_ideogram <- function(cones, genome = "hg19"){
   
   circos.initializeWithIdeogram(species = genome)
   
