@@ -47,7 +47,7 @@ get_GS_network <- function(gwas)  {
 #' @return An igraph network of the GM network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V set_edge_attr
+#' @importFrom igraph %>% graph_from_data_frame simplify set_vertex_attr V set_edge_attr
 #' @importFrom utils combn
 #' @export
 get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))  {
@@ -56,6 +56,7 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  map$snp <- as.character(map$snp)
   map <- merge(map, snpMapping)
   map <- subset(map, select = c("snp","gene"))
   # in some cases the same position is linked to two different variants
@@ -63,11 +64,9 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
   
   gm <- by(map, map$gene, function(x){
     if (nrow(x) > 1){
-      comb <- combn(x$snp, 2)
-      data.frame(snp1 = comb[1,], snp2 = comb[2,])
+      combn(x$snp, 2)
     }
-  })
-  gm <- do.call("rbind", gm)
+  }) %>% do.call(cbind, .) %>% t %>% as.data.frame
   
   gs <- get_GS_network(gwas)
   
@@ -76,7 +75,7 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
     gm <- simplify(gm + gs)
     gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
     
-    nGenes <- aggregate(gene ~ ., data=snpMapping, length)
+    nGenes <- aggregate(gene ~ ., data=map, length)
     gm <- set_vertex_attr(gm, "nGenes", value = 0)
     gm <- set_vertex_attr(gm, "nGenes", index = match(nGenes$snp, V(gm)$name), nGenes$gene)
   } else {
