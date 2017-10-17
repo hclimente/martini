@@ -23,11 +23,14 @@ simulate_causal_snps <- function(net, n=20, p=1) {
     neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
     neighboringGenes <- intersect(genes, neighboringGenes)
     
-    if ( length(neighboringGenes) >= n ) {
+    if ( length(neighboringGenes) >= n - 1 ) {
       
-      causalGenes <- sample(neighboringGenes, n)
+      # causal genes: n - 1 random neighbors + g
+      causalGenes <- sample(neighboringGenes, n - 1)
+      causalGenes <- c(causalGenes, g)
       neighbors <- subvert(net, "gene", causalGenes)
       
+      # sample a proportion p of the snps in the causal genes
       causal <- sample(neighbors, length(neighbors) * p)
       
       if (length(unique(causal$gene)) == n)
