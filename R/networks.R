@@ -56,21 +56,20 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
   
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  map$snp <- as.character(map$snp)
   map <- merge(map, snpMapping)
   map <- subset(map, select = c("snp","gene"))
   # in some cases the same position is linked to two different variants
   map <- unique(map)
+  map$snp <- as.character(map$snp)
+  map$gene <- as.character(map$gene)
   
-  gm <- by(map, map$gene, function(x){
-    if (nrow(x) > 1){
-      combn(x$snp, 2)
-    }
-  }) %>% do.call(cbind, .) %>% t %>% as.data.frame
+  nSnps <- aggregate(snp ~ ., data=map, length)
+  map <- subset(map, gene %in% nSnps$gene[nSnps$snp > 1])
   
   gs <- get_GS_network(gwas)
   
-  if (! is.null(gm)) {
+  if (nrow(map) > 0) {
+    gm <- tapply(map$snp, map$gene, combn, 2) %>% do.call(cbind, .) %>% t %>% as.data.frame
     gm <- graph_from_data_frame(gm, directed = FALSE)
     gm <- simplify(gm + gs)
     gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), map$gene)
@@ -124,8 +123,9 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
   snp2snp <- merge(snp2snp, map, by.x = "snp.x", by.y = "snp")
   snp2snp <- merge(snp2snp, map, by.x = "snp.y", by.y = "snp")
   
-  if (nrow(snp2snp) == 0)
+  if (nrow(snp2snp) == 0) {
     warning("no matches between genes in snpMapping and PPI. No information about PPI will be added.")
+  }
   
   gi <- graph_from_data_frame(snp2snp, directed = FALSE)
   gm <- get_GM_network(gwas, snpMapping=snpMapping)
