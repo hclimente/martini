@@ -85,28 +85,25 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   X <- X[, gwas$map$snp.names %in% names(snps)]
   G <- calculateG(effectSize, X, model)
   E <- calculateE(G, h2)
-  trait <- G + E
+  Y <- G + E
   
   if (qualitative){
     if (! exists("ncases") ) {
       stop("Specify ncases if qualitative = TRUE.")
     } else if (! exists("ncontrols") ) {
       stop("Specify ncontrols if qualitative = TRUE.")
-    } else if ( length(trait) < (ncases + ncontrols) ) {
+    } else if ( length(Y) < (ncases + ncontrols) ) {
       stop("Cases and controls requested exceed number of samples provided.")
     }
     
-    trait.sorted <- sort(trait, index.return = TRUE)
-    cases <- head(trait.sorted$ix, n = ncases)
-    controls <- tail(trait.sorted$ix, n = ncontrols)
-    
-    Y <- numeric(length(trait))
-    Y <- NA
+    Y.sorted <- sort(Y, index.return = TRUE)
+    cases <- head(Y.sorted$ix, n = ncases)
+    controls <- tail(Y.sorted$ix, n = ncontrols)
+
     Y[cases] <- 2
     Y[controls] <- 1
+    Y[-c(cases,controls)] <- NA
     
-  } else {
-    Y <- trait
   }
   
   gwas$fam$affected <- Y
