@@ -74,36 +74,27 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   
   X <- as(gwas$genotypes, "numeric")
   
-  if (any(! names(snps) %in% gwas$map$snp.names))
+  if (any(! names(snps) %in% gwas$map$snp.names)) {
     stop(paste("The following causal SNPs are not in the SNP list:", setdiff(names(snps), gwas$map$snp.names)))
-  if (h2 < 0 | h2 > 1)
+  }
+  
+  if (h2 < 0 | h2 > 1) {
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
+  }
   
   X <- X[, gwas$map$snp.names %in% names(snps)]
-  
-  # get effect sizes u and weights w
-  u <- effectSize
-  p <- (2 * colSums(X == 2) + colSums(X == 1)) / (2 * nrow(X))
-  x <- 2 * (X == 2) + (X == 1)
-  w = (x - 2 * p) / sqrt(2 * p * (1 - p))
-  
-  if (model == "additive")
-    geno <- colSums(t(w) * u)
-  else
-    stop(paste0("Genetic model ", model, " not recognised."))
-  
-  residual.var <- var(geno) * (1 / h2 - 1)
-  residual <- rnorm(length(geno), sd = sqrt(residual.var))
-  
-  trait <- geno + residual
+  G <- calculateG(effectSize, X, model)
+  E <- calculateE(G, h2)
+  trait <- G + E
   
   if (qualitative){
-    if (! exists("ncases") )
+    if (! exists("ncases") ) {
       stop("Specify ncases if qualitative = TRUE.")
-    else if (! exists("ncontrols") )
+    } else if (! exists("ncontrols") ) {
       stop("Specify ncontrols if qualitative = TRUE.")
-    else if ( length(trait) < (ncases + ncontrols) )
+    } else if ( length(trait) < (ncases + ncontrols) ) {
       stop("Cases and controls requested exceed number of samples provided.")
+    }
     
     trait.sorted <- sort(trait, index.return = TRUE)
     cases <- head(trait.sorted$ix, n = ncases)
@@ -113,6 +104,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
     Y <- NA
     Y[cases] <- 2
     Y[controls] <- 1
+    
   } else {
     Y <- trait
   }
@@ -120,4 +112,43 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   gwas$fam$affected <- Y
   
   return(gwas)
+}
+
+#' Calculate the genetic component of the phenotype
+#' 
+#' @description Calculates the genetic component of the phenotype from a genotype.
+#' 
+#' @param u A vector with the effect size of each SNP.
+#' @param X Genotypes.
+#' @param model Genetic model to assume.
+#' @return A vector with the genetic component of each sample.
+calculateG <- function(u, X, model) {
+  
+  # calculate weights w
+  p <- (2 * colSums(X == 2) + colSums(X == 1)) / (2 * nrow(X))
+  x <- 2 * (X == 2) + (X == 1)
+  w <- (x - 2 * p) / sqrt(2 * p * (1 - p))
+  
+  if (model == "additive") {
+    G <- colSums(t(w) * u)
+  } else {
+    stop(paste0("Genetic model ", model, " not recognised."))
+  }
+  
+  return(G)
+  
+}
+
+#' Calculate the environmental component of the phenotype
+#' 
+#' @description Calculates the environmental component of the phenotype using the variance in the genetic component.
+#' 
+#' @param G The genetic component of the phenotype.
+#' @param h2 The heritability.
+#' @return A vector with the environmental component of each sample.
+calculateE <- function(G, h2) {
+  
+  residual.var <- var(G) * (1 / h2 - 1)
+  residual <- rnorm(length(G), sd = sqrt(residual.var))
+  
 }
