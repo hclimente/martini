@@ -12,18 +12,27 @@ X_causal <- X[, examplegwas$gwas$map$snp.names %in% names(causal)]
 # qualitative phenotype
 Y_ql <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
                            effectSize = eff, 
-                           qualitative = TRUE, ncases = 1500, ncontrols = 1500)
+                           qualitative = TRUE, ncases = 1500, ncontrols = 1500, prevalence = 0.5)
 # quantitative phenotype
 Y_qt <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff)
 # not a phenotype for everyone
 Y_nas <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff,
-                            qualitative = T, ncases = 1400, ncontrols = 1350)$fam$affected
+                            qualitative = T, ncases = 1400, ncontrols = 1350, prevalence = 0.5)$fam$affected
 
-test_that("simulate_phenotype runs", {
+test_that("simulate_phenotype runs as expected", {
   expect_type(Y_ql, "list")
   expect_type(Y_qt, "list")
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T), 
+               'argument "ncases" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4), 
+               'argument "ncontrols" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500), 
+               'argument "prevalence" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4, ncontrols = 1e4, prevalence = 0.1), 
+               "Requested number of cases and controls too high (> # samples).", fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500, prevalence = 0.1), 
+               "Requested number of cases too high (> # samples * prevalence).", fixed=TRUE)
 })
-
 
 test_that("we get the requested number of phenotypes", {
   expect_equal(sum(is.na(Y_ql)), 0)

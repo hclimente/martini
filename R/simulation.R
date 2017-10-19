@@ -55,6 +55,8 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' @param qualitative Bool indicating if the phenotype is qualitative or not (quantitative).
 #' @param ncases Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.
 #' @param ncontrols Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.
+#' @param prevalence Value between 0 and 1 specifying the population prevalence of the disease. Note that ncases cannot be greater than 
+#' prevalence * number of samples. Required if qualitative = TRUE.
 #' @return A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importFrom utils head tail
@@ -62,7 +64,7 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' @importFrom methods as
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
-                               qualitative = FALSE, ncases, ncontrols){
+                               qualitative = FALSE, ncases, ncontrols, prevalence){
   # TODO check correspondence with gcta implementation
   
   # select only controls
@@ -88,12 +90,10 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
   Y <- G + E
   
   if (qualitative){
-    if (! exists("ncases") ) {
-      stop("Specify ncases if qualitative = TRUE.")
-    } else if (! exists("ncontrols") ) {
-      stop("Specify ncontrols if qualitative = TRUE.")
-    } else if ( length(Y) < (ncases + ncontrols) ) {
-      stop("Cases and controls requested exceed number of samples provided.")
+    if ( length(Y) < (ncases + ncontrols) ) {
+      stop("Requested number of cases and controls too high (> # samples).")
+    } else if ( prevalence * length(Y) < ncases ) {
+      stop("Requested number of cases too high (> # samples * prevalence).")
     }
     
     Y.sorted <- sort(Y, index.return = TRUE)

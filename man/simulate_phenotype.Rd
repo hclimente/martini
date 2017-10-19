@@ -5,7 +5,8 @@
 \title{Simulate phenotype}
 \usage{
 simulate_phenotype(gwas, snps, h2, model = "additive",
-  effectSize = rnorm(length(snps)), qualitative = FALSE, ncases, ncontrols)
+  effectSize = rnorm(length(snps)), qualitative = FALSE, ncases, ncontrols,
+  prevalence)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -24,6 +25,9 @@ if absent, they are sampled fron a normal distribution.}
 \item{ncases}{Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.}
 
 \item{ncontrols}{Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.}
+
+\item{prevalence}{Value between 0 and 1 specifying the population prevalence of the disease. Note that ncases cannot be greater than 
+prevalence * number of samples. Required if qualitative = TRUE.}
 }
 \value{
 A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
