@@ -145,7 +145,7 @@ calculateG <- function(u, X, model) {
 #' @return A vector with the environmental component of each sample.
 calculateE <- function(G, h2) {
   
-  residual.var <- var(G) * (1 / h2 - 1)
+  residual.var <- var(G) * (1 - 1/h2)
   residual <- rnorm(length(G), sd = sqrt(residual.var))
   
 }
