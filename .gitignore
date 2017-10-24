@@ -10,6 +10,7 @@ src/*.dll
 .idea/*
 martini.Rproj
 inst/doc
+src/Makevars
 
 # http://www.gnu.org/software/autoconf
 
