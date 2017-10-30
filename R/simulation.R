@@ -12,15 +12,15 @@
 simulate_causal_snps <- function(net, n=20, p=1) {
   
   # SNPs with only one gene
-  net <- subnet(net, "nGenes", 1)
+  subnet <- subnet(net, "nGenes", 1)
   # genes with more than 1 SNP
-  genes <- names(which(table(V(net)$gene) > 1))
+  genes <- names(which(table(V(subnet)$gene) > 1))
   
   repeat {
     g <- sample(genes, 1)
-    seed <- subvert(net, "gene", g)[1]
+    seed <- subvert(subnet, "gene", g)[1]
     
-    neighboringGenes <- neighbors(net, seed)$gene %>% na.omit %>% unique
+    neighboringGenes <- neighbors(subnet, seed)$gene %>% na.omit %>% unique
     neighboringGenes <- intersect(genes, neighboringGenes)
     
     if ( length(neighboringGenes) >= n - 1 ) {
@@ -28,7 +28,7 @@ simulate_causal_snps <- function(net, n=20, p=1) {
       # causal genes: n - 1 random neighbors + g
       causalGenes <- sample(neighboringGenes, n - 1)
       causalGenes <- c(causalGenes, g)
-      neighbors <- subvert(net, "gene", causalGenes)
+      neighbors <- subvert(subnet, "gene", causalGenes)
       
       # sample a proportion p of the snps in the causal genes
       causal <- sample(neighbors, length(neighbors) * p)
@@ -37,6 +37,9 @@ simulate_causal_snps <- function(net, n=20, p=1) {
         break
     }
   }
+  
+  # get the nodes from the original net
+  causal <- subvert(net, "name", names(causal))
   
   return(causal)
 }
