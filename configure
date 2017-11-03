@@ -2957,7 +2957,7 @@ return libgin_present ();
   return 0;
 }
 _ACEOF
-for ac_lib in '' gin, gin-devel; do
+for ac_lib in '' gin-devel gin; do
   if test -z "$ac_lib"; then
     ac_res="none required"
   else
