@@ -4,8 +4,7 @@ AC_PROG_CXX
 
 dnl check that gin is correctly installed
 AC_CHECK_HEADERS(gin/feature_selection/shake.h)
-AC_SEARCH_LIBS([libgin_present], [gin])
-dnl PKG_CHECK_MODULES([GIN], [gin])
+AC_SEARCH_LIBS([libgin_present], [gin, gin-devel], [], [AC_MSG_ERROR([gin not found])])
 
 AC_ARG_VAR([GIN_PATH], "Path to the gin dynamic library.")
 

@@ -2957,7 +2957,7 @@ return libgin_present ();
   return 0;
 }
 _ACEOF
-for ac_lib in '' gin; do
+for ac_lib in '' gin, gin-devel; do
   if test -z "$ac_lib"; then
     ac_res="none required"
   else
@@ -2987,6 +2987,8 @@ ac_res=$ac_cv_search_libgin_present
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
+else
+  as_fn_error $? "gin not found" "$LINENO" 5
 fi
 
 
