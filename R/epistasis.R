@@ -6,7 +6,6 @@
 #' @param net A network of SNPs.
 #' @return A dataframe with the chi-squared score for each pair of tested SNPs.
 #' @importFrom igraph as_data_frame
-#' @importFrom BiocParallel bpmapply
 #' @export
 measure_epistasis <- function(gwas, net) {
   
@@ -16,7 +15,7 @@ measure_epistasis <- function(gwas, net) {
   X <- as(gwas$genotypes, "numeric")
   colnames(X) <- as.character(gwas$map[,2])
   
-  edges$score <- bpmapply(function(x, y) {
+  edges$score <- mapply(function(x, y) {
     chisq.test(X[,x], X[,y])$statistic
   }, edges$snp1, edges$snp2)
   

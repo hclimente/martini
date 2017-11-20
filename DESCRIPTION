@@ -9,31 +9,31 @@ Description: User-friendly version of GIN (GWAS Incorporating Networks).
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
-    Rcpp (>= 0.12.8),
-    RcppEigen (>= 0.3.3.3.0),
-    Matrix (>= 1.2-7.1),
-    igraph (>= 1.0.1),
-    snpStats (>= 1.20.0),
-    httr (>= 1.2.1),
-    circlize (>= 0.4.0),
-    Gviz (>= 1.18.2),
-    GenomeInfoDb (>= 1.10.3),
-    biomaRt (>= 2.30.0),
-    IRanges (>= 2.8.2),
-    BiocParallel (>= 1.8.2),
-    S4Vectors (>= 0.12.2),
-    GenomicRanges (>= 1.26.4),
-    methods (>= 3.3.2)
+  igraph (>= 1.0.1),
+  Matrix (>= 1.2-7.1),
+  methods (>= 3.3.2),
+  Rcpp (>= 0.12.8),
+  RcppEigen (>= 0.3.3.3.0),
+  snpStats (>= 1.20.0),
+  S4Vectors (>= 0.12.2)
+Suggests:
+  biomaRt (>= 2.30.0),
+  circlize (>= 0.4.0),
+  GenomeInfoDb (>= 1.10.3),
+  GenomicRanges (>= 1.26.4),
+  Gviz (>= 1.18.2),
+  httr (>= 1.2.1),
+  IRanges (>= 2.8.2)
 Depends: R (>= 2.10.0)
 LinkingTo:
-    Rcpp,
-    RcppEigen
+  Rcpp,
+  RcppEigen
 SystemRequirements: gin
 RoxygenNote: 6.0.1
 Suggests:
-    testthat,
-    knitr,
-    rmarkdown
+  testthat,
+  knitr,
+  rmarkdown
 BiocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
-    FeatureExtraction, GraphAndNetwork, Network
+  FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr
