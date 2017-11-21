@@ -14,21 +14,12 @@ r_build_args: --resave-data
 r_packages:
   - covr
   - tidyverse
-  - readr
   - Rcpp
   - RcppEigen
   - Matrix
   - igraph
   - snpStats
-  - httr
-  - circlize
-  - Gviz
-  - GenomeInfoDb
-  - biomaRt
-  - IRanges
-  - BiocParallel
   - S4Vectors
-  - GenomicRanges
 
 before_script:
   - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh

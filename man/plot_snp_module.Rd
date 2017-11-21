@@ -12,7 +12,7 @@ plot_snp_module(cones, k, genome = "hg19")
 \item{k}{Id of the module to plot.}
 
 \item{genome}{Abbreviations of the genome to use: hg19 for human (default),  mm10 for mouse, etc. Argument to be passed to 
-\code{\link{IdeogramTrack}}.}
+\code{\link[Gviz]{IdeogramTrack}}.}
 }
 \value{
 An ideogram per chromosome showing the selected SNPs and the genes in the region.

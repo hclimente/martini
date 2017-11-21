@@ -10,7 +10,7 @@ plot_ideogram(cones, genome = "hg19")
 \item{cones}{Output from \code{SConES}.}
 
 \item{genome}{Abbreviations of the genome to use: hg19 for human (default), mm10 for mouse, etc. Argument to be passed to 
-\code{\link{circos.initializeWithIdeogram}} \code{species}.}
+\code{\link[circlize]{circos.initializeWithIdeogram}} \code{species}.}
 }
 \value{
 A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.

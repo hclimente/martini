@@ -5,7 +5,7 @@
 #' @param cones Results from \code{SConES}.
 #' @param k Id of the module to plot.
 #' @param genome Abbreviations of the genome to use: hg19 for human (default),  mm10 for mouse, etc. Argument to be passed to 
-#' \code{\link{IdeogramTrack}}.
+#' \code{\link[Gviz]{IdeogramTrack}}.
 #' @return An ideogram per chromosome showing the selected SNPs and the genes in the region.
 #' @references Hahne F. and Ivanek R. (2016). "Statistical Genomics: Methods and Protocols." In Mathe E and Davis S (eds.), chapter 
 #' Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 
@@ -51,7 +51,7 @@ plot_snp_module <- function(cones, k, genome = "hg19") {
 #' 
 #' @param cones Output from \code{SConES}.
 #' @param genome Abbreviations of the genome to use: hg19 for human (default), mm10 for mouse, etc. Argument to be passed to 
-#' \code{\link{circos.initializeWithIdeogram}} \code{species}.
+#' \code{\link[circlize]{circos.initializeWithIdeogram}} \code{species}.
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. 
 #' Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
