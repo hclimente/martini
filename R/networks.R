@@ -147,10 +147,11 @@ get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism)
 #' i.e. SNPs mapped to them will be considered mapped to the gene.
 #' @return A dataframe with two columns: one for the SNP and another for the gene it has been 
 #' mapped to.
-#' @importFrom httr GET content stop_for_status
-#' @importFrom biomaRt useMart getBM
-#' @importFrom IRanges IRanges findOverlaps
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
+  
+  check_installed("biomaRt", "snp2gene")
+  check_installed("httr", "snp2gene")
+  check_installed("IRanges", "snp2gene")
   
   # get map in appropriate format
   map <- gwas$map
@@ -160,9 +161,9 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
   urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy, "/id/", organism, "?content-type=application/json")
-  organism <- GET(query)
-  stop_for_status(organism)
-  organism <- content(organism, type ="application/json", encoding="UTF-8")
+  organism <- httr::GET(query)
+  httr::stop_for_status(organism)
+  organism <- httr::content(organism, type ="application/json", encoding="UTF-8")
   organism <- unlist(strsplit(organism$name, " "))
   organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
   
@@ -170,11 +171,11 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   # consider vertebrates and plants
   ensembl <- tryCatch({
     datasetName <- paste0(organism, "_gene_ensembl")
-    useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
+    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
   }, error = function(e){
     tryCatch({
       datasetName <- paste0(organism, "_eg_gene")
-      useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
+      biomaRt::useMart("plants_mart", host="plants.ensembl.org", dataset = datasetName)  
     }, error = function(e) {
       stop(e)
     })
@@ -184,7 +185,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     
     # get genes in the range defined by the snps
     grange <- paste(unique(snps$chr), min(snps$gpos) - flank, max(snps$gpos) + flank, sep = ":")
-    genes <- getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
+    genes <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","start_position","end_position"),
                    filters = c("chromosomal_region", "biotype"),
                    values = list(chromosomal_region=grange, biotype="protein_coding"), 
                    mart = ensembl)
@@ -199,9 +200,9 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
-    isnps <- with(snps, IRanges(gpos, width=1, names=snp))
-    igenes <- with(genes, IRanges(start_position, end_position, names=ensembl_gene_id))
-    olaps <- findOverlaps(isnps, igenes)
+    isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
+    igenes <- with(genes, IRanges::IRanges(start_position, end_position, names=ensembl_gene_id))
+    olaps <- IRanges::findOverlaps(isnps, igenes)
     s2g <- cbind(snps[S4Vectors::queryHits(olaps),], genes[S4Vectors::subjectHits(olaps),])
     s2g$gene <- ifelse(s2g$external_gene_name == "" | is.na(s2g$external_gene_name), s2g$ensembl_gene_id, s2g$external_gene_name)
     subset(s2g, select = c("snp", "gene"))
@@ -219,8 +220,9 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' 
 #' @param organism Organism: human represents human, arabidopsis for Arabidopsis thaliana, etc.
 #' @return A dataframe with two columns with pairs of interacting proteins.
-#' @importFrom httr GET content stop_for_status
 get_ppi <- function(organism = 9606) {
+  
+  check_installed("httr", "get_ppi")
   
   # construct query: all interactions in the requested organism
   baseUrl <- "http://webservice.thebiogrid.org/interactions/?"
@@ -231,18 +233,18 @@ get_ppi <- function(organism = 9606) {
                  paste0("taxId=", organism), sep = "&")
   
   # number of results
-  N <- GET(paste(query, "format=count", sep = "&"))
-  stop_for_status(N)
-  N <- as.numeric(content(N, type="text/csv", encoding="UTF-8", col_types="i"))
+  N <- httr::GET(paste(query, "format=count", sep = "&"))
+  httr::stop_for_status(N)
+  N <- as.numeric(httr::content(N, type="text/csv", encoding="UTF-8", col_types="i"))
   
   # retrieve results in batches
   ppi <- lapply(seq(1, N, 10000), function(i){
     q <- paste(query, paste0("start=", i), sep = "&")
-    req <- GET(q)
-    stop_for_status(req)
+    req <- httr::GET(q)
+    httr::stop_for_status(req)
     
     # parse results
-    biogrid <- content(req, type="text/tab-separated-values", encoding="UTF-8", col_types="cccccccccccccccccccccccc")
+    biogrid <- httr::content(req, type="text/tab-separated-values", encoding="UTF-8", col_types="cccccccccccccccccccccccc")
     p <- subset(biogrid, select=c("Official Symbol Interactor A", "Official Symbol Interactor B"))
     colnames(p) <- c("geneA","geneB")
     return(p)

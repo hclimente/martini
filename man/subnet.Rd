@@ -17,5 +17,5 @@ subnet(net, attr, values)
 A subgraph containing only the vertices with attribute equal to any of the values in \code{values}.
 }
 \description{
-Takes a map file and:
+Returns a subgraph matching some condition.
 }

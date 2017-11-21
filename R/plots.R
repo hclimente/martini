@@ -10,33 +10,35 @@
 #' @references Hahne F. and Ivanek R. (2016). "Statistical Genomics: Methods and Protocols." In Mathe E and Davis S (eds.), chapter 
 #' Visualizing Genomic Data Using Gviz and Bioconductor, pp. 335-351. Springer New York, New York, NY. ISBN 978-1-4939-3578-9, doi: 
 #' 10.1007/978-1-4939-3578-9_16, \url{http://dx.doi.org/10.1007/978-1-4939-3578-9_16}. 
-#' @importFrom GenomicRanges GRanges
-#' @importFrom GenomeInfoDb genome genome<-
-#' @importFrom IRanges IRanges
-#' @importFrom Gviz AnnotationTrack IdeogramTrack GenomeAxisTrack BiomartGeneRegionTrack plotTracks
 #' @export
 plot_snp_module <- function(cones, k, genome = "hg19") {
+  
+  check_installed("GenomeInfoDb", "plot_snp_module")
+  check_installed("GenomicRanges", "plot_snp_module")
+  check_installed("Gviz", "plot_snp_module")
+  check_installed("IRanges", "plot_snp_module")
   
   module <- subset(cones, module %in% k)
   
   by(module, module$chr, function(snps2plot) {
 
-    snpRange <- GRanges(seqnames = paste0("chr", snps2plot$chr), 
-                        ranges = IRanges(start = snps2plot$pos, 
-                                         end = snps2plot$pos) )
-    genome(snpRange) <- genome
-    tsnp <- AnnotationTrack(snpRange, name = "SNP", stacking ="dense")
+    snpRange <- GenomicRanges::GRanges(seqnames = paste0("chr", snps2plot$chr), 
+                        ranges = IRanges::IRanges(start = snps2plot$pos, 
+                                                  end = snps2plot$pos) )
+    GenomeInfoDb::genome(snpRange) <- genome
+    tsnp <- Gviz::AnnotationTrack(snpRange, name = "SNP", stacking ="dense")
 
-    tideo <- IdeogramTrack(genome = genome(snpRange), chromosome = names(genome(snpRange)))
-    tseq <- GenomeAxisTrack()
+    tideo <- Gviz::IdeogramTrack(genome = GenomeInfoDb::genome(snpRange), 
+                           chromosome = names(GenomeInfoDb::genome(snpRange)))
+    tseq <- Gviz::GenomeAxisTrack()
     
-    tbio <- BiomartGeneRegionTrack(genome = genome, 
-                                   chromosome = names(genome(snpRange)),
+    tbio <- Gviz::BiomartGeneRegionTrack(genome = genome, 
+                                   chromosome = names(GenomeInfoDb::genome(snpRange)),
                                    start = head(snps2plot$pos, n = 1), 
                                    end = tail(snps2plot$pos, n = 1), 
                                    name = "Ensembl")
     
-    plotTracks(list(tideo, tseq, tbio, tsnp), showId = TRUE)
+    Gviz::plotTracks(list(tideo, tseq, tbio, tsnp), showId = TRUE)
   })
   
   return(TRUE)
@@ -53,12 +55,13 @@ plot_snp_module <- function(cones, k, genome = "hg19") {
 #' @return A circular ideogram, including the manhattan plot, and the interactions between the selected SNPs.
 #' @references Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). circlize Implements and enhances circular visualization in R. 
 #' Bioinformatics (Oxford, England), 30(19), 2811-2. \url{https://doi.org/10.1093/bioinformatics/btu393}
-#' @importFrom circlize circos.initializeWithIdeogram circos.genomicTrackPlotRegion circos.genomicPoints circos.genomicLink circos.clear
 #' @importFrom igraph %>%
 #' @export
-plot_ideogram <- function(cones, genome = "hg19"){
+plot_ideogram <- function(cones, genome = "hg19") {
   
-  circos.initializeWithIdeogram(species = genome)
+  check_installed("circlize", "plot_ideogram")
+  
+  circlize::circos.initializeWithIdeogram(species = genome)
   
   bed <- map2bed(cones)
   bed$c <- cones$c
@@ -66,12 +69,12 @@ plot_ideogram <- function(cones, genome = "hg19"){
   # order to put the selected snps in fron in the plot
   bed <- bed[with(bed, order(selected)),]
   
-  circos.genomicTrackPlotRegion(bed, 
+  circlize::circos.genomicTrackPlotRegion(bed, 
                                 ylim = c(0, 1.1 * max(bed$c, na.rm = T)), 
                                 panel.fun = function(region, value, ...) {
                                   # color according to selection/non-selection
                                   col = ifelse(value[[2]], "orange", "gray70")
-                                  circos.genomicPoints(region, value, col = col, cex = 0.5, pch = 16)
+                                  circlize::circos.genomicPoints(region, value, col = col, cex = 0.5, pch = 16)
                                 }, track.height = 0.3)
   
   # create links
@@ -89,9 +92,9 @@ plot_ideogram <- function(cones, genome = "hg19"){
   region1 <- subset(links, chr.x != chr.y, select = c("chr.x","start.x","end.x"))
   region2 <- subset(links, chr.x != chr.y, select = c("chr.y","start.y","end.y"))
   
-  circos.genomicLink(region1, region2, col = sample(1:5, nrow(region1), replace = TRUE))
+  circlize::circos.genomicLink(region1, region2, col = sample(1:5, nrow(region1), replace = TRUE))
   
-  circos.clear()
+  circlize::circos.clear()
   
 }
 

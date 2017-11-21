@@ -23,17 +23,16 @@ Suggests:
   GenomicRanges (>= 1.26.4),
   Gviz (>= 1.18.2),
   httr (>= 1.2.1),
-  IRanges (>= 2.8.2)
+  IRanges (>= 2.8.2),
+  knitr,
+  testthat,
+  rmarkdown
 Depends: R (>= 2.10.0)
 LinkingTo:
   Rcpp,
   RcppEigen
 SystemRequirements: gin
 RoxygenNote: 6.0.1
-Suggests:
-  testthat,
-  knitr,
-  rmarkdown
 BiocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr

@@ -17,5 +17,5 @@ subvert(net, attr, values)
 The vertices with attribute equal to any of the values in \code{values}.
 }
 \description{
-Takes a map file and:
+Returns the nodes matching some condition.
 }
