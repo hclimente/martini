@@ -26,6 +26,7 @@ Suggests:
   IRanges (>= 2.8.2),
   knitr,
   testthat,
+  tidyverse,
   rmarkdown
 Depends: R (>= 2.10.0)
 LinkingTo:

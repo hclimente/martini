@@ -14,12 +14,6 @@ r_build_args: --resave-data
 r_packages:
   - covr
   - tidyverse
-  - Rcpp
-  - RcppEigen
-  - Matrix
-  - igraph
-  - snpStats
-  - S4Vectors
 
 before_script:
   - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh
