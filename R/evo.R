@@ -4,6 +4,7 @@
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
+#' @param encoding Genetic model assumed: additive, recessive, dominant or codominant.
 #' @param ... Extra arguments for \code{\link{get_evo_settings}}.
 #' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{

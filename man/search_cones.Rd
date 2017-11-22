@@ -11,6 +11,8 @@ search_cones(gwas, net, encoding = "additive", ...)
 
 \item{net}{An igraph network that connects the SNPs.}
 
+\item{encoding}{Genetic model assumed: additive, recessive, dominant or codominant.}
+
 \item{...}{Extra arguments for \code{\link{get_evo_settings}}.}
 }
 \value{
