@@ -18,10 +18,6 @@ Imports:
   S4Vectors (>= 0.12.2)
 Suggests:
   biomaRt (>= 2.30.0),
-  circlize (>= 0.4.0),
-  GenomeInfoDb (>= 1.10.3),
-  GenomicRanges (>= 1.26.4),
-  Gviz (>= 1.18.2),
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
   knitr,

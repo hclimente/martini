@@ -8,6 +8,7 @@
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V set_edge_attr
+#' @importFrom stats aggregate
 #' @importFrom utils combn head tail
 #' @export
 get_GS_network <- function(gwas)  {

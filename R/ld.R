@@ -7,6 +7,7 @@
 #' @param method How to incorporate LD values into the network.
 #' @return An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
 #' @importFrom igraph E %>% set_edge_attr delete_edges get.edgelist
+#' @importFrom stats cor
 #' @export
 ldweight_edges <- function(net, ld, method = "inverse") {
   

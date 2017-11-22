@@ -37,3 +37,32 @@ check_installed <- function(pkg, fn = "this function") {
          call. = FALSE)
   }
 }
+
+#' Change encoding of dataset
+#' 
+#' @description Converts the encoding from additive to another one.
+#' 
+#' @param X Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for heterozygous and 2 for minor homozygous.
+#' @param encoding Genetic model assumed: additive, recessive, dominant or codominant.
+#' @return A genotype matrix 
+encode_gwas <- function(X, encoding) {
+  
+  if (encoding == "additive") {
+    AA <- 0; AB <- 1; BB <- 2
+  } else if (encoding == "recessive") {
+    AA <- 0; AB <- 0; BB <- 1
+  } else if (encoding == "dominant") {
+    AA <- 0; AB <- 1; BB <- 1
+  } else if (encoding == "codominant") {
+    AA <- 0; AB <- 1; BB <- 0
+  } else {
+    stop("Invalid encoding.", call. = FALSE)
+  }
+  
+  X[X == 0] <- AA
+  X[X == 1] <- AB
+  X[X == 2] <- BB
+  
+  return(X)
+  
+}

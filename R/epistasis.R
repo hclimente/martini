@@ -6,6 +6,7 @@
 #' @param net A network of SNPs.
 #' @return A dataframe with the chi-squared score for each pair of tested SNPs.
 #' @importFrom igraph as_data_frame
+#' @importFrom stats chisq.test
 #' @export
 measure_epistasis <- function(gwas, net) {
   

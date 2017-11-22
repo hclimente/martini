@@ -13,7 +13,7 @@ r:
 r_build_args: --resave-data
 r_packages:
   - covr
-  - tidyverse
+  - testthat
 
 before_script:
   - cd .. && git clone --recursive https://github.com/hclimente/gin.git && gin/install_gin.sh

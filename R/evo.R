@@ -16,9 +16,10 @@
 #' @importFrom igraph simplify as_adj
 #' @importFrom methods as
 #' @export
-search_cones <- function(gwas, net, ...) {
+search_cones <- function(gwas, net, encoding = "additive", ...) {
 
   X <- as(gwas$genotypes, "numeric")
+  X <- encode_gwas(X, encoding)
   Y <- gwas$fam$affected
   
   # remove redundant edges and self-edges
