@@ -4,7 +4,7 @@
 \alias{search_cones}
 \title{Find connected explanatory SNPs.}
 \usage{
-search_cones(gwas, net, ...)
+search_cones(gwas, net, encoding = "additive", ...)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

@@ -64,7 +64,7 @@ We can proceed to search for cones (CONnected Explanatory SNPs). We will choose 
 cones <- search_cones(athal$gwas, athal$gm, associationScore = "chi2")
 ```
 
-```{r check overlap}
+```{r check overlap, eval=FALSE}
 data(athal)
 cones <- athal$cones
 cones$causal <- cones$snp %in% names(athal$causal)
@@ -72,7 +72,7 @@ table(subset(cones, select = c("selected","causal")))
 ```
 We recover all causal 60 SNPs, and 129 false positives. Let's see why they were selected.
 
-```{r manhattan}
+```{r manhattan, eval=FALSE}
 library(tidyverse)
 
 filter(cones, selected) %>%
@@ -87,7 +87,7 @@ filter(cones, selected) %>%
 
 A significant proportion of the causal SNPs do not have a strong association with the phenotype. 
 
-```{r subnetwork}
+```{r subnetwork, eval=FALSE}
 library(igraph)
 
 selected <- subset(cones,selected)
