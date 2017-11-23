@@ -5,16 +5,13 @@
 \title{Get evo settings.}
 \usage{
 get_evo_settings(associationScore = "chi2", modelScore = "bic",
-  encoding = "additive", etas = numeric(), lambdas = numeric(),
-  debug = FALSE)
+  etas = numeric(), lambdas = numeric(), debug = FALSE)
 }
 \arguments{
 \item{associationScore}{Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
 trend.}
 
 \item{modelScore}{Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.}
-
-\item{encoding}{SNP encoding. Possible values: additive (default), resessive, dominant, codominant.}
 
 \item{etas}{Numeric vector with the etas to explore in the grid search. If ommited, it's automatically created based on the association
 scores.}

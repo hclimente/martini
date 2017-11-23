@@ -4,7 +4,7 @@
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
-#' @param encoding Genetic model assumed: additive, recessive, dominant or codominant.
+#' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
 #' @param ... Extra arguments for \code{\link{get_evo_settings}}.
 #' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{
@@ -76,14 +76,13 @@ get_snp_modules <- function(cones, net) {
 #' @param associationScore Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
 #' trend.
 #' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
-#' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
 #' @param etas Numeric vector with the etas to explore in the grid search. If ommited, it's automatically created based on the association
 #' scores.
 #' @param lambdas Numeric vector with the lambdas to explore in the grid search. If ommited, it's automatically created based on the 
 #' association scores.
 #' @param debug Display additional information. Possible values: TRUE, FALSE (default).
 #' @return A list of \code{evo} settings.
-get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", encoding = "additive", etas = numeric(), lambdas = numeric(), 
+get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){
   
   settings <- list()
@@ -112,19 +111,6 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", enco
     settings$modelScore = 4
   } else {
     stop(paste("Error: invalid modelScore", modelScore))
-  }
-  
-  # unsigned int
-  if (encoding == "additive") {
-    settings$encoding = 0
-  } else if (encoding == "recessive") {
-    settings$encoding = 1
-  } else if (encoding == "dominant") {
-    settings$encoding = 2
-  } else if (encoding == "codominant") {
-    settings$encoding = 3
-  } else {
-    stop(paste("Error: invalid encoding", encoding))
   }
   
   # bool
