@@ -6,7 +6,7 @@
 #' @param n Number of causal genes.
 #' @param p Number between 0 and 1, proportion of the SNPs in causal genes that are causal themselves.
 #' @return A vector with the ids of the simulated causal SNPs.
-#' @importFrom igraph vertex_attr V neighbors largest_cliques %>% degree make_ego_graph
+#' @importFrom igraph components V neighbors %>%
 #' @importFrom stats na.omit
 #' @export
 simulate_causal_snps <- function(net, n=20, p=1) {
@@ -33,8 +33,11 @@ simulate_causal_snps <- function(net, n=20, p=1) {
       causal <- subvert(subnet, "gene", causalGenes)
       # sample a proportion p of the snps in the causal genes
       causal <- sample(causal, length(causal) * p)
-      break
       
+      # check that we have at most two subnetworks
+      if (components(subnet(net, "name", names(causal)))$no <= 2) {
+        break
+      }
     }
   }
   
