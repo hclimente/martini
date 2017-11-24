@@ -64,7 +64,8 @@ get_snp_modules <- function(cones, net) {
   colnames(modules) <- "module"
   modules$snp <- rownames(modules)
   
-  cones <- merge(cones, modules, all.x = T)
+  modules <- merge(cones, modules, all.x = T)
+  cones <- modules[match(cones$snp, modules$snp),]
 
   return(cones)
 }
