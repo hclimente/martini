@@ -89,7 +89,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
     stop(paste0("h2 must be between 0 and 1. Current value is ", h2, "."))
   }
   
-  X <- X[, gwas$map$snp.names %in% names(snps)]
+  X <- X[, names(snps)]
   G <- calculateG(effectSize, X, model)
   E <- calculateE(G, h2)
   Y <- G + E
