@@ -24,7 +24,7 @@ Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
   VectorXd etas(Rcpp::as<Eigen::VectorXd>(userSettings["etas"]));
   VectorXd lambdas(Rcpp::as<Eigen::VectorXd>(userSettings["lambdas"]));
   
-  Settings s("", "", userSettings["encoding"], userSettings["modelScore"], userSettings["associationScore"], etas, lambdas, "");
+  Settings s("", "", 0, userSettings["modelScore"], userSettings["associationScore"], etas, lambdas, "");
   
   Shake experiment(X, Y, network);
   experiment.setDebug(userSettings["debug"]);
