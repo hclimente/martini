@@ -4,45 +4,59 @@ data(examplegwas)
 set.seed(0)
 
 # get 20 random snps and 20 random effect sizes
-causal <- sample(igraph::V(examplegwas$net), 20)
+causal <- sample(igraph::V(examplegwas$net), 50)
 eff <- rnorm(length(causal))
 X <- as(examplegwas$gwas$genotypes, "numeric")
 X_causal <- X[, examplegwas$gwas$map$snp.names %in% names(causal)]
 
-# qualitative phenotype
-Y_ql <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
-                           effectSize = eff, 
-                           qualitative = TRUE, ncases = 1500, ncontrols = 1500, prevalence = 0.5)
+# case-control phenotype
+sim_cc <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
+                             effectSize = eff, 
+                             qualitative = TRUE, ncases = 1500, ncontrols = 1500, prevalence = 0.5)
 # quantitative phenotype
-Y_qt <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff)
-# not a phenotype for everyone
-Y_nas <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff,
-                            qualitative = T, ncases = 1400, ncontrols = 1350, prevalence = 0.5)$fam$affected
+sim <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff)
 
 test_that("output is as expected", {
-  expect_type(Y_ql, "list")
-  expect_type(Y_qt, "list")
+  
+  # right class
+  expect_type(sim_cc, "list")
+  expect_type(sim, "list")
+  
+  # only original controls are used
+  expect_equal(nrow(sim_cc$fam), 3000)
+  expect_equal(dim(sim_cc$genotypes), c(3000, 1800))
+  expect_equal(nrow(sim$fam), 3000)
+  expect_equal(dim(sim$genotypes), c(3000, 1800))
+  
 })
 
 test_that("we get the requested number of phenotypes", {
-  expect_equal(sum(is.na(Y_ql)), 0)
-  expect_equal(sum(is.na(Y_qt)), 0)
-  expect_equal(sum(is.na(Y_nas)), 250)
-})
-
-qt_p <- apply(X_causal, 2, function(x){
-  wilcox.test(Y_qt$fam$affected, x)$p.value
-})
-
-ql_p <- apply(X_causal, 2, function(x){
-  df <- data.frame(p = Y_ql$fam$affected, g = x)
-  chsq <- chisq.test(table(df))
-  chsq$p.value
+  
+  expect_equal(sum(is.na(sim_cc)), 0)
+  expect_equal(sum(is.na(sim)), 0)
+  
+  # less requested cases and controls than the total number of samples
+  expect_equal(sum(is.na(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
+                                            effectSize = eff, qualitative = T, 
+                                            ncases = 1400, ncontrols = 1350, 
+                                            prevalence = 0.5)$fam$affected)), 250)
+  
 })
 
 test_that("there is an association between phenotype and genotype", {
-  expect_gt(sum(ql_p < 0.05), 10)
-  expect_gt(sum(qt_p < 0.05), 10)
+  
+  cc_p <- apply(X_causal, 2, function(x){
+    df <- data.frame(p = sim_cc$fam$affected, g = x)
+    chsq <- chisq.test(table(df))
+    chsq$p.value
+  })
+  expect_gt(sum(cc_p < 0.05), 20)
+  
+  qt_p <- apply(X_causal, 2, function(x){
+    wilcox.test(sim$fam$affected, x)$p.value
+  })
+  expect_gt(sum(qt_p < 0.05), 20)
+  
 })
 
 test_that("errors when it should", {

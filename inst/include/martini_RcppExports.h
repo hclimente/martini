@@ -44,25 +44,6 @@ namespace martini {
         return Rcpp::as<List >(rcpp_result_gen);
     }
 
-    inline List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings) {
-        typedef SEXP(*Ptr_run_shake)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr_run_shake p_run_shake = NULL;
-        if (p_run_shake == NULL) {
-            validateSignature("List(*run_shake)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
-            p_run_shake = (Ptr_run_shake)R_GetCCallable("martini", "_martini_run_shake");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_run_shake(Shield<SEXP>(Rcpp::wrap(X)), Shield<SEXP>(Rcpp::wrap(Y)), Shield<SEXP>(Rcpp::wrap(network)), Shield<SEXP>(Rcpp::wrap(userSettings)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<List >(rcpp_result_gen);
-    }
-
 }
 
 #endif // RCPP_martini_RCPPEXPORTS_H_GEN_

@@ -27,19 +27,6 @@ run_scones <- function(c, eta, lambda, W) {
     .Call('_martini_run_scones', PACKAGE = 'martini', c, eta, lambda, W)
 }
 
-#' Run shake.
-#' 
-#' @description Run shake.
-#' 
-#' @param X A matrix with the genotypes.
-#' @param Y A vector with the phenptypes.
-#' @param network A sparse matrix containing the adjacency matrix of the network.
-#' @param userSettings A named list with the settings.
-#' @return An object with the shake results.
-run_shake <- function(X, Y, network, userSettings) {
-    .Call('_martini_run_shake', PACKAGE = 'martini', X, Y, network, userSettings)
-}
-
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
     .Call('_martini_RcppExport_registerCCallable', PACKAGE = 'martini')

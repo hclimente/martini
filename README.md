@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/hclimente/martini.svg?branch=master)](https://travis-ci.org/hclimente/martini)
 [![codecov](https://codecov.io/gh/hclimente/martini/branch/master/graph/badge.svg)](https://codecov.io/gh/hclimente/martini)
 
-martini is an R interface of [gin](https://github.com/hclimente/gin). gin performs GWAS incorporating prior knowledge, namely biological networks. martini provides an R interface for gin's signature `find_cones` function, and extends it useful functions for data preprocessing, and plotting and analyzing the results.
+martini is an R interface of [gin](https://github.com/hclimente/gin). gin performs GWAS incorporating prior knowledge, namely biological networks. martini provides an R interface for gin's signature `search_cones` function, and extends it useful functions for data preprocessing, and plotting and analyzing the results.
 
 # Installation
 
@@ -31,18 +31,18 @@ The example data contains two variables:
 martini uses igraph networks of SNPs. The user can connect them according to gene membership, sequence contiguity, protein-protein interactions, etc.
 
 ```{r}
-g <- find_cones(gwas, net)
+g <- search_cones(examplegwas$gwas, examplegwas$net)
 ```
 
-`find_cones` is the main function in martini. Additional arguments can be passed. `find_cones` returns a copy of the `map` from the `gwas` object, which contain information of the SNPs (name, chromosome, genomic position...). `find_cones` adds three columns.
+`search_cones` is the main function in martini. Additional arguments can be passed. `search_cones` returns a copy of the `map` from the `gwas` object, which contain information of the SNPs (name, chromosome, genomic position...). `search_cones` adds three columns.
 
-- `C` is a numeric vector with the association scone for each SNP.
-- `selected` is a boolean vector informing about if the SNP was selected or not by `find_cones`.
+- `c` is a numeric vector with the association scone for each SNP.
+- `selected` is a boolean vector informing about if the SNP was selected or not by `search_cones`.
 - `module` is a integer vector with information about which SNPs is adjacent to which SNP in the network. The integer is the identifier of that module (NA if the SNP is disconnected from any other selected SNP).
 
 ```{r}
 head(g)
-#   V1 snp.names V3 V4 allele.1 allele.2         C  selected   module
+#   V1 snp.names V3 V4 allele.1 allele.2         c  selected   module
 # 1  1       1_1  0  1        A        T 361.13735     FALSE       NA
 # 2  1       1_2  0  2        T        A 344.29586     FALSE       NA
 # 3  1       1_3  0  3        T        A 894.68186     FALSE        1
@@ -61,17 +61,18 @@ data(examplegwas)
 simulation <- data.frame(causal = logical(1800) )
 
 # simulate 20 causal SNPs, interconnected in the PPI network
-simulation$causal <- simulate_causal_snps(gwas, net, 20)
+simulation$causal <- simulate_causal_snps(examplegwas$gwas, examplegwas$net, 20)
 
 # get their effect sizes from a normal distribution and simulate the phenotype
 simulation$effectSize[simulation$causal] <- rnorm(sum(simulation$causal))
-Y.simu <- simulate_phenotype(gwas, simulation$causal, 
-                            h2 = 1, 
-                            effectSize = simulation$effectSize[simulation$causal], 
-                            qualitative = TRUE, ncases = 3000, ncontrols = 3000)
+Y.simu <- simulate_phenotype(examplegwas$gwas, 
+                             simulation$causal, 
+                             h2 = 1, 
+                             effectSize = simulation$effectSize[simulation$causal], 
+                             qualitative = TRUE, ncases = 1500, ncontrols = 1500)
 
 # study the association between the SNPs and the phenotype
-simulation$pval <- apply(as(gwas$genotypes, "numeric"), 2, function(x){
+simulation$pval <- apply(as(examplegwas$gwas$genotypes, "numeric"), 2, function(x){
     df <- data.frame(p = Y.simu, g = x)
     chsq <- chisq.test(table(df))
     chsq$p.value

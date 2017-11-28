@@ -9,7 +9,7 @@ calculateG(u, X, model)
 \arguments{
 \item{u}{A vector with the effect size of each SNP.}
 
-\item{X}{Genotypes.}
+\item{X}{Genotypes in a numeric matrix, where each row is a sample and each column a SNP.}
 
 \item{model}{Genetic model to assume.}
 }

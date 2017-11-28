@@ -56,46 +56,12 @@ RcppExport SEXP _martini_run_scones(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, S
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// run_shake
-List run_shake(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings);
-static SEXP _martini_run_shake_try(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> >::type network(networkSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type userSettings(userSettingsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_shake(X, Y, network, userSettings));
-    return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _martini_run_shake(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_martini_run_shake_try(XSEXP, YSEXP, networkSEXP, userSettingsSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error(CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
-}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _martini_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
         signatures.insert("List(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
-        signatures.insert("List(*run_shake)(Eigen::MatrixXd,Eigen::VectorXd,Eigen::SparseMatrix<double,Eigen::ColMajor>,Rcpp::List)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -103,7 +69,6 @@ static int _martini_RcppExport_validate(const char* sig) {
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _martini_RcppExport_registerCCallable() { 
     R_RegisterCCallable("martini", "_martini_run_scones", (DL_FUNC)_martini_run_scones_try);
-    R_RegisterCCallable("martini", "_martini_run_shake", (DL_FUNC)_martini_run_shake_try);
     R_RegisterCCallable("martini", "_martini_RcppExport_validate", (DL_FUNC)_martini_RcppExport_validate);
     return R_NilValue;
 }
@@ -111,7 +76,6 @@ RcppExport SEXP _martini_RcppExport_registerCCallable() {
 static const R_CallMethodDef CallEntries[] = {
     {"_martini_evo", (DL_FUNC) &_martini_evo, 4},
     {"_martini_run_scones", (DL_FUNC) &_martini_run_scones, 4},
-    {"_martini_run_shake", (DL_FUNC) &_martini_run_shake, 4},
     {"_martini_RcppExport_registerCCallable", (DL_FUNC) &_martini_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };
