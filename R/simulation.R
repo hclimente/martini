@@ -155,4 +155,6 @@ calculateE <- function(G, h2) {
   residual.var <- var(G) * (1/h2 - 1)
   residual <- rnorm(length(G), sd = sqrt(residual.var))
   
+  return(residual)
+  
 }
