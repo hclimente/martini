@@ -6,7 +6,7 @@ set.seed(0)
 # get 20 random snps and 20 random effect sizes
 causal <- sample(igraph::V(examplegwas$net), 50)
 eff <- rnorm(length(causal))
-X <- as(examplegwas$gwas$genotypes, "matrix")
+X <- as(examplegwas$gwas$genotypes, "numeric")
 X_causal <- X[, examplegwas$gwas$map$snp.names %in% names(causal)]
 
 # case-control phenotype

@@ -11,7 +11,7 @@ test_that("get_ld_from_gwas output has the right shape", {
   expect_equal(nrow(ld), nrow(unique(ld)))
 })
 
-X <- as(gwas$genotypes, "matrix")
+X <- as(gwas$genotypes, "numeric")
 rs275 <- X[gwas$fam$affected == 1, gwas$map$snp=="rs275"]
 rs276 <- X[gwas$fam$affected == 1, gwas$map$snp=="rs276"]
 rs1109 <- X[gwas$fam$affected == 1, gwas$map$snp=="rs1109"]

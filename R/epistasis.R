@@ -13,7 +13,7 @@ measure_epistasis <- function(gwas, net) {
   edges <- as_data_frame(net, what = "edges")
   colnames(edges) <- c("snp1", "snp2")
   
-  X <- as(gwas$genotypes, "matrix")
+  X <- as(gwas$genotypes, "numeric")
   colnames(X) <- as.character(gwas$map[,2])
   
   edges$score <- mapply(function(x, y) {

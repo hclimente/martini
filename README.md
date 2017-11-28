@@ -72,7 +72,7 @@ Y.simu <- simulate_phenotype(examplegwas$gwas,
                              qualitative = TRUE, ncases = 1500, ncontrols = 1500)
 
 # study the association between the SNPs and the phenotype
-simulation$pval <- apply(as(examplegwas$gwas$genotypes, "matrix"), 2, function(x){
+simulation$pval <- apply(as(examplegwas$gwas$genotypes, "numeric"), 2, function(x){
     df <- data.frame(p = Y.simu, g = x)
     chsq <- chisq.test(table(df))
     chsq$p.value
