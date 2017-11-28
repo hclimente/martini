@@ -52,7 +52,7 @@ get_ld <- function(gwas, window = 5e4) {
   map <- gwas$map
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   
-  X <- as(gwas$genotypes, "numeric")
+  X <- as(gwas$genotypes, "matrix")
   
   # select only controls
   binary <- (unique(gwas$fam$affected) %>% length) == 2

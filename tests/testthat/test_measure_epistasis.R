@@ -5,7 +5,7 @@ subnet <- igraph::delete_edges(examplegwas$net, sample(igraph::E(examplegwas$net
 epistasis <- measure_epistasis(examplegwas$gwas, subnet)
 edges <- igraph::as_data_frame(subnet, what = "edges")
 colnames(edges) <- c("snp1", "snp2")
-X <- as(examplegwas$gwas$genotypes, "numeric")
+X <- as(examplegwas$gwas$genotypes, "matrix")
 colnames(X) <- as.character(examplegwas$gwas$map[,2])
 
 test_that("we calculate epistasis among the expected edges", {

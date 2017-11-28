@@ -79,7 +79,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
     gwas$fam <- gwas$fam[gwas$fam$affected == 1, ]
   }
   
-  X <- as(gwas$genotypes, "numeric")
+  X <- as(gwas$genotypes, "matrix")
   
   if (any(! names(snps) %in% gwas$map$snp.names)) {
     stop(paste("The following causal SNPs are not in the SNP list:", 

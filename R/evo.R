@@ -19,7 +19,7 @@
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", ...) {
 
-  X <- as(gwas$genotypes, "numeric")
+  X <- as(gwas$genotypes, "matrix")
   X <- encode_gwas(X, encoding)
   Y <- gwas$fam$affected
   
