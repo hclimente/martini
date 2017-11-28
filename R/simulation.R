@@ -121,18 +121,20 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
 #' @description Calculates the genetic component of the phenotype from a genotype.
 #' 
 #' @param u A vector with the effect size of each SNP.
-#' @param X Genotypes.
+#' @param X Genotypes in a numeric matrix, where each row is a sample and each column a SNP.
 #' @param model Genetic model to assume.
 #' @return A vector with the genetic component of each sample.
 calculateG <- function(u, X, model) {
   
+  X <- t(X)
+  
   # calculate weights w
-  p <- (2 * colSums(X == 2) + colSums(X == 1)) / (2 * nrow(X))
-  x <- 2 * (X == 2) + (X == 1)
+  p <- (2 * rowSums(X == 0) + rowSums(X == 1)) / (2 * ncol(X))
+  x <- 2 * (X == 0) + (X == 1)
   w <- (x - 2 * p) / sqrt(2 * p * (1 - p))
   
   if (model == "additive") {
-    G <- colSums(t(w) * u)
+    G <- colSums(w * u)
   } else {
     stop(paste0("Genetic model ", model, " not recognised."))
   }
