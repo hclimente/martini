@@ -19,19 +19,9 @@ Y_qt <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff)
 Y_nas <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff,
                             qualitative = T, ncases = 1400, ncontrols = 1350, prevalence = 0.5)$fam$affected
 
-test_that("simulate_phenotype runs as expected", {
+test_that("output is as expected", {
   expect_type(Y_ql, "list")
   expect_type(Y_qt, "list")
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T), 
-               'argument "ncases" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4), 
-               'argument "ncontrols" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500), 
-               'argument "prevalence" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4, ncontrols = 1e4, prevalence = 0.1), 
-               "Requested number of cases and controls too high (> # samples).", fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500, prevalence = 0.1), 
-               "Requested number of cases too high (> # samples * prevalence).", fixed=TRUE)
 })
 
 test_that("we get the requested number of phenotypes", {
@@ -53,4 +43,32 @@ ql_p <- apply(X_causal, 2, function(x){
 test_that("there is an association between phenotype and genotype", {
   expect_gt(sum(ql_p < 0.05), 10)
   expect_gt(sum(qt_p < 0.05), 10)
+})
+
+test_that("errors when it should", {
+  
+  source("big_network.R")
+  badCausal <- sample(igraph::V(gi), 10)
+  
+  # general errors
+  expect_error(simulate_phenotype(examplegwas$gwas, badCausal, h2 = 1, effectSize = eff),
+               paste("The following causal SNPs are not in the SNP list:", 
+                     paste(names(badCausal), collapse = ",")), fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1.5, effectSize = eff),
+               "h2 must be between 0 and 1. Current value is 1.5.", fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = -1.5, effectSize = eff),
+               "h2 must be between 0 and 1. Current value is -1.5.", fixed=TRUE)
+  
+  # errors related to qualitative phenotypes
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T), 
+               'argument "ncases" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4), 
+               'argument "ncontrols" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500), 
+               'argument "prevalence" is missing, with no default', fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4, ncontrols = 1e4, prevalence = 0.1), 
+               "Requested number of cases and controls too high (> # samples).", fixed=TRUE)
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500, prevalence = 0.1), 
+               "Requested number of cases too high (> # samples * prevalence).", fixed=TRUE)
+  
 })

@@ -45,3 +45,11 @@ test_that("additive effects are the sum of the effects of individual SNPs", {
   expect_equal(G, G1 + G2 + G3)
   
 })
+
+test_that("errors when it should", { 
+  
+  X <- matrix(c(0,1,2), 3, 1)
+  
+  expect_error(calculateG(1, X, "xyz"), "Genetic model xyz not recognised.", fixed=TRUE)
+  
+})
