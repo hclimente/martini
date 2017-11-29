@@ -28,6 +28,10 @@ test_that("output is as expected", {
   expect_equal(nrow(sim$fam), 3000)
   expect_equal(dim(sim$genotypes), c(3000, 1800))
   
+  # genotypes are still a SnpMatrix
+  expect_equal(class(sim$genotypes)[1], "SnpMatrix")
+  expect_equal(class(sim_cc$genotypes)[1], "SnpMatrix")
+  
 })
 
 test_that("we get the requested number of phenotypes", {

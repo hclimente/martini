@@ -65,9 +65,10 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' prevalence * number of samples. Required if qualitative = TRUE.
 #' @return A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
 #' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
-#' @importFrom utils head tail
+#' @importMethodsFrom snpStats "["
 #' @importFrom stats rnorm var
-#' @importFrom methods as
+#' @importFrom utils head tail
+#' @importMethodsFrom snpStats "["
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
                                qualitative = FALSE, ncases, ncontrols, prevalence){
