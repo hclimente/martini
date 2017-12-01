@@ -1,3 +1,7 @@
+library(igraph)
+
+# MAKE GWAS OBJECT
+## map
 gwas <- list()
 gwas$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
@@ -28,6 +32,25 @@ gwas$map <- read.table(text = "
                        2 2D3 0 85 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
 
+## genotypes
+N <- 100
+sol <- grepl("[AC]", gwas$map$snp.names)
+pCausal <- sum(sol)
+pNonCausal <- nrow(gwas$map) - pCausal
+causal <- c(rep(2, N/2), rep(0, N/2))
+rest <- rep(0,N)
+
+X <- do.call(cbind, lapply(sol, function(x) if(x) causal else rest))
+colnames(X) <- gwas$map$snp.names
+Xp <- X + 1
+mode(Xp) <- "raw"
+gwas$genotypes <- new("SnpMatrix", Xp)
+
+## phenotypes
+Y <- c(rep(2, N/2), rep(1, N/2))
+gwas$fam <- data.frame(affected = Y)
+
+## MAKE NETWORKS
 snpMapping <- data.frame(snp = gwas$map$snp.names,
                          gene = substr(gwas$map$snp.names, 2, 2))
 snpMapping <- subset(snpMapping, gene != "-")
@@ -41,3 +64,4 @@ ppi <- read.table(text = "
 gs <- get_GS_network(gwas)
 gm <- get_GM_network(gwas, snpMapping = snpMapping)
 gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
+W <- as_adj(gi)

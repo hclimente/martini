@@ -19,6 +19,7 @@
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", ...) {
 
+  colnames(gwas$map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   X <- as(gwas$genotypes, "numeric")
   X <- encode_gwas(X, encoding)
   Y <- gwas$fam$affected
@@ -28,7 +29,7 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
   W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
   
   # order according to order in map
-  W <- W[gwas$map$snp.names, gwas$map$snp.names]
+  W <- W[gwas$map$snp, gwas$map$snp]
   
   settings <- get_evo_settings(...)
   
@@ -36,7 +37,6 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
   cat("eta =", test$eta, "\nlambda =", test$lambda, "\n")
   
   cones <- gwas$map
-  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   cones$c <- test$c
   cones$selected <- as.logical(test$selected)
   
