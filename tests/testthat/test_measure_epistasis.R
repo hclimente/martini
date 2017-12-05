@@ -1,5 +1,5 @@
 library(martini)
-data(examplegwas)
+load("examplegwas.rda")
 
 subnet <- igraph::delete_edges(examplegwas$net, sample(igraph::E(examplegwas$net), 39564))
 epistasis <- measure_epistasis(examplegwas$gwas, subnet)

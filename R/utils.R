@@ -31,6 +31,7 @@ subvert <- function(net, attr, values) {
 #' 
 #' @param pkg Name of the package.
 #' @param fn Function calling the check.
+#' @return The package is loaded into the namespace.
 check_installed <- function(pkg, fn = "this function") {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(paste(pkg, "needed for", fn, "to work. Please install it."),

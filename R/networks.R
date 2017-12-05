@@ -10,6 +10,8 @@
 #' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V set_edge_attr
 #' @importFrom stats aggregate
 #' @importFrom utils combn head tail
+#' @example
+#' get_GS_network(minigwas)
 #' @export
 get_GS_network <- function(gwas)  {
   
@@ -50,6 +52,8 @@ get_GS_network <- function(gwas)  {
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph %>% graph_from_data_frame simplify set_vertex_attr V set_edge_attr
 #' @importFrom utils combn
+#' @examples 
+#' get_GM_network(minigwas, snpMapping = minisnpMapping)
 #' @export
 get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))  {
   
@@ -102,6 +106,8 @@ get_GM_network <- function(gwas, organism = 9606, snpMapping = snp2gene(gwas, or
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph graph_from_data_frame simplify set_edge_attr
+#' @examples 
+#' get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' @export
 get_GI_network <- function(gwas, organism, snpMapping = snp2gene(gwas, organism), ppi = get_ppi(organism))  {
   

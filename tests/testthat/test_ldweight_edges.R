@@ -1,4 +1,5 @@
 library(martini)
+load("examplegwas.rda")
 
 gwas <- examplegwas$gwas
 ld <- data.frame(key = c("rs1101-rs1101", "rs1101-rs1103", "rs1102-rs1103"),

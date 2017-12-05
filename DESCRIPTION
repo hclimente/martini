@@ -10,12 +10,12 @@ License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
   igraph (>= 1.0.1),
-  Matrix (>= 1.2-7.1),
   methods (>= 3.3.2),
   Rcpp (>= 0.12.8),
-  RcppEigen (>= 0.3.3.3.0),
   snpStats (>= 1.20.0),
-  S4Vectors (>= 0.12.2)
+  S4Vectors (>= 0.12.2),
+  stats,
+  utils
 Suggests:
   biomaRt (>= 2.30.0),
   httr (>= 1.2.1),
@@ -24,12 +24,12 @@ Suggests:
   testthat,
   tidyverse,
   rmarkdown
-Depends: R (>= 2.10.0)
+Depends: R (>= 3.4)
 LinkingTo:
   Rcpp,
-  RcppEigen
+  RcppEigen (>= 0.3.3.3.0)
 SystemRequirements: gin
 RoxygenNote: 6.0.1
-BiocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
+biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr

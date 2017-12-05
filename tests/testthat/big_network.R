@@ -48,7 +48,12 @@ gwas$genotypes <- new("SnpMatrix", Xp)
 
 ## phenotypes
 Y <- c(rep(2, N/2), rep(1, N/2))
-gwas$fam <- data.frame(affected = Y)
+gwas$fam <- data.frame(pedigree = 1:N,
+                       member = 1:N,
+                       father = NA,
+                       mother = NA,
+                       sex = sample(c(1,2), N, replace = T),
+                       affected = Y)
 
 ## MAKE NETWORKS
 snpMapping <- data.frame(snp = gwas$map$snp.names,
@@ -65,3 +70,28 @@ gs <- get_GS_network(gwas)
 gm <- get_GM_network(gwas, snpMapping = snpMapping)
 gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
 W <- as_adj(gi)
+
+solution <- search_cones(gwas, gi)
+
+# CREATE MINI
+# minigwas = gwas
+# minigs = gs
+# minigm = gm
+# minigi = gi
+# miniX = X
+# miniY = Y
+# miniW = W
+# minisnpMapping = snpMapping
+# minippi = ppi
+# miniSolution = solution
+# 
+# save(minigwas, file = "data/minigwas.rda")
+# save(minigs, file = "data/minigs.rda")
+# save(minigm, file = "data/minigm.rda")
+# save(minigi, file = "data/minigi.rda")
+# save(miniX, file = "data/miniX.rda")
+# save(miniY, file = "data/miniY.rda")
+# save(miniW, file = "data/miniW.rda")
+# save(minisnpMapping, file = "data/minisnpMapping.rda")
+# save(minippi, file = "data/minippi.rda")
+# save(miniSolution, file = "data/miniSolution.rda")

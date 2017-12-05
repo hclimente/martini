@@ -1,11 +1,14 @@
 library(martini)
 
-source("big_network.R")
+miniX <- as(minigwas$genotypes, "numeric")
+miniY <- minigwas$fam$affected
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+miniW <- igraph::as_adj(gi)
 
 test_that("output is as expected", {
   
   settings <- get_evo_settings(etas = 1, lambdas = 2)
-  test <- evo(X, Y, W, settings)
+  test <- evo(miniX, miniY, miniW, settings)
   
   expect_equal(length(test), 4)
   expect_equal(class(test), "list")
@@ -19,14 +22,14 @@ test_that("output is as expected", {
 test_that("we recover causal SNPs", {
   
   settings <- get_evo_settings(etas = 1, lambdas = 2)
-  test <- evo(X, Y, W, settings)
+  test <- evo(miniX, miniY, miniW, settings)
   
-  expect_equal(sum(test$selected), ncol(X))
+  expect_equal(sum(test$selected), ncol(miniX))
   
   settings <- get_evo_settings()
-  test <- evo(X, Y, W, settings)
+  test <- evo(miniX, miniY, miniW, settings)
   
-  expect_equal(sum(test$selected[sol]), pCausal)
-  expect_equal(test$c[sol], rep(96.15385, pCausal), tolerance = 1e-5)
+  expect_equal(sum(test$selected), sum(grepl("[AC]", minigwas$map$snp.names)))
+  expect_equal(test$c[test$selected], rep(96.15385, sum(test$selected)), tolerance = 1e-5)
   
 })

@@ -11,6 +11,9 @@ check_installed(pkg, fn = "this function")
 
 \item{fn}{Function calling the check.}
 }
+\value{
+The package is loaded into the namespace.
+}
 \description{
 Checks if a package is installed, launches an error if it is not.
 }

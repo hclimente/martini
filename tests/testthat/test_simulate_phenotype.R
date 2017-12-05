@@ -1,5 +1,5 @@
 library(martini)
-data(examplegwas)
+load("examplegwas.rda")
 
 set.seed(0)
 

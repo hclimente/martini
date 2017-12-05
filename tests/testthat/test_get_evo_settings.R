@@ -1,5 +1,4 @@
 library(martini)
-data(examplegwas)
 
 set.seed(0)
 

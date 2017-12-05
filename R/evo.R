@@ -16,6 +16,11 @@
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
 #' @importFrom methods as
+#' @examples
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' search_cones(minigwas, gi)
+#' search_cones(minigwas, gi, encoding = "recessive")
+#' search_cones(minigwas, gi, associationScore = "skat")
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", ...) {
 
@@ -64,7 +69,7 @@ get_snp_modules <- function(cones, net) {
   colnames(modules) <- "module"
   modules$snp <- rownames(modules)
   
-  modules <- merge(cones, modules, all.x = T)
+  modules <- merge(cones, modules, all.x = TRUE)
   cones <- modules[match(cones$snp, modules$snp),]
 
   return(cones)

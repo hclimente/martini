@@ -1,12 +1,26 @@
-#' Description of the examplegwas data.
+#' Description of the minigwas dataset.
 #'
-#' @name examplegwas
+#' @name minigwas
 #' @docType data
-#' @description Simulated genotype of 1800 SNPs over 6000 samples (3000 cases and 3000 controls).
+#' @description Small GWAS example.
 #' @format A list with 3 items:
 #' \describe{
-#'   \item{gwas}{Genotype and phenotype information.}
-#'   \item{net}{Simulated network.}
-#'   \item{cones}{Result of runing \code{find_cones} with gwas and net.}
+#'   \item{genotypes}{Genotype and phenotype information.}
+#'   \item{fam}{Simulated network.}
+#'   \item{map}{Result of runing \code{find_cones} with gwas and net.}
 #' }
+NULL
+
+#' Genes for the minigwas dataset.
+#'
+#' @name minisnpMapping
+#' @docType data
+#' @description Data frame that maps SNPs from minigwas to their gene.
+NULL
+
+#' PPIs for the minigwas dataset.
+#'
+#' @name minippi
+#' @docType data
+#' @description Data frame describing pairs of proteins that interact for minigwas.
 NULL

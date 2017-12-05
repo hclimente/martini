@@ -1,6 +1,5 @@
 library(martini)
-data(examplegwas)
-
+load("examplegwas.rda")
 set.seed(0)
 
 test_that("the ordering of the map is not relevant", {

@@ -15,13 +15,12 @@ test_that("conversions are right", {
 })
 
 test_that("output is as expected", {
+
+  miniX <- as(minigwas$genotypes, "numeric")
+  Xr <- encode_gwas(miniX, "recessive")
   
-  data(examplegwas)
-  Xa <- as(examplegwas$gwas$genotypes, "numeric")
-  Xr <- encode_gwas(Xa, "recessive")
-  
-  expect_equal(dim(Xa), dim(Xr))
-  expect_equal(Xa, encode_gwas(Xa, "additive"))
+  expect_equal(dim(miniX), dim(Xr))
+  expect_equal(miniX, encode_gwas(miniX, "additive"))
   
 })
 
