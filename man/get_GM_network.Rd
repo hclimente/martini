@@ -9,21 +9,26 @@ get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{organism}{Tax ID of the studied organism. Required if snpMapping is not provided.}
+\item{organism}{Tax ID of the studied organism. Required if snpMapping is not
+provided.}
 
-\item{snpMapping}{A data frame with two columns: snp id (1st column) and gene it maps to (2nd column).}
+\item{snpMapping}{A data frame with two columns: snp id (1st column) and gene
+it maps to (2nd column).}
 }
 \value{
 An igraph network of the GM network of the SNPs.
 }
 \description{
-Creates a network of SNPs where each SNP is connected as in the GS network and, in addition, to all the other SNPs 
-pertaining to the same gene. Corresponds to the GM network described by Azencott et al.
+Creates a network of SNPs where each SNP is connected as in the
+GS network and, in addition, to all the other SNPs pertaining to the same
+gene. Corresponds to the GM network described by Azencott et al.
 }
 \examples{
 get_GM_network(minigwas, snpMapping = minisnpMapping)
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
+mapping with graph cuts. Bioinformatics, 29(13), 171-179.
+\url{https://doi.org/10.1093/bioinformatics/btt238}
 }

@@ -42,6 +42,7 @@ rest <- rep(0,N)
 
 X <- do.call(cbind, lapply(sol, function(x) if(x) causal else rest))
 colnames(X) <- gwas$map$snp.names
+rownames(X) <- 1:nrow(X)
 Xp <- X + 1
 mode(Xp) <- "raw"
 gwas$genotypes <- new("SnpMatrix", Xp)

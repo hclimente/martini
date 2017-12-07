@@ -17,3 +17,8 @@ A list with the modules of selected SNPs.
 \description{
 Find modules composed by interconnected SNPs.
 }
+\examples{
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+cones <- search_cones(minigwas, gi)
+get_snp_modules(cones, gi)
+}

@@ -10,24 +10,31 @@ get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{organism}{Tax ID of the studied organism. Required if snpMapping is not provided.}
+\item{organism}{Tax ID of the studied organism. Required if snpMapping is not
+provided.}
 
-\item{snpMapping}{A data frame with minimum two columns: snp id (1st column) and gene it maps to (2nd column).}
+\item{snpMapping}{A data frame with minimum two columns: snp id (1st column)
+and gene it maps to (2nd column).}
 
-\item{ppi}{A data frame describing protein-protein interactions with at least two colums. The first two columns must be the gene ids of 
-the interacting proteins.}
+\item{ppi}{A data frame describing protein-protein interactions with at least
+two colums. The first two columns must be the gene ids of the interacting
+proteins.}
 }
 \value{
 An igraph network of the GI network of the SNPs.
 }
 \description{
-Creates a network of SNPs where each SNP is connected as in the GM network and, in addition, to all the other SNPs 
-pertaining to any interactor of the gene it is mapped to. Corresponds to the GI network described by Azencott et al.
+Creates a network of SNPs where each SNP is connected as in the
+GM network and, in addition, to all the other SNPs pertaining to any
+interactor of the gene it is mapped to. Corresponds to the GI network
+described by Azencott et al.
 }
 \examples{
 get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
+mapping with graph cuts. Bioinformatics, 29(13), 171-179.
+\url{https://doi.org/10.1093/bioinformatics/btt238}
 }

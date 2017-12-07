@@ -15,5 +15,6 @@ calculateE(G, h2)
 A vector with the environmental component of each sample.
 }
 \description{
-Calculates the environmental component of the phenotype using the variance in the genetic component.
+Calculates the environmental component of the phenotype using
+the variance in the genetic component.
 }

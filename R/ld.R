@@ -1,25 +1,31 @@
 #' Include LD information in the network.
 #' 
-#' @description Include LD information in the SNP network. Only work for human SNPs.
+#' @description Include LD information in the SNP network. Only work for human
+#' SNPs.
 #' 
 #' @param net A SNP network.
 #' @param ld Data frame with linkage disequilibrium, like \code{get_ld} output.
 #' @param method How to incorporate LD values into the network.
-#' @return An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
+#' @return An SNP network where the edges weight 1 - LD, measured as Pearson
+#' correlation.
 #' @importFrom igraph E %>% set_edge_attr delete_edges get.edgelist
 #' @importFrom stats cor
 #' @export
 ldweight_edges <- function(net, ld, method = "inverse") {
   
-  edges <- get.edgelist(net) %>% apply(1, sort) %>% t %>% apply(1, paste, collapse = "-")
+  edges <- get.edgelist(net) %>% 
+    apply(1, sort) %>% 
+    t %>% 
+    apply(1, paste, collapse = "-")
   ld <- subset(ld, key %in% edges)
   
   snps <- strsplit(ld$key, "-") %>% unlist
+  idx <- E(net, P=snps)
   
   if (method == "inverse") {
-    net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = 1 / (1 + ld$r2))
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ld$r2))
   } else if (method == "subtraction") {
-    net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = 1 - ld$r2)
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 - ld$r2)
   }
   
   if (any(is.na(E(net)$weight))) {
@@ -38,13 +44,14 @@ ldweight_edges <- function(net, ld, method = "inverse") {
 
 #' Calculate LD in the datasets
 #' 
-#' @description Calculate LD as pairwise correlations in the GWAS dataset. Creates a sliding window for each SNP and calculates all the 
-#' pairwise correlations inside that window.
+#' @description Calculate LD as pairwise correlations in the GWAS dataset.
+#' Creates a sliding window for each SNP and calculates all the pairwise 
+#' correlations inside that window.
 #' 
 #' @param gwas A GWAS experiment, in snpMatrix form.
 #' @param window Window size.
-#' @return An dataframe with a column key, with SNP ids separated by a "-" character, and an r2 column, 
-#' containing the Pearson correlation.
+#' @return An dataframe with a column key, with SNP ids separated by a "-"
+#' character, and an r2 column, containing the Pearson correlation.
 #' @importFrom igraph %>%
 #' @export
 get_ld <- function(gwas, window = 5e4) {
@@ -92,7 +99,7 @@ get_ld <- function(gwas, window = 5e4) {
   unique
   
   ld$key <- as.character(ld$key)
-  # remove cases where LD cannot be calculated, because one SNP presents no variance
+  # remove cases where LD cannot be computed (if one SNP presents no variance)
   ld <- subset(ld, !is.na(r2))
   
   return(ld)

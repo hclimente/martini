@@ -5,8 +5,13 @@
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}
-#' @return A subgraph containing only the vertices with attribute equal to any of the values in \code{values}.
+#' @return A subgraph containing only the vertices with attribute equal to any
+#' of the values in \code{values}.
 #' @importFrom igraph V induced_subgraph vertex_attr %>%
+#' @examples 
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' subnet(gi, "gene", "A")
+#' subnet(gi, "name", c("1A1", "1A3"))
 subnet <- function(net, attr, values) {
   vertices <- V(net)[vertex_attr(net, attr) %in% values]
   induced_subgraph(net, vertices)
@@ -19,19 +24,28 @@ subnet <- function(net, attr, values) {
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}
-#' @return The vertices with attribute equal to any of the values in \code{values}.
+#' @return The vertices with attribute equal to any of the values in
+#' \code{values}.
 #' @importFrom igraph V vertex_attr
+#' @examples 
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' subvert(gi, "gene", "A")
+#' subvert(gi, "name", c("1A1", "1A3"))
 subvert <- function(net, attr, values) {
   V(net)[vertex_attr(net, attr) %in% values]
 }
 
 #' Check package is installed
 #' 
-#' @description Checks if a package is installed, launches an error if it is not.
+#' @description Checks if a package is installed, launches an error if it is
+#' not.
 #' 
 #' @param pkg Name of the package.
 #' @param fn Function calling the check.
 #' @return The package is loaded into the namespace.
+#' @examples 
+#' check_installed("martini")
+#' \dontrun{check_installed("martinid")}
 check_installed <- function(pkg, fn = "this function") {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(paste(pkg, "needed for", fn, "to work. Please install it."),
@@ -43,9 +57,14 @@ check_installed <- function(pkg, fn = "this function") {
 #' 
 #' @description Converts the encoding from additive to another one.
 #' 
-#' @param X Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for heterozygous and 2 for minor homozygous.
-#' @param encoding Genetic model assumed: additive, recessive, dominant or codominant.
+#' @param X Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for
+#' heterozygous and 2 for minor homozygous.
+#' @param encoding Genetic model assumed: additive, recessive, dominant or
+#' codominant.
 #' @return A genotype matrix 
+#' @examples 
+#' X <- as(minigwas$genotypes, "numeric")
+#' encode_gwas(X, "recessive")
 encode_gwas <- function(X, encoding) {
   
   if (encoding == "additive") {

@@ -7,11 +7,13 @@
 get_ppi(organism = 9606)
 }
 \arguments{
-\item{organism}{Organism: human represents human, arabidopsis for Arabidopsis thaliana, etc.}
+\item{organism}{Organism: human represents human, arabidopsis for Arabidopsis
+thaliana, etc.}
 }
 \value{
 A dataframe with two columns with pairs of interacting proteins.
 }
 \description{
-Get all protein-protein interactions for an organism from BioGRID
+Get all protein-protein interactions for an organism from
+BioGRID.
 }

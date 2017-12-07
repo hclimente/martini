@@ -11,7 +11,8 @@ search_cones(gwas, net, encoding = "additive", ...)
 
 \item{net}{An igraph network that connects the SNPs.}
 
-\item{encoding}{SNP encoding. Possible values: additive (default), resessive, dominant, codominant.}
+\item{encoding}{SNP encoding. Possible values: additive (default), resessive, 
+dominant, codominant.}
 
 \item{...}{Extra arguments for \code{\link{get_evo_settings}}.}
 }
@@ -19,12 +20,14 @@ search_cones(gwas, net, encoding = "additive", ...)
 A copy of the SnpMatrix$map object, with the following additions:
 \itemize{
 \item{C: contains the univariate association score for every single SNP.}
-\item{selected: logical vector indicating if the SNP was selected by evo or not.}
+\item{selected: logical vector indicating if the SNP was selected by evo or 
+not.}
 \item{module: integer with the number of the module the SNP belongs to.}
 }
 }
 \description{
-Finds the SNPs maximally associated with a phenotype while being connected in an underlying network (Azencott et al., 2013).
+Finds the SNPs maximally associated with a phenotype while being
+ connected in an underlying network (Azencott et al., 2013).
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -33,6 +36,8 @@ search_cones(minigwas, gi, encoding = "recessive")
 search_cones(minigwas, gi, associationScore = "skat")
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+\url{https://doi.org/10.1093/bioinformatics/btt238}
 }

@@ -11,11 +11,17 @@ simulate_causal_snps(net, n = 20, p = 1)
 
 \item{n}{Number of causal genes.}
 
-\item{p}{Number between 0 and 1, proportion of the SNPs in causal genes that are causal themselves.}
+\item{p}{Number between 0 and 1, proportion of the SNPs in causal genes that
+are causal themselves.}
 }
 \value{
 A vector with the ids of the simulated causal SNPs.
 }
 \description{
-Selects randomly interconnected genes as causal, then selects a proportion of them as causal.
+Selects randomly interconnected genes as causal, then selects a
+proportion of them as causal.
+}
+\examples{
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+simulate_causal_snps(gi, n=2)
 }

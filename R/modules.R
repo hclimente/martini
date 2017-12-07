@@ -1,16 +1,22 @@
 #' Calculate an empirical p-value for \code{find_cones} results.
 #' 
-#' @description Do a permutation-based test to assess the statistical significance of each of the modules obtained through shake. For a 
-#' module of size k, k interconnected SNPs are picked N times, and their joint association score is calculated to come up with an 
-#' estimation of the distribution.
+#' @description Do a permutation-based test to assess the statistical
+#' significance of each of the modules obtained through shake. For a module of 
+#' size k, k interconnected SNPs are picked N times, and their joint association
+#' score is calculated to come up with an estimation of the distribution.
 #' 
 #' @param cones Results from \code{find_cones}.
 #' @param net The same SNP network provided to \code{find_cones}.
 #' @param N Integer with the name of permutations.
-#' @return An empirical p-value for each of the SNP modules. Please, note that the minimum possible p-value from an empirical distribution 
-#' is set to 1/(N+1). Modules composed by a single SNP will not have a empirical p-value.
+#' @return An empirical p-value for each of the SNP modules. Please, note that 
+#' the minimum possible p-value from an empirical distribution is set to 
+#' 1/(N+1). Modules composed by a single SNP will not have a empirical p-value.
 #' @importFrom stats ecdf
 #' @importFrom igraph vcount random_walk
+#' @examples
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' cones <- search_cones(minigwas, gi)
+#' test_cones_modules(cones, gi, 100)
 #' @export
 test_cones_modules <- function(cones, net, N = 100000) {
   

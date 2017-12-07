@@ -1,19 +1,24 @@
 #' Find connected explanatory SNPs.
 #' 
-#' @description Finds the SNPs maximally associated with a phenotype while being connected in an underlying network (Azencott et al., 2013).
+#' @description Finds the SNPs maximally associated with a phenotype while being
+#'  connected in an underlying network (Azencott et al., 2013).
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
-#' @param encoding SNP encoding. Possible values: additive (default), resessive, dominant, codominant.
+#' @param encoding SNP encoding. Possible values: additive (default), resessive, 
+#' dominant, codominant.
 #' @param ... Extra arguments for \code{\link{get_evo_settings}}.
 #' @return A copy of the SnpMatrix$map object, with the following additions:
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by evo or not.}
+#' \item{selected: logical vector indicating if the SNP was selected by evo or 
+#' not.}
 #' \item{module: integer with the number of the module the SNP belongs to.}
 #' }
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
+#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+#' \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
 #' @importFrom methods as
 #' @examples
@@ -59,6 +64,10 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
 #' @param net The same SNP network provided to \code{evo}.
 #' @return A list with the modules of selected SNPs.
 #' @importFrom igraph induced_subgraph components
+#' @examples
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' cones <- search_cones(minigwas, gi)
+#' get_snp_modules(cones, gi)
 get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
@@ -77,18 +86,26 @@ get_snp_modules <- function(cones, net) {
 
 #' Get evo settings.
 #' 
-#' @description Creates a list composed by all \code{evo} settings, with the values provided by the user, or the default ones if none is 
-#' provided.
-#' @param associationScore Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
-#' trend.
-#' @param modelScore Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.
-#' @param etas Numeric vector with the etas to explore in the grid search. If ommited, it's automatically created based on the association
+#' @description Creates a list composed by all \code{evo} settings, with the 
+#' values provided by the user, or the default ones if none is provided.
+#' @param associationScore Association score to measure association between 
+#' genotype and phenotype. Possible values: chi2 (default), skat, trend.
+#' @param modelScore Model selection criterion Possible values: consistency, 
+#' bic (default), aic, aicc, mbic.
+#' @param etas Numeric vector with the etas to explore in the grid search. If 
+#' ommited, it's automatically created based on the association
 #' scores.
-#' @param lambdas Numeric vector with the lambdas to explore in the grid search. If ommited, it's automatically created based on the 
+#' @param lambdas Numeric vector with the lambdas to explore in the grid search.
+#' If ommited, it's automatically created based on the 
 #' association scores.
-#' @param debug Display additional information. Possible values: TRUE, FALSE (default).
+#' @param debug Display additional information. Possible values: TRUE, FALSE
+#' (default).
 #' @return A list of \code{evo} settings.
-get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", etas = numeric(), lambdas = numeric(), 
+#' @examples 
+#' get_evo_settings()
+#' get_evo_settings(associationScore = "skat")
+get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", 
+                             etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){
   
   settings <- list()

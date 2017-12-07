@@ -29,8 +29,10 @@ measure_epistasis <- function(gwas, net) {
 #' @description Incorporate epistatic interactions in the network.
 #' 
 #' @param net A network of SNPs.
-#' @param scores A dataframe with pairs of SNPs and the measure of the epistatic effect.
-#' @return A network where the weight of the edges reflect the strength of the epistatic interaction.
+#' @param scores A dataframe with pairs of SNPs and the measure of the epistatic
+#'  effect.
+#' @return A network where the weight of the edges reflect the strength of the 
+#' epistatic interaction.
 #' @importFrom igraph E set_edge_attr %>%
 #' @export
 weight_epistasis_network <- function(net, scores) {
@@ -38,7 +40,9 @@ weight_epistasis_network <- function(net, scores) {
   colnames(scores) <- c("snp1", "snp2", "score")
   snps <- subset(scores, select = c("snp1", "snp2")) %>% t %>% c
   
-  net <- set_edge_attr(net, "weight", index = E(net, P=snps), value = scores$score)
+  net <- set_edge_attr(net, "weight", 
+                       index = E(net, P=snps), 
+                       value = scores$score)
   
   return(net)
   

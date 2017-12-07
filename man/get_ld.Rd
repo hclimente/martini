@@ -12,10 +12,11 @@ get_ld(gwas, window = 50000)
 \item{window}{Window size.}
 }
 \value{
-An dataframe with a column key, with SNP ids separated by a "-" character, and an r2 column, 
-containing the Pearson correlation.
+An dataframe with a column key, with SNP ids separated by a "-"
+character, and an r2 column, containing the Pearson correlation.
 }
 \description{
-Calculate LD as pairwise correlations in the GWAS dataset. Creates a sliding window for each SNP and calculates all the 
-pairwise correlations inside that window.
+Calculate LD as pairwise correlations in the GWAS dataset.
+Creates a sliding window for each SNP and calculates all the pairwise 
+correlations inside that window.
 }

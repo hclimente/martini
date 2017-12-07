@@ -7,13 +7,19 @@
 encode_gwas(X, encoding)
 }
 \arguments{
-\item{X}{Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for heterozygous and 2 for minor homozygous.}
+\item{X}{Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for
+heterozygous and 2 for minor homozygous.}
 
-\item{encoding}{Genetic model assumed: additive, recessive, dominant or codominant.}
+\item{encoding}{Genetic model assumed: additive, recessive, dominant or
+codominant.}
 }
 \value{
 A genotype matrix
 }
 \description{
 Converts the encoding from additive to another one.
+}
+\examples{
+X <- as(minigwas$genotypes, "numeric")
+encode_gwas(X, "recessive")
 }

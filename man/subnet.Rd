@@ -14,8 +14,14 @@ subnet(net, attr, values)
 \item{values}{Possible values of \code{attr}}
 }
 \value{
-A subgraph containing only the vertices with attribute equal to any of the values in \code{values}.
+A subgraph containing only the vertices with attribute equal to any
+of the values in \code{values}.
 }
 \description{
 Returns a subgraph matching some condition.
+}
+\examples{
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+subnet(gi, "gene", "A")
+subnet(gi, "name", c("1A1", "1A3"))
 }

@@ -1,5 +1,5 @@
 ---
-title: "Run SConES on a simple dataset"
+title: "Running SConES"
 author: "Héctor Climente-González"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,13 +9,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Running SConES
-
 In this example we will analyze a simple case of GWAS data. We start by loading the `martini`, which contains the example we will work on.
 
 ```{r load martini}
 library(martini)
 ```
+
+# Experimental data
 
 `minigwas` is a simplification of an actual GWAS. It is a list equivalent to what `snpStats::read.pedfile` would generate. In this experiment, we sequenced 25 SNPs on 100 samples. Half of them suffer from a disease, the other half are perfectly healthy individuals. The information of each patient is available in the `fam` element:
 
@@ -39,7 +39,9 @@ Lastly, `genotypes` contains the actual genotype for each SNP and sample.
 minigwas$genotypes
 ```
 
-Other than the GWAS data, we need a network of SNPs to work on. We can create those with the family of `get_G*_network` function. Let's see how they work.
+# The network
+
+Other than the information from the GWAS experiment, we need a network of SNPs to work on. We can create those with the family of `get_G*_network` functions. Let's see how they work.
 
 ```{r create GS network}
 gs <- get_GS_network(minigwas)
@@ -47,11 +49,15 @@ par(mar=c(0,0,0,0)+.1)
 plot(gs)
 ```
 
+The GS network contains information about the genomic structure: it is created by connecting every SNP to the adjacent one. The result are one linear subgraph for each chromosome. Hence, GS network contains spacial information about the SNPs, which might be useful in investigating genotypes were a chromosomic region has been related to a disease.
+
 ```{r create GM network}
 gm <- get_GM_network(minigwas, snpMapping = minisnpMapping)
 par(mar=c(0,0,0,0)+.1)
 plot(gm)
 ```
+
+The GM network builds on the GS network, additionally interconnecting all SNPs belonging to the same gene. Still, each chromosome has its independent subnetwork. GM network gives insights into the functionality implications, as it will interconnect causal SNPs that belong to the same gene (which were already close in the GS network).
 
 ```{r create GI network}
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -59,18 +65,26 @@ par(mar=c(0,0,0,0)+.1)
 plot(gi)
 ```
 
-```{r find causal SNPs}
+The GI network builds on the GM network by connecting SNPs belonging to genes interacting with each other, for example, through a protein-protein interaction of their products. This kind of network contains, but it is not limited to, pathway information and crosstalk.
+
+# Running SConES
+
+We can find ConES (connected explanatory SNPs), the set of SNPs $S$ that solve the problem
+
+$$argmax_{S \subseteq V} \sum_{p \in S} c_p - \sum_{p \in S} \eta - \sum_{p \in S} \sum_{q \notin S} \lambda W_{pq} .$$
+where $c$ represents an association measure with the phenotype (e.g. $\chi^2_1$) and $W_{pq}$ is the weight of the edge between $p$ and $q$. $\eta$ and $\lambda$ are parameters that enforce sparsity and connectivity on the subset respectively. Essentially, we are looking for a small subset of SNPs maximally associated with the phenotype that is mostly interconnected among itself in the network. We can find ConES in `martini` with the function `search_cones`. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
+
+```{r find cones gridsearch}
 cones <- search_cones(minigwas, gi)
+```
+`search_cones` informs us of the optimal values for $\eta$ and $\lambda$. The results is a data frame that looks like this:
+
+```{r}
 head(cones)
 ```
 
-```{r manhattan plot}
-library(tidyverse)
+The first six columns of the data frame come from the `map` data frame. The remaining represent the output of SConES:
 
-ggplot(cones, aes(x = pos, y = c, color = ifelse(selected, "Yes", "No"))) +
-  geom_point() +
-  facet_grid(. ~ chr) +
-  labs(x = "Genomic position", y = "Association score", color = "Selected") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
+- `c` contains the SNP univariate association score.
+- `selected` is a logical vector indicating wether a SNP has been selected or not.
+- `module` is an id shared by all the SNPs included in the same submodule of the solution subnetwork. They are not necesarily connected to each other, but there must be a path connecting them inside the solution subnetwork.

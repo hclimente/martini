@@ -1,13 +1,18 @@
 #' Simulate causal SNPs
 #' 
-#' @description Selects randomly interconnected genes as causal, then selects a proportion of them as causal.
+#' @description Selects randomly interconnected genes as causal, then selects a
+#' proportion of them as causal.
 #' 
 #' @param net An igraph gene-interaction (GI) network that connects the SNPs.
 #' @param n Number of causal genes.
-#' @param p Number between 0 and 1, proportion of the SNPs in causal genes that are causal themselves.
+#' @param p Number between 0 and 1, proportion of the SNPs in causal genes that
+#' are causal themselves.
 #' @return A vector with the ids of the simulated causal SNPs.
 #' @importFrom igraph components V neighbors %>%
 #' @importFrom stats na.omit
+#' @examples 
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' simulate_causal_snps(gi, n=2)
 #' @export
 simulate_causal_snps <- function(net, n=20, p=1) {
   
@@ -49,29 +54,44 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 
 #' Simulate phenotype
 #' 
-#' @description Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs. If the data is qualitative, only controls
-#' are used.
+#' @description Simulates a phenotype from a GWAS experiment and a specified set
+#' of causal SNPs. If the data is qualitative, only controls are used.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
-#' @param snps Character vector with the SNP ids of the causal SNPs. Must match SNPs in gwas$map$snp.names.
+#' @param snps Character vector with the SNP ids of the causal SNPs. Must match
+#' SNPs in gwas$map$snp.names.
 #' @param h2 Heritability of the phenotype (between 0 and 1).
-#' @param model String specifying the genetic model under the phenotype. Accepted values: "additive".
-#' @param effectSize Numeric vector with the same lenght as the number of causal SNPs. It indicates the effect size of each of the SNPs; 
-#' if absent, they are sampled fron a normal distribution.
-#' @param qualitative Bool indicating if the phenotype is qualitative or not (quantitative).
-#' @param ncases Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.
-#' @param ncontrols Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.
-#' @param prevalence Value between 0 and 1 specifying the population prevalence of the disease. Note that ncases cannot be greater than 
+#' @param model String specifying the genetic model under the phenotype.
+#' Accepted values: "additive".
+#' @param effectSize Numeric vector with the same lenght as the number of causal
+#' SNPs. It indicates the effect size of each of the SNPs; if absent, they are
+#' sampled fron a normal distribution.
+#' @param qualitative Bool indicating if the phenotype is qualitative or not
+#' (quantitative).
+#' @param ncases Integer specifying the number of cases to simulate in a
+#' qualitative phenotype. Required if qualitative = TRUE.
+#' @param ncontrols Integer specifying the number of controls to simulate in a
+#' qualitative phenotype. Required if qualitative = TRUE.
+#' @param prevalence Value between 0 and 1 specifying the population prevalence
+#' of the disease. Note that ncases cannot be greater than 
 #' prevalence * number of samples. Required if qualitative = TRUE.
-#' @return A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
-#' @references Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
+#' @return A copy of the GWAS experiment with the new phenotypes in the
+#' gwas$fam$affected.
+#' @references Inspired from GCTA simulation tool:
+#' \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importMethodsFrom snpStats "["
 #' @importFrom stats rnorm var
 #' @importFrom utils head tail
 #' @importMethodsFrom snpStats "["
+#' @examples 
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' causal <- simulate_causal_snps(gi, n=2)
+#' simulate_phenotype(minigwas, causal, h2=1)
 #' @export
-simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = rnorm(length(snps)), 
-                               qualitative = FALSE, ncases, ncontrols, prevalence){
+simulate_phenotype <- function(gwas, snps, h2, model = "additive", 
+                               effectSize = rnorm(length(snps)), 
+                               qualitative = FALSE, 
+                               ncases, ncontrols, prevalence){
 
   # select only controls
   binary <- (unique(gwas$fam$affected) %>% length) == 2
@@ -120,10 +140,12 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive", effectSize = 
 
 #' Calculate the genetic component of the phenotype
 #' 
-#' @description Calculates the genetic component of the phenotype from a genotype.
+#' @description Calculates the genetic component of the phenotype from a
+#' genotype.
 #' 
 #' @param u A vector with the effect size of each SNP.
-#' @param X Genotypes in a numeric matrix, where each row is a sample and each column a SNP.
+#' @param X Genotypes in a numeric matrix, where each row is a sample and each
+#' column a SNP.
 #' @param model Genetic model to assume.
 #' @return A vector with the genetic component of each sample.
 calculateG <- function(u, X, model) {
@@ -147,7 +169,8 @@ calculateG <- function(u, X, model) {
 
 #' Calculate the environmental component of the phenotype
 #' 
-#' @description Calculates the environmental component of the phenotype using the variance in the genetic component.
+#' @description Calculates the environmental component of the phenotype using
+#' the variance in the genetic component.
 #' 
 #' @param G The genetic component of the phenotype.
 #' @param h2 The heritability.

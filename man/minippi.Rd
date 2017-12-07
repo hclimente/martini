@@ -5,5 +5,6 @@
 \alias{minippi}
 \title{PPIs for the minigwas dataset.}
 \description{
-Data frame describing pairs of proteins that interact for minigwas.
+Data frame describing pairs of proteins that interact for 
+minigwas.
 }

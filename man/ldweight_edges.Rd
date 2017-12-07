@@ -14,8 +14,10 @@ ldweight_edges(net, ld, method = "inverse")
 \item{method}{How to incorporate LD values into the network.}
 }
 \value{
-An SNP network where the edges weight 1 - LD, measured as Pearson correlation.
+An SNP network where the edges weight 1 - LD, measured as Pearson
+correlation.
 }
 \description{
-Include LD information in the SNP network. Only work for human SNPs.
+Include LD information in the SNP network. Only work for human
+SNPs.
 }

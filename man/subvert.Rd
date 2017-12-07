@@ -14,8 +14,14 @@ subvert(net, attr, values)
 \item{values}{Possible values of \code{attr}}
 }
 \value{
-The vertices with attribute equal to any of the values in \code{values}.
+The vertices with attribute equal to any of the values in
+\code{values}.
 }
 \description{
 Returns the nodes matching some condition.
+}
+\examples{
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+subvert(gi, "gene", "A")
+subvert(gi, "name", c("1A1", "1A3"))
 }

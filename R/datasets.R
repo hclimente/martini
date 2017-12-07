@@ -22,5 +22,6 @@ NULL
 #'
 #' @name minippi
 #' @docType data
-#' @description Data frame describing pairs of proteins that interact for minigwas.
+#' @description Data frame describing pairs of proteins that interact for 
+#' minigwas.
 NULL

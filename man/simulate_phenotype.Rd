@@ -11,31 +11,45 @@ simulate_phenotype(gwas, snps, h2, model = "additive",
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{snps}{Character vector with the SNP ids of the causal SNPs. Must match SNPs in gwas$map$snp.names.}
+\item{snps}{Character vector with the SNP ids of the causal SNPs. Must match
+SNPs in gwas$map$snp.names.}
 
 \item{h2}{Heritability of the phenotype (between 0 and 1).}
 
-\item{model}{String specifying the genetic model under the phenotype. Accepted values: "additive".}
+\item{model}{String specifying the genetic model under the phenotype.
+Accepted values: "additive".}
 
-\item{effectSize}{Numeric vector with the same lenght as the number of causal SNPs. It indicates the effect size of each of the SNPs; 
-if absent, they are sampled fron a normal distribution.}
+\item{effectSize}{Numeric vector with the same lenght as the number of causal
+SNPs. It indicates the effect size of each of the SNPs; if absent, they are
+sampled fron a normal distribution.}
 
-\item{qualitative}{Bool indicating if the phenotype is qualitative or not (quantitative).}
+\item{qualitative}{Bool indicating if the phenotype is qualitative or not
+(quantitative).}
 
-\item{ncases}{Integer specifying the number of cases to simulate in a qualitative phenotype. Required if qualitative = TRUE.}
+\item{ncases}{Integer specifying the number of cases to simulate in a
+qualitative phenotype. Required if qualitative = TRUE.}
 
-\item{ncontrols}{Integer specifying the number of controls to simulate in a qualitative phenotype. Required if qualitative = TRUE.}
+\item{ncontrols}{Integer specifying the number of controls to simulate in a
+qualitative phenotype. Required if qualitative = TRUE.}
 
-\item{prevalence}{Value between 0 and 1 specifying the population prevalence of the disease. Note that ncases cannot be greater than 
+\item{prevalence}{Value between 0 and 1 specifying the population prevalence
+of the disease. Note that ncases cannot be greater than 
 prevalence * number of samples. Required if qualitative = TRUE.}
 }
 \value{
-A copy of the GWAS experiment with the new phenotypes in the gwas$fam$affected.
+A copy of the GWAS experiment with the new phenotypes in the
+gwas$fam$affected.
 }
 \description{
-Simulates a phenotype from a GWAS experiment and a specified set of causal SNPs. If the data is qualitative, only controls
-are used.
+Simulates a phenotype from a GWAS experiment and a specified set
+of causal SNPs. If the data is qualitative, only controls are used.
+}
+\examples{
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+causal <- simulate_causal_snps(gi, n=2)
+simulate_phenotype(minigwas, causal, h2=1)
 }
 \references{
-Inspired from GCTA simulation tool: \url{http://cnsgenomics.com/software/gcta/Simu.html}.
+Inspired from GCTA simulation tool:
+\url{http://cnsgenomics.com/software/gcta/Simu.html}.
 }

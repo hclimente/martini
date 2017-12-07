@@ -15,5 +15,10 @@ check_installed(pkg, fn = "this function")
 The package is loaded into the namespace.
 }
 \description{
-Checks if a package is installed, launches an error if it is not.
+Checks if a package is installed, launches an error if it is
+not.
+}
+\examples{
+check_installed("martini")
+\dontrun{check_installed("martinid")}
 }

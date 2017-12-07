@@ -8,23 +8,31 @@ get_evo_settings(associationScore = "chi2", modelScore = "bic",
   etas = numeric(), lambdas = numeric(), debug = FALSE)
 }
 \arguments{
-\item{associationScore}{Association score to measure association between genotype and phenotype. Possible values: chi2 (default), skat, 
-trend.}
+\item{associationScore}{Association score to measure association between 
+genotype and phenotype. Possible values: chi2 (default), skat, trend.}
 
-\item{modelScore}{Model selection criterion Possible values: consistency, bic (default), aic, aicc, mbic.}
+\item{modelScore}{Model selection criterion Possible values: consistency, 
+bic (default), aic, aicc, mbic.}
 
-\item{etas}{Numeric vector with the etas to explore in the grid search. If ommited, it's automatically created based on the association
+\item{etas}{Numeric vector with the etas to explore in the grid search. If 
+ommited, it's automatically created based on the association
 scores.}
 
-\item{lambdas}{Numeric vector with the lambdas to explore in the grid search. If ommited, it's automatically created based on the 
+\item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
+If ommited, it's automatically created based on the 
 association scores.}
 
-\item{debug}{Display additional information. Possible values: TRUE, FALSE (default).}
+\item{debug}{Display additional information. Possible values: TRUE, FALSE
+(default).}
 }
 \value{
 A list of \code{evo} settings.
 }
 \description{
-Creates a list composed by all \code{evo} settings, with the values provided by the user, or the default ones if none is 
-provided.
+Creates a list composed by all \code{evo} settings, with the 
+values provided by the user, or the default ones if none is provided.
+}
+\examples{
+get_evo_settings()
+get_evo_settings(associationScore = "skat")
 }

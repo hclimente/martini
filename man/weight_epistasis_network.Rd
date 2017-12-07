@@ -9,10 +9,12 @@ weight_epistasis_network(net, scores)
 \arguments{
 \item{net}{A network of SNPs.}
 
-\item{scores}{A dataframe with pairs of SNPs and the measure of the epistatic effect.}
+\item{scores}{A dataframe with pairs of SNPs and the measure of the epistatic
+effect.}
 }
 \value{
-A network where the weight of the edges reflect the strength of the epistatic interaction.
+A network where the weight of the edges reflect the strength of the 
+epistatic interaction.
 }
 \description{
 Incorporate epistatic interactions in the network.
