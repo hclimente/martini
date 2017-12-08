@@ -29,7 +29,7 @@ gwas$map <- read.table(text = "
                        2 2-2 0 95 A G
                        2 2D1 0 105 A G
                        2 2D2 0 115 A G
-                       2 2D3 0 85 A G
+                       2 2D3 0 125 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
 
 ## genotypes

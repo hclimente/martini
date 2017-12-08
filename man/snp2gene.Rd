@@ -23,3 +23,6 @@ gene it has been mapped to.
 \description{
 Maps SNPs from a GWAS experiment to genes.
 }
+\examples{
+\dontrun{get_ppi(gwas, 9606, 50000)}
+}

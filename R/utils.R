@@ -86,3 +86,31 @@ encode_gwas <- function(X, encoding) {
   return(X)
   
 }
+
+#' Check inner coherence of GWAS dataset
+#' 
+#' @description Checks that the different data structures have the SNPs in the 
+#' same order.
+#' @param gwas A GWAS experiment.
+#' @return TRUE if the GWAS dataset is coherent. Else, raises an error.
+#' @examples 
+#' is_coherent(minigwas)
+is_coherent <- function(gwas) {
+  
+  mapSelfCoherence <- by(gwas$map, gwas$map[,1], function(chr) {
+    ascendingChr <- chr[order(chr[,4]),]
+    descendingChr <- chr[order(chr[,4], decreasing = TRUE),]
+    return(any(chr != ascendingChr) & any(chr != descendingChr))
+  })
+  
+  if (any(mapSelfCoherence)) {
+    stop("map is not ordered by genomic position.")
+  }
+  
+  if (any(gwas$map[,2] != colnames(gwas$genotypes))) {
+    stop("map and genotype SNP order differ.")
+  }
+  
+  return(TRUE)
+  
+}

@@ -17,3 +17,6 @@ A dataframe with two columns with pairs of interacting proteins.
 Get all protein-protein interactions for an organism from
 BioGRID.
 }
+\examples{
+\dontrun{get_ppi(9606)}
+}
