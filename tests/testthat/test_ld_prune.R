@@ -27,17 +27,22 @@ test_that("output is as expected", {
   expect_equal(class(pruned$genotypes)[1], "SnpMatrix")
   expect_equal(colnames(pruned$genotypes), pruned$map$snp.names)
   
+  # prune information
+  expect_true("pruning" %in% names(pruned))
+  
 })
 
 test_that("it prunes", {
   
   # we dont remove SNPs where we have NAs
-  expect_equal(sum(grepl("[BD]", pruned$map$snp.names)), 
-               sum(grepl("[BD]", minigwas$map$snp.names)))
+  expect_equal(sum(grepl("[BD-]", pruned$map$snp.names)), 
+               sum(grepl("[BD-]", minigwas$map$snp.names)))
+  expect_equal(length(unique(pruned$pruning$block[grepl("[BD-]", pruned$pruning$snp)])), 13)
   
   # we remove SNPs where correlations are perfect i.e. same haploblock
   expect_equal(sum(grepl("[AC]", pruned$map$snp.names)) + 10, 
                sum(grepl("[AC]", minigwas$map$snp.names)))
+  expect_equal(length(unique(pruned$pruning$block[grepl("[AC]", pruned$pruning$snp)])), 2)
   
   # only remove SNPs that we are supposed to
   expect_equal(nrow(pruned$map) + 10, nrow(minigwas$map))

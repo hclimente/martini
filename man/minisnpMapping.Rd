@@ -7,3 +7,8 @@
 \description{
 Data frame that maps SNPs from minigwas to their gene.
 }
+\examples{
+data(minisnpMapping)
+
+head(minisnpMapping)
+}

@@ -4,34 +4,39 @@
 #' SNPs.
 #' 
 #' @param net A SNP network.
-#' @param ld Data frame with linkage disequilibrium, like \code{get_ld} output.
+#' @param ld Data frame with linkage disequilibrium, like \code{snpStats::ld} 
+#' output.
 #' @param method How to incorporate LD values into the network.
 #' @return An SNP network where the edges weight 1 - LD, measured as Pearson
 #' correlation.
 #' @importFrom igraph E %>% set_edge_attr delete_edges get.edgelist
 #' @importFrom stats cor
+#' @examples 
+#' ld <- snpStats::ld(minigwas$genotypes, depth = 2, stats = "R.squared")
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' ldGi <- ldweight_edges(gi, ld)
 #' @export
 ldweight_edges <- function(net, ld, method = "inverse") {
   
-  edges <- get.edgelist(net) %>% 
-    apply(1, sort) %>% 
-    t %>% 
-    apply(1, paste, collapse = "-")
-  ld <- subset(ld, key %in% edges)
+  edges <- get.edgelist(net)
   
-  snps <- strsplit(ld$key, "-") %>% unlist
-  idx <- E(net, P=snps)
-  
+  ld <- apply(edges, 1, function(e) {
+    ld[e[1],e[2]]
+  })
+
+  idx <- which(!is.na(ld))
+  ld <- ld[!is.na(ld)]
+
   if (method == "inverse") {
-    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ld$r2))
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ld))
   } else if (method == "subtraction") {
-    net <- set_edge_attr(net, "weight", index = idx, value = 1 - ld$r2)
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 - ld)
   }
   
   if (any(is.na(E(net)$weight))) {
     stop("NA values as edge weights.")
   } else if (any(E(net)$weight < 0)) {
-    stop("Pearson coefficients cannot be > 1.")
+    stop("Edge weights cannpt be negative.")
   }
   
   # remove edges with 0 weight
@@ -39,70 +44,6 @@ ldweight_edges <- function(net, ld, method = "inverse") {
   net <- delete_edges(net, zeroE)
   
   return(net)
-  
-}
-
-#' Calculate LD in the datasets
-#' 
-#' @description Calculate LD as pairwise correlations in the GWAS dataset.
-#' Creates a sliding window for each SNP and calculates all the pairwise 
-#' correlations inside that window.
-#' 
-#' @param gwas A GWAS experiment, in snpMatrix form.
-#' @param window Window size.
-#' @return An dataframe with a column key, with SNP ids separated by a "-"
-#' character, and an r2 column, containing the Pearson correlation.
-#' @importFrom igraph %>%
-#' @export
-get_ld <- function(gwas, window = 5e4) {
-  
-  map <- gwas$map
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  
-  X <- as(gwas$genotypes, "numeric")
-  
-  # select only controls
-  binary <- (unique(gwas$fam$affected) %>% length) == 2
-  if (binary) {
-    X <- X[gwas$fam$affected == 1, ]
-  }
-  
-  ld <- by(map, map$chr, function(chr) {
-    c <- unique(chr$chr)
-    start <- min(chr$pos)
-    end <- max(chr$pos)
-    
-    lapply(seq(start, end - window/2, window/2), function(x){
-      
-      mask <- (map$chr == c) & (map$pos >= x) & (map$pos <= x + window)
-      
-      if (sum(mask) < 2) {
-        return(NULL)
-      }
-      
-      r <- cor(X[,mask])
-      r <- r[lower.tri(r)]
-      
-      snps <- as.character(map$snp[mask])
-      
-      keys <- lapply(1:(length(snps) - 1), function(x) {
-        this <- snps[x]
-        lapply(snps[(x+1):length(snps)], function(that) {
-          sort(c(this, that)) %>% paste(collapse = "-")
-        }) %>% unlist
-      }) %>% unlist
-      
-      data.frame(key = keys, r2 = r^2)
-      
-    }) %>% invisible %>% do.call(rbind, .)
-  }) %>% do.call(rbind, .) %>%
-  unique
-  
-  ld$key <- as.character(ld$key)
-  # remove cases where LD cannot be computed (if one SNP presents no variance)
-  ld <- subset(ld, !is.na(r2))
-  
-  return(ld)
   
 }
 
@@ -128,6 +69,8 @@ ld_prune <- function(gwas, ld, cutoff = 0.8) {
     stop("gwas$map and ld SNP order differ.")
   }
   
+  map <- gwas$map
+  
   b <- 1
   blocks <- numeric(nrow(ld))
   blocks[1] <- 1
@@ -141,7 +84,7 @@ ld_prune <- function(gwas, ld, cutoff = 0.8) {
     
   }
 
-  representative <- by(gwas$map, blocks, function(block) {
+  representative <- by(map, blocks, function(block) {
     
     snps <- as.character(block[,2])
     id <- ceiling(length(snps)/2)
@@ -150,8 +93,9 @@ ld_prune <- function(gwas, ld, cutoff = 0.8) {
     
   }) %>% as.character
   
-  gwas$map <- gwas$map[gwas$map[,2] %in% representative, ]
+  gwas$map <- map[map[,2] %in% representative, ]
   gwas$genotypes <- gwas$genotypes[, representative]
+  gwas$pruning <- data.frame(snp = map[,2], block = blocks)
   
   return(gwas)
   

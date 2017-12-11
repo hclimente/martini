@@ -9,6 +9,13 @@
 #'   \item{fam}{Simulated network.}
 #'   \item{map}{Result of runing \code{find_cones} with gwas and net.}
 #' }
+#' @examples 
+#' data(minigwas)
+#' 
+#' # access different elements
+#' minigwas$genotypes
+#' minigwas$map
+#' minigwas$fam
 NULL
 
 #' Genes for the minigwas dataset.
@@ -16,6 +23,10 @@ NULL
 #' @name minisnpMapping
 #' @docType data
 #' @description Data frame that maps SNPs from minigwas to their gene.
+#' @examples
+#' data(minisnpMapping)
+#' 
+#' head(minisnpMapping)
 NULL
 
 #' PPIs for the minigwas dataset.
@@ -24,4 +35,8 @@ NULL
 #' @docType data
 #' @description Data frame describing pairs of proteins that interact for 
 #' minigwas.
+#' @examples
+#' data(minippi)
+#' 
+#' head(minippi)
 NULL

@@ -17,5 +17,5 @@ Checks that the different data structures have the SNPs in the
 same order.
 }
 \examples{
-is_coherent(minigwas)
+martini:::is_coherent(minigwas)
 }

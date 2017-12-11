@@ -22,6 +22,6 @@ Returns the nodes matching some condition.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-subvert(gi, "gene", "A")
-subvert(gi, "name", c("1A1", "1A3"))
+martini:::subvert(gi, "gene", "A")
+martini:::subvert(gi, "name", c("1A1", "1A3"))
 }

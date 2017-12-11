@@ -13,3 +13,11 @@
 \description{
 Small GWAS example.
 }
+\examples{
+data(minigwas)
+
+# access different elements
+minigwas$genotypes
+minigwas$map
+minigwas$fam
+}

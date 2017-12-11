@@ -10,8 +10,8 @@
 #' @importFrom igraph V induced_subgraph vertex_attr %>%
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' subnet(gi, "gene", "A")
-#' subnet(gi, "name", c("1A1", "1A3"))
+#' martini:::subnet(gi, "gene", "A")
+#' martini:::subnet(gi, "name", c("1A1", "1A3"))
 subnet <- function(net, attr, values) {
   vertices <- V(net)[vertex_attr(net, attr) %in% values]
   induced_subgraph(net, vertices)
@@ -29,8 +29,8 @@ subnet <- function(net, attr, values) {
 #' @importFrom igraph V vertex_attr
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' subvert(gi, "gene", "A")
-#' subvert(gi, "name", c("1A1", "1A3"))
+#' martini:::subvert(gi, "gene", "A")
+#' martini:::subvert(gi, "name", c("1A1", "1A3"))
 subvert <- function(net, attr, values) {
   V(net)[vertex_attr(net, attr) %in% values]
 }
@@ -44,8 +44,8 @@ subvert <- function(net, attr, values) {
 #' @param fn Function calling the check.
 #' @return The package is loaded into the namespace.
 #' @examples 
-#' check_installed("martini")
-#' \dontrun{check_installed("martinid")}
+#' martini:::check_installed("martini")
+#' \dontrun{martini:::check_installed("martinid")}
 check_installed <- function(pkg, fn = "this function") {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(paste(pkg, "needed for", fn, "to work. Please install it."),
@@ -64,7 +64,7 @@ check_installed <- function(pkg, fn = "this function") {
 #' @return A genotype matrix 
 #' @examples 
 #' X <- as(minigwas$genotypes, "numeric")
-#' encode_gwas(X, "recessive")
+#' martini:::encode_gwas(X, "recessive")
 encode_gwas <- function(X, encoding) {
   
   if (encoding == "additive") {
@@ -94,7 +94,7 @@ encode_gwas <- function(X, encoding) {
 #' @param gwas A GWAS experiment.
 #' @return TRUE if the GWAS dataset is coherent. Else, raises an error.
 #' @examples 
-#' is_coherent(minigwas)
+#' martini:::is_coherent(minigwas)
 is_coherent <- function(gwas) {
   
   mapSelfCoherence <- by(gwas$map, gwas$map[,1], function(chr) {

@@ -33,6 +33,6 @@ Creates a list composed by all \code{evo} settings, with the
 values provided by the user, or the default ones if none is provided.
 }
 \examples{
-get_evo_settings()
-get_evo_settings(associationScore = "skat")
+martini:::get_evo_settings()
+martini:::get_evo_settings(associationScore = "skat")
 }

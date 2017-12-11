@@ -22,6 +22,6 @@ Returns a subgraph matching some condition.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-subnet(gi, "gene", "A")
-subnet(gi, "name", c("1A1", "1A3"))
+martini:::subnet(gi, "gene", "A")
+martini:::subnet(gi, "name", c("1A1", "1A3"))
 }

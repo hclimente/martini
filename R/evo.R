@@ -67,7 +67,7 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' cones <- search_cones(minigwas, gi)
-#' get_snp_modules(cones, gi)
+#' martini:::get_snp_modules(cones, gi)
 get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
@@ -102,8 +102,8 @@ get_snp_modules <- function(cones, net) {
 #' (default).
 #' @return A list of \code{evo} settings.
 #' @examples 
-#' get_evo_settings()
-#' get_evo_settings(associationScore = "skat")
+#' martini:::get_evo_settings()
+#' martini:::get_evo_settings(associationScore = "skat")
 get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", 
                              etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){

@@ -19,6 +19,6 @@ Checks if a package is installed, launches an error if it is
 not.
 }
 \examples{
-check_installed("martini")
-\dontrun{check_installed("martinid")}
+martini:::check_installed("martini")
+\dontrun{martini:::check_installed("martinid")}
 }

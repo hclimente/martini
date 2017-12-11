@@ -2,8 +2,9 @@ library(martini)
 load("examplegwas.rda")
 
 gwas <- examplegwas$gwas
-ld <- data.frame(key = c("rs1101-rs1101", "rs1101-rs1103", "rs1102-rs1103"),
-                 r2 = c(0, 1, 0.5), stringsAsFactors = F)
+ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 1, 0.5), symmetric = T)
+colnames(ld) <- c("rs1101", "rs1102", "rs1103")
+rownames(ld) <- colnames(ld)
 
 snps <- data.frame(snp1 = c("rs1101","rs1101","rs1102"),
                    snp2 = c("rs1102","rs1103","rs1103"))

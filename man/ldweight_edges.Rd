@@ -9,7 +9,8 @@ ldweight_edges(net, ld, method = "inverse")
 \arguments{
 \item{net}{A SNP network.}
 
-\item{ld}{Data frame with linkage disequilibrium, like \code{get_ld} output.}
+\item{ld}{Data frame with linkage disequilibrium, like \code{snpStats::ld} 
+output.}
 
 \item{method}{How to incorporate LD values into the network.}
 }
@@ -20,4 +21,9 @@ correlation.
 \description{
 Include LD information in the SNP network. Only work for human
 SNPs.
+}
+\examples{
+ld <- snpStats::ld(minigwas$genotypes, depth = 2, stats = "R.squared")
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+ldGi <- ldweight_edges(gi, ld)
 }

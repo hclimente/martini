@@ -21,5 +21,5 @@ Converts the encoding from additive to another one.
 }
 \examples{
 X <- as(minigwas$genotypes, "numeric")
-encode_gwas(X, "recessive")
+martini:::encode_gwas(X, "recessive")
 }

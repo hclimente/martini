@@ -181,9 +181,6 @@ get_GI_network <- function(gwas, organism,
 #' gene.
 #' @return A dataframe with two columns: one for the SNP and another for the
 #' gene it has been mapped to.
-#' @examples 
-#' \dontrun{get_ppi(gwas, 9606, 50000)}
-#' @export
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
   check_installed("biomaRt", "snp2gene")
@@ -266,8 +263,8 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' thaliana, etc.
 #' @return A dataframe with two columns with pairs of interacting proteins.
 #' @examples 
-#' \dontrun{get_ppi(9606)}
-#' @export
+#' # download dog interactions
+#' martini:::get_ppi(9615)
 get_ppi <- function(organism = 9606) {
   
   check_installed("httr", "get_ppi")
