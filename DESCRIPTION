@@ -1,11 +1,13 @@
 Package: martini
 Type: Package
-Title: GWAS Incorporating Networks in R
-Version: 0.1.1
-Authors@R: person("Hector", "Climente-Gonzalez", email = "hector.climente@curie.fr",
-                  role = c("aut", "cre"))
+Title: GWAS Incorporating Networks
+Version: 0.99
+Authors@R: c(person("Hector", "Climente-Gonzalez", 
+                    email = "hector.climente@curie.fr",
+                    role = c("aut", "cre")),
+             person("Chloe-Agathe", "Azencott", role = "aut"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
-Description: User-friendly version of GIN (GWAS Incorporating Networks).
+Description: martini deals with the low power inherent to GWAS studies by using prior knowledge represented as a network. SNPs are the vertices of the network, and the edges represent biological relationships between them (genomic adjacency, belonging to the same gene, physical interaction between protein products). The network is scanned using SConES, which looks for groups of SNPs maximally associated with the phenotype, that form a close subnetwork.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
