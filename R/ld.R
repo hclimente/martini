@@ -10,6 +10,7 @@
 #' @return An SNP network where the edges weight 1 - LD, measured as Pearson
 #' correlation.
 #' @importFrom igraph E %>% set_edge_attr delete_edges get.edgelist
+#' @importFrom Matrix summary
 #' @importFrom stats cor
 #' @examples 
 #' ld <- snpStats::ld(minigwas$genotypes, depth = 2, stats = "R.squared")
@@ -18,19 +19,17 @@
 #' @export
 ldweight_edges <- function(net, ld, method = "inverse") {
   
-  edges <- get.edgelist(net)
-  
-  ld <- apply(edges, 1, function(e) {
-    ld[e[1],e[2]]
-  })
-
-  idx <- which(!is.na(ld))
-  ld <- ld[!is.na(ld)]
+  edges <- as.data.frame(get.edgelist(net))
+  edges <- paste(edges[,1], edges[,2], sep = "-")
+  ldDf <- Matrix::summary(ld)
+  ldDf$key <- paste(rownames(ld)[ldDf$i], rownames(ld)[ldDf$j], sep = "-")
+  ldDf <- subset(ldDf, key %in% edges)
+  idx <- match(ldDf$key, edges)
 
   if (method == "inverse") {
-    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ld))
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ldDf$x))
   } else if (method == "subtraction") {
-    net <- set_edge_attr(net, "weight", index = idx, value = 1 - ld)
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 - ldDf$x)
   }
   
   if (any(is.na(E(net)$weight))) {
