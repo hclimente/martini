@@ -20,7 +20,7 @@ Imports:
   stats,
   utils
 Suggests:
-  biomaRt (>= 2.30.0),
+  biomaRt (>= 2.43.1),
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
   knitr,
