@@ -37,7 +37,3 @@ test_that("edges have the apropriate values", {
   expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1103")$weight, 0.5)
   expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 2/3)
 })
-
-test_that("snps not in perfect ld connected", {
-  
-})

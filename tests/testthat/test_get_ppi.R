@@ -1,7 +1,7 @@
 library(martini)
 
 # retrieve PPI from the dog, which in Biogrid 3.4.151 had 25 described interactions
-dog <- get_ppi(9615)
+dog <- martini:::get_ppi(9615)
 
 test_that("output is as expected", {
   
