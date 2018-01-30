@@ -4,14 +4,14 @@
 \alias{evo}
 \title{Run evo.}
 \usage{
-evo(X, Y, network, userSettings)
+evo(X, Y, W, userSettings)
 }
 \arguments{
 \item{X}{A matrix with the genotypes.}
 
 \item{Y}{A vector with the phenptypes.}
 
-\item{network}{A sparse matrix containing the adjacency matrix of the network.}
+\item{W}{A sparse matrix containing the adjacency matrix of the network.}
 
 \item{userSettings}{A named list with the settings.}
 }

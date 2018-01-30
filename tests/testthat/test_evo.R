@@ -7,13 +7,14 @@ miniW <- igraph::as_adj(gi)
 
 test_that("output is as expected", {
   
-  settings <- get_evo_settings(etas = 1, lambdas = 2)
+  settings <- get_evo_settings(etas = c(1,2,3), lambdas = c(2.5,3.5))
   test <- evo(miniX, miniY, miniW, settings)
   
-  expect_equal(length(test), 4)
+  expect_equal(length(test), 5)
   expect_equal(class(test), "list")
   expect_equal(test$eta, 1)
-  expect_equal(test$lambda, 2)
+  expect_equal(test$lambda, 2.5)
+  expect_equal(dim(test$grid), c(3,2))
   expect_equal(class(test$selected), "numeric")
   expect_equal(class(test$c), "numeric")
   

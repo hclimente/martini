@@ -10,16 +10,16 @@
 using namespace Rcpp;
 
 // evo
-Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> network, Rcpp::List userSettings);
-RcppExport SEXP _martini_evo(SEXP XSEXP, SEXP YSEXP, SEXP networkSEXP, SEXP userSettingsSEXP) {
+Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> W, Rcpp::List opts);
+RcppExport SEXP _martini_evo(SEXP XSEXP, SEXP YSEXP, SEXP WSEXP, SEXP optsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> >::type network(networkSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type userSettings(userSettingsSEXP);
-    rcpp_result_gen = Rcpp::wrap(evo(X, Y, network, userSettings));
+    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type opts(optsSEXP);
+    rcpp_result_gen = Rcpp::wrap(evo(X, Y, W, opts));
     return rcpp_result_gen;
 END_RCPP
 }

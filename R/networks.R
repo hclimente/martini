@@ -235,16 +235,20 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     
     # add a buffer before and after the gene
     genes$start_position <- genes$start_position - flank
-    genes$start_position <- ifelse(genes$start_position < 0, 0, genes$start_position)
+    genes$start_position <- ifelse(genes$start_position < 0, 
+                                   0, genes$start_position)
     genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
     isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
     igenes <- with(genes, 
-                   IRanges::IRanges(start_position, end_position, names=ensembl_gene_id))
+                   IRanges::IRanges(start_position, end_position, 
+                                    names=ensembl_gene_id))
     olaps <- IRanges::findOverlaps(isnps, igenes)
-    s2g <- cbind(snps[S4Vectors::queryHits(olaps),], genes[S4Vectors::subjectHits(olaps),])
-    s2g$gene <- ifelse(s2g$external_gene_name == "" | is.na(s2g$external_gene_name), s2g$ensembl_gene_id, s2g$external_gene_name)
+    s2g <- cbind(snps[S4Vectors::queryHits(olaps),], 
+                 genes[S4Vectors::subjectHits(olaps),])
+    hasName <- s2g$external_gene_name == "" | is.na(s2g$external_gene_name)
+    s2g$gene <- ifelse(hasName, s2g$ensembl_gene_id, s2g$external_gene_name)
     subset(s2g, select = c("snp", "gene"))
     
   })
@@ -280,7 +284,8 @@ get_ppi <- function(organism = 9606) {
   # number of results
   N <- httr::GET(paste(query, "format=count", sep = "&"))
   httr::stop_for_status(N)
-  N <- as.numeric(httr::content(N, type="text/csv", encoding="UTF-8", col_types="i"))
+  N <- as.numeric(
+             httr::content(N, type="text/csv", encoding="UTF-8", col_types="i"))
   
   # retrieve results in batches
   ppi <- lapply(seq(1, N, 10000), function(i){

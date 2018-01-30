@@ -7,11 +7,11 @@
 #' 
 #' @param X A matrix with the genotypes.
 #' @param Y A vector with the phenptypes.
-#' @param network A sparse matrix containing the adjacency matrix of the network.
-#' @param userSettings A named list with the settings.
+#' @param W A sparse matrix containing the adjacency matrix of the network.
+#' @param opts A named list with the settings.
 #' @return An object with the evo results.
-evo <- function(X, Y, network, userSettings) {
-    .Call('_martini_evo', PACKAGE = 'martini', X, Y, network, userSettings)
+evo <- function(X, Y, W, opts) {
+    .Call('_martini_evo', PACKAGE = 'martini', X, Y, W, opts)
 }
 
 #' Run shake.

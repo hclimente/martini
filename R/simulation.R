@@ -25,13 +25,14 @@ simulate_causal_snps <- function(net, n=20, p=1) {
     g <- sample(genes, 1)
     seed <- subvert(subnet, "gene", g)[1]
     
-    causalGenes <- neighbors(subnet, seed)$gene %>% na.omit %>% unique %>% c(., g)
+    causalGenes <- neighbors(subnet,seed)$gene %>% na.omit %>% unique %>% c(.,g)
     
     causalNetwork <- lapply(causalGenes, function(s) {
       subvert(subnet, "gene", s)$gene
     }) %>% unlist %>% table
     
-    causalGenes <- causalNetwork[causalNetwork > n/4] %>% names %>% intersect(genes) %>% head(n)
+    causalGenes <- causalNetwork[causalNetwork > n/4] %>% names %>% 
+                      intersect(genes) %>% head(n)
     
     if ( length(causalGenes) >= n ) {
       
