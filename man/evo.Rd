@@ -4,7 +4,7 @@
 \alias{evo}
 \title{Run evo.}
 \usage{
-evo(X, Y, W, userSettings)
+evo(X, Y, W, opts)
 }
 \arguments{
 \item{X}{A matrix with the genotypes.}
@@ -13,7 +13,7 @@ evo(X, Y, W, userSettings)
 
 \item{W}{A sparse matrix containing the adjacency matrix of the network.}
 
-\item{userSettings}{A named list with the settings.}
+\item{opts}{A named list with the settings.}
 }
 \value{
 An object with the evo results.
