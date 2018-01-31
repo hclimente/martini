@@ -8,6 +8,7 @@ r:
   - bioc-devel
 r_build_args: --resave-data
 r_packages:
+  - digest
   - covr
   - testthat
 
