@@ -32,7 +32,7 @@ test_cones_modules <- function(cones, net, N = 100000) {
       sampled_C <- lapply(1:N, function(i){
         v <- sample(1:numSNPs, 1)
         snpmodule_i <- random_walk(net, v, n)
-        cones_module <- subset(cones, snp %in% snpmodule_i)
+        cones_module <- cones[cones$snp %in% snpmodule_i, ]
         sum(cones_module$c)
       })
       sampled_C <- do.call("c", sampled_C)

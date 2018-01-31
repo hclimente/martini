@@ -25,7 +25,7 @@ ldweight_edges <- function(net, ld, method = "inverse") {
   edges <- paste(edges[,1], edges[,2], sep = "-")
   ldDf <- Matrix::summary(ld)
   ldDf$key <- paste(rownames(ld)[ldDf$i], rownames(ld)[ldDf$j], sep = "-")
-  ldDf <- subset(ldDf, key %in% edges)
+  ldDf <- ldDf[ldDf$key %in% edges, ]
   idx <- match(ldDf$key, edges)
 
   if (method == "inverse") {

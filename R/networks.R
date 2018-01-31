@@ -80,13 +80,12 @@ get_GM_network <- function(gwas, organism = 9606,
   map$gene <- as.character(map$gene)
   
   nSnps <- aggregate(snp ~ ., data=map, length)
-  map <- subset(map, gene %in% nSnps$gene[nSnps$snp > 1])
+  map <- map[map$gene %in% nSnps$gene[nSnps$snp > 1], ]
   
   gs <- get_GS_network(gwas)
   
   if (nrow(map) > 0) {
-    gm <- tapply(map$snp, map$gene, combn, 2) %>% 
-      do.call(cbind, .) %>% 
+    gm <- do.call(cbind, tapply(map$snp, map$gene, combn, 2)) %>% 
       t %>% 
       as.data.frame
     gm <- graph_from_data_frame(gm, directed = FALSE)
@@ -147,7 +146,7 @@ get_GI_network <- function(gwas, organism,
   colnames(ppi) <- c("gene1", "gene2")
   ppi <- unique(ppi)
   # remove self-interactions
-  ppi <- subset(ppi, gene1 != gene2)
+  ppi <- ppi[ppi$gene1 != ppi$gene2, ]
   
   # match all SNPs to pairwise PPI
   snp2snp <- merge(ppi, snpMapping, by.x = "gene1", by.y = "gene")
