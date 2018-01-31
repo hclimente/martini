@@ -19,7 +19,7 @@ biocLite("hclimente/martini")
 
 # Usage
 
-Running `martini` is three step process:
+Running `martini` is a three step process:
 
 ``` r
 library(martini)
