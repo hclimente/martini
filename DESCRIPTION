@@ -33,7 +33,6 @@ LinkingTo:
   Rcpp,
   RcppEigen (>= 0.3.3.3.0)
 Remotes: hclimente/Rgin
-SystemRequirements: gin
 RoxygenNote: 6.0.1
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
