@@ -32,6 +32,8 @@ ldweight_edges <- function(net, ld, method = "inverse") {
     net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + ldDf$x))
   } else if (method == "subtraction") {
     net <- set_edge_attr(net, "weight", index = idx, value = 1 - ldDf$x)
+  } else if (method == "sigmoid") {
+    net <- set_edge_attr(net, "weight", index = idx, value = 1 / (1 + exp(10*(ldDf$x - 0.5))))
   }
   
   if (any(is.na(E(net)$weight))) {

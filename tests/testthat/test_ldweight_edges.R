@@ -37,3 +37,16 @@ test_that("edges have the apropriate values", {
   expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1103")$weight, 0.5)
   expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 2/3)
 })
+
+# sigmoid tests
+ldnet <- ldweight_edges(net, ld, method = "sigmoid")
+ldnetDf <- igraph::as_data_frame(ldnet)
+
+test_that("edges have the apropriate values", {
+  expect_equal(length(igraph::E(ldnet)), 3)
+  expect_true(all(igraph::E(net) %in% igraph::E(ldnet)))
+  expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1102")$weight, 1)
+  expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1103")$weight, 1 / (1 + exp(10*(1 - 0.5))))
+  expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 1 / (1 + exp(10*(0.5 - 0.5))))
+})
+
