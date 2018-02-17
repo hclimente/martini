@@ -22,7 +22,8 @@ evo <- function(X, Y, W, opts) {
 #' @param eta A numeric with the value of the eta parameter.
 #' @param lambda A numeric with the value of the eta parameter.
 #' @param W A sparse matrix with the connectivity.
-#' @return A list with vector indicating if the feature was selected and the objective score.
+#' @return A list with vector indicating if the feature was selected and the 
+#' objective score.
 run_scones <- function(c, eta, lambda, W) {
     .Call('_martini_run_scones', PACKAGE = 'martini', c, eta, lambda, W)
 }

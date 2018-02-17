@@ -2,25 +2,26 @@
 % Please edit documentation in R/ld.R
 \name{ldweight_edges}
 \alias{ldweight_edges}
-\title{Include LD information in the network.}
+\title{Include linkage disequilibrium information in the network.}
 \usage{
 ldweight_edges(net, ld, method = "inverse")
 }
 \arguments{
 \item{net}{A SNP network.}
 
-\item{ld}{Data frame with linkage disequilibrium, like \code{snpStats::ld} 
-output.}
+\item{ld}{A \code{dsCMatrix} or \code{dgCMatrix} containing linkage 
+disequilibrium measures, like the output of \code{\link[snpStats]{ld}}.}
 
-\item{method}{How to incorporate LD values into the network.}
+\item{method}{How to incorporate linkage-disequilibrium values into the 
+network.}
 }
 \value{
-An SNP network where the edges weight 1 - LD, measured as Pearson
-correlation.
+An copy of net where the edges weighted according to linkage 
+disequilibrium.
 }
 \description{
-Include LD information in the SNP network. Only work for human
-SNPs.
+Include linkage disequilibrium information in the SNP network. 
+The weight of the edges will be lower the higher the linkage is.
 }
 \examples{
 ld <- snpStats::ld(minigwas$genotypes, depth = 2, stats = "R.squared")

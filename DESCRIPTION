@@ -1,13 +1,19 @@
 Package: martini
 Type: Package
 Title: GWAS Incorporating Networks
-Version: 0.99.5
+Version: 0.99.6
 Authors@R: c(person("Hector", "Climente-Gonzalez", 
                     email = "hector.climente@curie.fr",
                     role = c("aut", "cre")),
              person("Chloe-Agathe", "Azencott", role = "aut"))
 Maintainer: Hector Climente <hector.climente@curie.fr>
-Description: martini deals with the low power inherent to GWAS studies by using prior knowledge represented as a network. SNPs are the vertices of the network, and the edges represent biological relationships between them (genomic adjacency, belonging to the same gene, physical interaction between protein products). The network is scanned using SConES, which looks for groups of SNPs maximally associated with the phenotype, that form a close subnetwork.
+Description: martini deals with the low power inherent to GWAS studies by using 
+    prior knowledge represented as a network. SNPs are the vertices of the 
+    network, and the edges represent biological relationships between them 
+    (genomic adjacency, belonging to the same gene, physical interaction between
+    protein products). The network is scanned using SConES, which looks for 
+    groups of SNPs maximally associated with the phenotype, that form a close 
+    subnetwork.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
@@ -32,7 +38,6 @@ LinkingTo:
   Rgin,
   Rcpp,
   RcppEigen (>= 0.3.3.3.0)
-Remotes: hclimente/Rgin
 RoxygenNote: 6.0.1
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network

@@ -17,7 +17,7 @@ Small GWAS example.
 data(minigwas)
 
 # access different elements
-minigwas$genotypes
-minigwas$map
-minigwas$fam
+minigwas[["genotypes"]]
+minigwas[["map"]]
+minigwas[["fam"]]
 }

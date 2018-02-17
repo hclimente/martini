@@ -17,7 +17,7 @@ part of the gene i.e. SNPs mapped to them will be considered mapped to the
 gene.}
 }
 \value{
-A dataframe with two columns: one for the SNP and another for the
+A data.frame with two columns: one for the SNP and another for the
 gene it has been mapped to.
 }
 \description{

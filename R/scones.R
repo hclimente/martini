@@ -5,14 +5,15 @@
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
-#' @param encoding SNP encoding. Possible values: additive (default), resessive, 
+#' @param encoding SNP encoding. Possible values: additive (default), resessive,
 #' dominant, codominant.
 #' @param ... Extra arguments for \code{\link{get_evo_settings}}.
-#' @return A copy of the SnpMatrix$map object, with the following additions:
+#' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
+#' following additions:
 #' \itemize{
 #' \item{C: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by evo or 
-#' not.}
+#' \item{selected: logical vector indicating if the SNP was selected by SConES 
+#' or not.}
 #' \item{module: integer with the number of the module the SNP belongs to.}
 #' }
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
@@ -29,26 +30,26 @@
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", ...) {
 
-  colnames(gwas$map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  X <- as(gwas$genotypes, "numeric")
+  colnames(gwas[["map"]]) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  X <- as(gwas[['genotypes']], "numeric")
   X <- encode_gwas(X, encoding)
-  Y <- gwas$fam$affected
+  Y <- gwas[['fam']][['affected']]
   
   # remove redundant edges and self-edges
   net <- simplify(net)
   W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
   
   # order according to order in map
-  W <- W[gwas$map$snp, gwas$map$snp]
+  W <- W[gwas[["map"]][['snp']], gwas[["map"]][['snp']]]
   
   settings <- get_evo_settings(...)
   
   test <- evo(X, Y, W, settings)
-  cat("eta =", test$eta, "\nlambda =", test$lambda, "\n")
+  cat("eta =", test[['eta']], "\nlambda =", test[['lambda']], "\n")
   
-  cones <- gwas$map
-  cones$c <- test$c
-  cones$selected <- as.logical(test$selected)
+  cones <- gwas[["map"]]
+  cones[['c']] <- test[['c']]
+  cones[['selected']] <- as.logical(test[['selected']])
   
   cones <- get_snp_modules(cones, net)
   
@@ -96,8 +97,7 @@ get_snp_modules <- function(cones, net) {
 #' ommited, it's automatically created based on the association
 #' scores.
 #' @param lambdas Numeric vector with the lambdas to explore in the grid search.
-#' If ommited, it's automatically created based on the 
-#' association scores.
+#' If ommited, it's automatically created based on the association scores.
 #' @param debug Display additional information. Possible values: TRUE, FALSE
 #' (default).
 #' @return A list of \code{evo} settings.
@@ -111,28 +111,15 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic",
   settings <- list()
   
   # unsigned int
-  if (associationScore == "skat") {
-    settings$associationScore = 0
-  } else if (associationScore == "chi2") {
-    settings$associationScore = 1
-  } else if (associationScore == "trend") {
-    settings$associationScore = 2
-  } else {
+  settings$associationScore <- switch(associationScore, skat = 0, chi2 = 1)
+  if (length(settings$associationScore) == 0) {
     stop(paste("Error: invalid associationScore", associationScore))
   }
   
   # unsigned int
-  if (modelScore == "consistency") {
-    settings$modelScore = 0
-  } else if (modelScore == "bic") {
-    settings$modelScore = 1
-  } else if (modelScore == "aic") {
-    settings$modelScore = 2
-  } else if (modelScore == "aicc") {
-    settings$modelScore = 3
-  } else if (modelScore == "mbic") {
-    settings$modelScore = 4
-  } else {
+  settings$modelScore <- switch(modelScore, consistency = 0, bic = 1, aic = 2, 
+                                            aicc = 3, mbic = 4)
+  if (length(settings$modelScore) == 0) {
     stop(paste("Error: invalid modelScore", modelScore))
   }
   

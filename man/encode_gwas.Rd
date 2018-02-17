@@ -20,6 +20,6 @@ A genotype matrix
 Converts the encoding from additive to another one.
 }
 \examples{
-X <- as(minigwas$genotypes, "numeric")
+X <- as(minigwas[["genotypes"]], "numeric")
 martini:::encode_gwas(X, "recessive")
 }

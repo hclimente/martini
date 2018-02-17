@@ -1,8 +1,8 @@
-#' Get GS network.
+#' Get genomic sequence network.
 #' 
 #' @description Creates a network of SNPs where each SNP is connected to its 
-#' adjacent SNPs in the genome sequence. Corresponds to the GS network described
-#' by Azencott et al.
+#' adjacent SNPs in the genome sequence. Corresponds to the genomic sequence 
+#' (GS) network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @return An igraph network of the GS network of the SNPs.
@@ -19,7 +19,7 @@
 #' @export
 get_GS_network <- function(gwas)  {
   
-  map <- gwas$map
+  map <- gwas[["map"]]
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   map <- subset(map, select = c("chr","pos","snp"))
   map <- unique(map)
@@ -43,16 +43,17 @@ get_GS_network <- function(gwas)  {
   
 }
 
-#' Get GM network.
+#' Get gene membership network.
 #' 
 #' @description Creates a network of SNPs where each SNP is connected as in the
-#' GS network and, in addition, to all the other SNPs pertaining to the same
-#' gene. Corresponds to the GM network described by Azencott et al.
+#' \link[=get_GS_network]{GS} network and, in addition, to all the other SNPs 
+#' pertaining to the same gene. Corresponds to the gene membership (GM) network 
+#' described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
 #' provided.
-#' @param snpMapping A data frame with two columns: snp id (1st column) and gene
+#' @param snpMapping A data.frame with two columns: snp id (1st column) and gene
 #' it maps to (2nd column).
 #' @return An igraph network of the GM network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
@@ -70,7 +71,7 @@ get_GM_network <- function(gwas, organism = 9606,
   
   colnames(snpMapping) <- c("snp","gene")
   
-  map <- gwas$map
+  map <- gwas[["map"]]
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   map <- merge(map, snpMapping)
   map <- subset(map, select = c("snp","gene"))
@@ -107,19 +108,19 @@ get_GM_network <- function(gwas, organism = 9606,
   return(gm)
 }
 
-#' Get GI network.
+#' Get gene-interaction network.
 #' 
 #' @description Creates a network of SNPs where each SNP is connected as in the
-#' GM network and, in addition, to all the other SNPs pertaining to any
-#' interactor of the gene it is mapped to. Corresponds to the GI network
-#' described by Azencott et al.
+#' \link[=get_GM_network]{GM} network and, in addition, to all the other SNPs 
+#' pertaining to any interactor of the gene it is mapped to. Corresponds to the 
+#' gene-interaction (GI) network described by Azencott et al.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
 #' provided.
-#' @param snpMapping A data frame with minimum two columns: snp id (1st column)
+#' @param snpMapping A data.frame with minimum two columns: snp id (1st column)
 #' and gene it maps to (2nd column).
-#' @param ppi A data frame describing protein-protein interactions with at least
+#' @param ppi A data.frame describing protein-protein interactions with at least
 #' two colums. The first two columns must be the gene ids of the interacting
 #' proteins.
 #' @return An igraph network of the GI network of the SNPs.
@@ -137,7 +138,7 @@ get_GI_network <- function(gwas, organism,
   
   colnames(snpMapping) <- c("snp","gene")
   
-  map <- gwas$map
+  map <- gwas[["map"]]
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   map <-  subset(map, select = c("chr","snp","pos"))
   
@@ -178,7 +179,7 @@ get_GI_network <- function(gwas, organism,
 #' @param flank A number with the flanking regions around genes to be considered
 #' part of the gene i.e. SNPs mapped to them will be considered mapped to the
 #' gene.
-#' @return A dataframe with two columns: one for the SNP and another for the
+#' @return A data.frame with two columns: one for the SNP and another for the
 #' gene it has been mapped to.
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
@@ -187,7 +188,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   check_installed("IRanges", "snp2gene")
   
   # get map in appropriate format
-  map <- gwas$map
+  map <- gwas[["map"]]
   colnames(map) <- c("chr", "snp", "cm", "gpos", "allele1", "allele2")
   map$chr <- gsub("[Cc]hr", "", map$chr)
   
@@ -234,8 +235,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     
     # add a buffer before and after the gene
     genes$start_position <- genes$start_position - flank
-    genes$start_position <- ifelse(genes$start_position < 0, 
-                                   0, genes$start_position)
+    genes$start_position[genes$start_position < 0] <- 0
     genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
@@ -264,7 +264,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' 
 #' @param organism Organism: human represents human, arabidopsis for Arabidopsis
 #' thaliana, etc.
-#' @return A dataframe with two columns with pairs of interacting proteins.
+#' @return A data.frame with two columns with pairs of interacting proteins.
 #' @examples 
 #' # download dog interactions
 #' martini:::get_ppi(9615)

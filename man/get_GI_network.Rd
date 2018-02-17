@@ -2,7 +2,7 @@
 % Please edit documentation in R/networks.R
 \name{get_GI_network}
 \alias{get_GI_network}
-\title{Get GI network.}
+\title{Get gene-interaction network.}
 \usage{
 get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
   ppi = get_ppi(organism))
@@ -13,10 +13,10 @@ get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
 provided.}
 
-\item{snpMapping}{A data frame with minimum two columns: snp id (1st column)
+\item{snpMapping}{A data.frame with minimum two columns: snp id (1st column)
 and gene it maps to (2nd column).}
 
-\item{ppi}{A data frame describing protein-protein interactions with at least
+\item{ppi}{A data.frame describing protein-protein interactions with at least
 two colums. The first two columns must be the gene ids of the interacting
 proteins.}
 }
@@ -25,9 +25,9 @@ An igraph network of the GI network of the SNPs.
 }
 \description{
 Creates a network of SNPs where each SNP is connected as in the
-GM network and, in addition, to all the other SNPs pertaining to any
-interactor of the gene it is mapped to. Corresponds to the GI network
-described by Azencott et al.
+\link[=get_GM_network]{GM} network and, in addition, to all the other SNPs 
+pertaining to any interactor of the gene it is mapped to. Corresponds to the 
+gene-interaction (GI) network described by Azencott et al.
 }
 \examples{
 get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)

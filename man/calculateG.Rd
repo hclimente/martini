@@ -4,10 +4,10 @@
 \alias{calculateG}
 \title{Calculate the genetic component of the phenotype}
 \usage{
-calculateG(u, X, model)
+calculateG(effectSize, X, model)
 }
 \arguments{
-\item{u}{A vector with the effect size of each SNP.}
+\item{effectSize}{A vector with the effect size of each SNP.}
 
 \item{X}{Genotypes in a numeric matrix, where each row is a sample and each
 column a SNP.}

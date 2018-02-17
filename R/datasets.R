@@ -13,16 +13,16 @@
 #' data(minigwas)
 #' 
 #' # access different elements
-#' minigwas$genotypes
-#' minigwas$map
-#' minigwas$fam
+#' minigwas[["genotypes"]]
+#' minigwas[["map"]]
+#' minigwas[["fam"]]
 NULL
 
 #' Genes for the minigwas dataset.
 #'
 #' @name minisnpMapping
 #' @docType data
-#' @description Data frame that maps SNPs from minigwas to their gene.
+#' @description data.frame that maps SNPs from minigwas to their gene.
 #' @examples
 #' data(minisnpMapping)
 #' 
@@ -33,7 +33,7 @@ NULL
 #'
 #' @name minippi
 #' @docType data
-#' @description Data frame describing pairs of proteins that interact for 
+#' @description data.frame describing pairs of proteins that interact for 
 #' minigwas.
 #' @examples
 #' data(minippi)

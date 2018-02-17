@@ -63,25 +63,22 @@ check_installed <- function(pkg, fn = "this function") {
 #' codominant.
 #' @return A genotype matrix 
 #' @examples 
-#' X <- as(minigwas$genotypes, "numeric")
+#' X <- as(minigwas[["genotypes"]], "numeric")
 #' martini:::encode_gwas(X, "recessive")
 encode_gwas <- function(X, encoding) {
   
-  if (encoding == "additive") {
-    AA <- 0; AB <- 1; BB <- 2
-  } else if (encoding == "recessive") {
-    AA <- 0; AB <- 0; BB <- 1
-  } else if (encoding == "dominant") {
-    AA <- 0; AB <- 1; BB <- 1
-  } else if (encoding == "codominant") {
-    AA <- 0; AB <- 1; BB <- 0
-  } else {
+  if (! encoding %in% c("additive", "recessive", "dominant", "codominant")) {
     stop("Invalid encoding.", call. = FALSE)
   }
   
-  X[X == 0] <- AA
-  X[X == 1] <- AB
-  X[X == 2] <- BB
+  code <- data.frame(e = c('additive', 'recessive', 'dominant', 'codominant'),
+                     AA = c(0,0,0,0),
+                     AB = c(1,0,1,1),
+                     BB = c(2,1,1,0))
+  
+  X[X == 0] <- code$AA[code$e == encoding]
+  X[X == 1] <- code$AB[code$e == encoding]
+  X[X == 2] <- code$BB[code$e == encoding]
   
   return(X)
   
@@ -97,7 +94,7 @@ encode_gwas <- function(X, encoding) {
 #' martini:::is_coherent(minigwas)
 is_coherent <- function(gwas) {
   
-  mapSelfCoherence <- by(gwas$map, gwas$map[,1], function(chr) {
+  mapSelfCoherence <- by(gwas[["map"]], gwas[["map"]][,1], function(chr) {
     ascendingChr <- chr[order(chr[,4]),]
     descendingChr <- chr[order(chr[,4], decreasing = TRUE),]
     return(any(chr != ascendingChr) & any(chr != descendingChr))
@@ -107,7 +104,7 @@ is_coherent <- function(gwas) {
     stop("map is not ordered by genomic position.")
   }
   
-  if (any(gwas$map[,2] != colnames(gwas$genotypes))) {
+  if (any(gwas[["map"]][,2] != colnames(gwas[["genotypes"]]))) {
     stop("map and genotype SNP order differ.")
   }
   

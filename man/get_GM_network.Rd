@@ -2,7 +2,7 @@
 % Please edit documentation in R/networks.R
 \name{get_GM_network}
 \alias{get_GM_network}
-\title{Get GM network.}
+\title{Get gene membership network.}
 \usage{
 get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))
 }
@@ -12,7 +12,7 @@ get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
 provided.}
 
-\item{snpMapping}{A data frame with two columns: snp id (1st column) and gene
+\item{snpMapping}{A data.frame with two columns: snp id (1st column) and gene
 it maps to (2nd column).}
 }
 \value{
@@ -20,8 +20,9 @@ An igraph network of the GM network of the SNPs.
 }
 \description{
 Creates a network of SNPs where each SNP is connected as in the
-GS network and, in addition, to all the other SNPs pertaining to the same
-gene. Corresponds to the GM network described by Azencott et al.
+\link[=get_GS_network]{GS} network and, in addition, to all the other SNPs 
+pertaining to the same gene. Corresponds to the gene membership (GM) network 
+described by Azencott et al.
 }
 \examples{
 get_GM_network(minigwas, snpMapping = minisnpMapping)

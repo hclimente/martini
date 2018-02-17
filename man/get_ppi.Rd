@@ -11,7 +11,7 @@ get_ppi(organism = 9606)
 thaliana, etc.}
 }
 \value{
-A dataframe with two columns with pairs of interacting proteins.
+A data.frame with two columns with pairs of interacting proteins.
 }
 \description{
 Get all protein-protein interactions for an organism from

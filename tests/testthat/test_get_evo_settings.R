@@ -19,7 +19,6 @@ test_that("default we can change values", {
   expect_error(get_evo_settings(modelScore = "kk"))
   expect_equal(get_evo_settings(associationScore = "skat")$associationScore, 0)
   expect_equal(get_evo_settings(associationScore = "chi2")$associationScore, 1)
-  expect_equal(get_evo_settings(associationScore = "trend")$associationScore, 2)
   expect_error(get_evo_settings(associationScore = "kk"))
   expect_equal(get_evo_settings(etas = c(3,4,5))$etas, c(3,4,5))
   expect_error(get_evo_settings(etas = c("a","b"))$etas)

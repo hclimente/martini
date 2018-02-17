@@ -1,4 +1,3 @@
-library(martini)
 source("minimum_data.R")
 
 test_that("we interconnect the right genes", {

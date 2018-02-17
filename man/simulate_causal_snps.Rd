@@ -4,15 +4,15 @@
 \alias{simulate_causal_snps}
 \title{Simulate causal SNPs}
 \usage{
-simulate_causal_snps(net, n = 20, p = 1)
+simulate_causal_snps(net, ngenes = 20, pcausal = 1)
 }
 \arguments{
 \item{net}{An igraph gene-interaction (GI) network that connects the SNPs.}
 
-\item{n}{Number of causal genes.}
+\item{ngenes}{Number of causal genes.}
 
-\item{p}{Number between 0 and 1, proportion of the SNPs in causal genes that
-are causal themselves.}
+\item{pcausal}{Number between 0 and 1, proportion of the SNPs in causal genes
+that are causal themselves.}
 }
 \value{
 A vector with the ids of the simulated causal SNPs.
@@ -23,5 +23,5 @@ proportion of them as causal.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-simulate_causal_snps(gi, n=2)
+simulate_causal_snps(gi, ngenes=2)
 }

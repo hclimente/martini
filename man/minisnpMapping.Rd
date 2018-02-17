@@ -5,7 +5,7 @@
 \alias{minisnpMapping}
 \title{Genes for the minigwas dataset.}
 \description{
-Data frame that maps SNPs from minigwas to their gene.
+data.frame that maps SNPs from minigwas to their gene.
 }
 \examples{
 data(minisnpMapping)

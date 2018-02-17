@@ -4,17 +4,17 @@
 #' proportion of them as causal.
 #' 
 #' @param net An igraph gene-interaction (GI) network that connects the SNPs.
-#' @param n Number of causal genes.
-#' @param p Number between 0 and 1, proportion of the SNPs in causal genes that
-#' are causal themselves.
+#' @param ngenes Number of causal genes.
+#' @param pcausal Number between 0 and 1, proportion of the SNPs in causal genes
+#' that are causal themselves.
 #' @return A vector with the ids of the simulated causal SNPs.
 #' @importFrom igraph components V neighbors %>%
 #' @importFrom stats na.omit
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' simulate_causal_snps(gi, n=2)
+#' simulate_causal_snps(gi, ngenes=2)
 #' @export
-simulate_causal_snps <- function(net, n=20, p=1) {
+simulate_causal_snps <- function(net, ngenes = 20, pcausal = 1) {
   
   # SNPs with only one gene
   subnet <- subnet(net, "nGenes", 1)
@@ -32,14 +32,14 @@ simulate_causal_snps <- function(net, n=20, p=1) {
       subvert(subnet, "gene", s)$gene
     }) %>% unlist %>% table
     
-    causalGenes <- causalNetwork[causalNetwork > n/4] %>% names %>% 
-                      intersect(genes) %>% head(n)
+    causalGenes <- causalNetwork[causalNetwork > ngenes/4] %>% names %>% 
+                      intersect(genes) %>% head(ngenes)
     
-    if ( length(causalGenes) >= n ) {
+    if ( length(causalGenes) >= ngenes ) {
       
       causal <- subvert(subnet, "gene", causalGenes)
-      # sample a proportion p of the snps in the causal genes
-      causal <- sample(causal, length(causal) * p)
+      # sample a proportion pcausal of the snps in the causal genes
+      causal <- sample(causal, length(causal) * pcausal)
       
       # check that we have at most two subnetworks
       if (components(subnet(net, "name", names(causal)))$no <= 2) {
@@ -61,7 +61,7 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param snps Character vector with the SNP ids of the causal SNPs. Must match
-#' SNPs in gwas$map$snp.names.
+#' SNPs in gwas[["map"]][["snp.names"]].
 #' @param h2 Heritability of the phenotype (between 0 and 1).
 #' @param model String specifying the genetic model under the phenotype.
 #' Accepted values: "additive".
@@ -77,18 +77,17 @@ simulate_causal_snps <- function(net, n=20, p=1) {
 #' @param prevalence Value between 0 and 1 specifying the population prevalence
 #' of the disease. Note that ncases cannot be greater than 
 #' prevalence * number of samples. Required if qualitative = TRUE.
-#' @return A copy of the GWAS experiment with the new phenotypes in the
-#' gwas$fam$affected.
+#' @return A copy of the GWAS experiment with the new phenotypes in
+#' \code{gwas[["fam"]][["affected"]]}.
 #' @references Inspired from GCTA simulation tool:
 #' \url{http://cnsgenomics.com/software/gcta/Simu.html}.
-#' @importMethodsFrom snpStats "["
+#' @importClassesFrom snpStats SnpMatrix
 #' @importFrom stats rnorm var
 #' @importFrom utils head tail
-#' @importMethodsFrom snpStats "["
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' causal <- simulate_causal_snps(gi, n=2)
-#' simulate_phenotype(minigwas, causal, h2=1)
+#' causal <- simulate_causal_snps(gi, ngenes = 2)
+#' simulate_phenotype(minigwas, causal, h2 = 1)
 #' @export
 simulate_phenotype <- function(gwas, snps, h2, model = "additive", 
                                effectSize = rnorm(length(snps)), 
@@ -96,17 +95,18 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
                                ncases, ncontrols, prevalence){
 
   # select only controls
-  binary <- (unique(gwas$fam$affected) %>% length) == 2
+  binary <- (unique(gwas[["fam"]][["affected"]]) %>% length) == 2
   if (binary) {
-    gwas$genotypes <- gwas$genotypes[gwas$fam$affected == 1, ]
-    gwas$fam <- gwas$fam[gwas$fam$affected == 1, ]
+    gwas[["genotypes"]] <- gwas[["genotypes"]][gwas[["fam"]][["affected"]]==1, ]
+    gwas[["fam"]] <- gwas[["fam"]][gwas[["fam"]][["affected"]] == 1, ]
   }
   
-  X <- as(gwas$genotypes, "numeric")
+  X <- as(gwas[["genotypes"]], "numeric")
   
-  if (any(! names(snps) %in% gwas$map$snp.names)) {
+  if (any(! names(snps) %in% gwas[["map"]][["snp.names"]])) {
     stop(paste("The following causal SNPs are not in the SNP list:", 
-               paste(setdiff(names(snps), gwas$map$snp.names), collapse = ",")))
+         paste(setdiff(names(snps), gwas[["map"]][["snp.names"]]), 
+               collapse = ",")))
   }
   
   if (h2 < 0 | h2 > 1) {
@@ -135,7 +135,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
     
   }
   
-  gwas$fam$affected <- Y
+  gwas[["fam"]][["affected"]] <- Y
   
   return(gwas)
 }
@@ -145,12 +145,12 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
 #' @description Calculates the genetic component of the phenotype from a
 #' genotype.
 #' 
-#' @param u A vector with the effect size of each SNP.
+#' @param effectSize A vector with the effect size of each SNP.
 #' @param X Genotypes in a numeric matrix, where each row is a sample and each
 #' column a SNP.
 #' @param model Genetic model to assume.
 #' @return A vector with the genetic component of each sample.
-calculateG <- function(u, X, model) {
+calculateG <- function(effectSize, X, model) {
   
   X <- t(X)
   
@@ -160,7 +160,7 @@ calculateG <- function(u, X, model) {
   w <- (x - 2 * p) / sqrt(2 * p * (1 - p))
   
   if (model == "additive") {
-    G <- colSums(w * u)
+    G <- colSums(w * effectSize)
   } else {
     stop(paste0("Genetic model ", model, " not recognised."))
   }

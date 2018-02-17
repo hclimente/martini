@@ -19,7 +19,8 @@ using namespace Rcpp;
 //' @param opts A named list with the settings.
 //' @return An object with the evo results.
 // [[Rcpp::export]]
-Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,Eigen::ColMajor> W, Rcpp::List opts) {
+Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
+               Eigen::ColMajor> W, Rcpp::List opts) {
 
   VectorXd etas(Rcpp::as<Eigen::VectorXd>(opts["etas"]));
   VectorXd lambdas(Rcpp::as<Eigen::VectorXd>(opts["lambdas"]));

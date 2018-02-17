@@ -16,7 +16,8 @@ run_scones(c, eta, lambda, W)
 \item{W}{A sparse matrix with the connectivity.}
 }
 \value{
-A list with vector indicating if the feature was selected and the objective score.
+A list with vector indicating if the feature was selected and the 
+objective score.
 }
 \description{
 Run scones.

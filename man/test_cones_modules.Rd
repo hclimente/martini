@@ -4,25 +4,27 @@
 \alias{test_cones_modules}
 \title{Calculate an empirical p-value for \code{find_cones} results.}
 \usage{
-test_cones_modules(cones, net, N = 1e+05)
+test_cones_modules(cones, net, nperm = 1e+05)
 }
 \arguments{
 \item{cones}{Results from \code{find_cones}.}
 
 \item{net}{The same SNP network provided to \code{find_cones}.}
 
-\item{N}{Integer with the name of permutations.}
+\item{nperm}{Integer with the name of permutations.}
 }
 \value{
 An empirical p-value for each of the SNP modules. Please, note that 
 the minimum possible p-value from an empirical distribution is set to 
-1/(N+1). Modules composed by a single SNP will not have a empirical p-value.
+\code{1/(nperm+1)}. Modules composed by a single SNP will not have an 
+empirical p-value.
 }
 \description{
 Do a permutation-based test to assess the statistical
 significance of each of the modules obtained through shake. For a module of 
-size k, k interconnected SNPs are picked N times, and their joint association
-score is calculated to come up with an estimation of the distribution.
+size k, k interconnected SNPs are picked \code{nperm} times, and their joint 
+association score is calculated to come up with an estimation of the 
+distribution.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)

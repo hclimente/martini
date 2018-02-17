@@ -12,7 +12,7 @@ simulate_phenotype(gwas, snps, h2, model = "additive",
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{snps}{Character vector with the SNP ids of the causal SNPs. Must match
-SNPs in gwas$map$snp.names.}
+SNPs in gwas[["map"]][["snp.names"]].}
 
 \item{h2}{Heritability of the phenotype (between 0 and 1).}
 
@@ -37,8 +37,8 @@ of the disease. Note that ncases cannot be greater than
 prevalence * number of samples. Required if qualitative = TRUE.}
 }
 \value{
-A copy of the GWAS experiment with the new phenotypes in the
-gwas$fam$affected.
+A copy of the GWAS experiment with the new phenotypes in
+\code{gwas[["fam"]][["affected"]]}.
 }
 \description{
 Simulates a phenotype from a GWAS experiment and a specified set
@@ -46,8 +46,8 @@ of causal SNPs. If the data is qualitative, only controls are used.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-causal <- simulate_causal_snps(gi, n=2)
-simulate_phenotype(minigwas, causal, h2=1)
+causal <- simulate_causal_snps(gi, ngenes = 2)
+simulate_phenotype(minigwas, causal, h2 = 1)
 }
 \references{
 Inspired from GCTA simulation tool:

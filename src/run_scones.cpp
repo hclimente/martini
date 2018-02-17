@@ -17,9 +17,11 @@ using namespace Rcpp;
 //' @param eta A numeric with the value of the eta parameter.
 //' @param lambda A numeric with the value of the eta parameter.
 //' @param W A sparse matrix with the connectivity.
-//' @return A list with vector indicating if the feature was selected and the objective score.
+//' @return A list with vector indicating if the feature was selected and the 
+//' objective score.
 // [[Rcpp::export]]
-List run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+List run_scones(Eigen::VectorXd c, double eta, double lambda, 
+                Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   Scones s(c, eta, lambda, &W);
   s.selectSnps();

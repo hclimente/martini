@@ -2,7 +2,7 @@
 % Please edit documentation in R/networks.R
 \name{get_GS_network}
 \alias{get_GS_network}
-\title{Get GS network.}
+\title{Get genomic sequence network.}
 \usage{
 get_GS_network(gwas)
 }
@@ -14,8 +14,8 @@ An igraph network of the GS network of the SNPs.
 }
 \description{
 Creates a network of SNPs where each SNP is connected to its 
-adjacent SNPs in the genome sequence. Corresponds to the GS network described
-by Azencott et al.
+adjacent SNPs in the genome sequence. Corresponds to the genomic sequence 
+(GS) network described by Azencott et al.
 }
 \examples{
 get_GS_network(minigwas)
