@@ -7,6 +7,7 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
 ---
 
 In this example we will analyze a simple case of GWAS data. We start by loading the `martini`, which contains the example we will work on.
@@ -41,7 +42,7 @@ minigwas$genotypes
 
 # The network
 
-Other than the information from the GWAS experiment, we need a network of SNPs to work on. We can create those with the family of `get_G*_network` functions. Let's see how they work.
+Other than the information from the GWAS experiment, we need a network of SNPs to work on. We can create those described in [@Azencott2013] with the family of `get_G*_network` functions. Let's see how they work.
 
 ```{r create GS network}
 gs <- get_GS_network(minigwas)
@@ -69,10 +70,12 @@ The GI network builds on the GM network by connecting SNPs belonging to genes in
 
 # Running SConES
 
-We can find ConES (connected explanatory SNPs), the set of SNPs $S$ that solve the problem
+Once we have the network, we can find ConES (connected explanatory SNPs), the set of SNPs $S$ that solve the problem
 
 $$argmax_{S \subseteq V} \sum_{p \in S} c_p - \sum_{p \in S} \eta - \sum_{p \in S} \sum_{q \notin S} \lambda W_{pq} .$$
-where $c$ represents an association measure with the phenotype (e.g. $\chi^2_1$) and $W_{pq}$ is the weight of the edge between $p$ and $q$. $\eta$ and $\lambda$ are parameters that enforce sparsity and connectivity on the subset respectively. Essentially, we are looking for a small subset of SNPs maximally associated with the phenotype that is mostly interconnected among itself in the network. We can find ConES in `martini` with the function `search_cones`. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
+where $c$ represents an association measure with the phenotype (e.g. $\chi^2_1$) and $W_{pq}$ is the weight of the edge between $p$ and $q$. $\eta$ and $\lambda$ are parameters that enforce sparsity and connectivity on the subset respectively. Essentially, we are looking for a small subset of SNPs maximally associated with the phenotype that is mostly interconnected among itself in the network. 
+
+We can find ConES in `martini` with the function `search_cones`, which implements SConES [@Azencott2013]. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
 
 ```{r find cones gridsearch}
 cones <- search_cones(minigwas, gi)
@@ -88,3 +91,5 @@ The first six columns of the data frame come from the `map` data frame. The rema
 - `c` contains the SNP univariate association score.
 - `selected` is a logical vector indicating wether a SNP has been selected or not.
 - `module` is an id shared by all the SNPs included in the same submodule of the solution subnetwork. They are not necesarily connected to each other, but there must be a path connecting them inside the solution subnetwork.
+
+# References
