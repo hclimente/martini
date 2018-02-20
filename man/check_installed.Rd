@@ -22,3 +22,4 @@ not.
 martini:::check_installed("martini")
 \dontrun{martini:::check_installed("martinid")}
 }
+\keyword{internal}

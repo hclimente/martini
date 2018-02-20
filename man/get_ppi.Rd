@@ -21,3 +21,4 @@ BioGRID.
 # download dog interactions
 martini:::get_ppi(9615)
 }
+\keyword{internal}

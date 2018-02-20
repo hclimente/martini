@@ -181,6 +181,7 @@ get_GI_network <- function(gwas, organism,
 #' gene.
 #' @return A data.frame with two columns: one for the SNP and another for the
 #' gene it has been mapped to.
+#' @keywords internal
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
   check_installed("biomaRt", "snp2gene")
@@ -268,6 +269,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' @examples 
 #' # download dog interactions
 #' martini:::get_ppi(9615)
+#' @keywords internal
 get_ppi <- function(organism = 9606) {
   
   check_installed("httr", "get_ppi")

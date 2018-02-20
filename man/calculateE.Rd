@@ -18,3 +18,4 @@ A vector with the environmental component of each sample.
 Calculates the environmental component of the phenotype using
 the variance in the genetic component.
 }
+\keyword{internal}

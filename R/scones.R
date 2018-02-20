@@ -69,6 +69,7 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' cones <- search_cones(minigwas, gi)
 #' martini:::get_snp_modules(cones, gi)
+#' @keywords internal
 get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
@@ -104,6 +105,7 @@ get_snp_modules <- function(cones, net) {
 #' @examples 
 #' martini:::get_evo_settings()
 #' martini:::get_evo_settings(associationScore = "skat")
+#' @keywords internal
 get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", 
                              etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){

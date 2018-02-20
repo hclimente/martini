@@ -21,3 +21,4 @@ A vector with the genetic component of each sample.
 Calculates the genetic component of the phenotype from a
 genotype.
 }
+\keyword{internal}

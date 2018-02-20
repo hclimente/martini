@@ -35,3 +35,4 @@ values provided by the user, or the default ones if none is provided.
 martini:::get_evo_settings()
 martini:::get_evo_settings(associationScore = "skat")
 }
+\keyword{internal}

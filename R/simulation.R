@@ -150,6 +150,7 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
 #' column a SNP.
 #' @param model Genetic model to assume.
 #' @return A vector with the genetic component of each sample.
+#' @keywords internal
 calculateG <- function(effectSize, X, model) {
   
   X <- t(X)
@@ -177,6 +178,7 @@ calculateG <- function(effectSize, X, model) {
 #' @param G The genetic component of the phenotype.
 #' @param h2 The heritability.
 #' @return A vector with the environmental component of each sample.
+#' @keywords internal
 calculateE <- function(G, h2) {
   
   residual.var <- var(G) * (1/h2 - 1)

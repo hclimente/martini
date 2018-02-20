@@ -19,3 +19,4 @@ same order.
 \examples{
 martini:::is_coherent(minigwas)
 }
+\keyword{internal}

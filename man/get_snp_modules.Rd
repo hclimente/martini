@@ -22,3 +22,4 @@ gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 cones <- search_cones(minigwas, gi)
 martini:::get_snp_modules(cones, gi)
 }
+\keyword{internal}

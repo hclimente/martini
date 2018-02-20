@@ -23,3 +23,4 @@ Converts the encoding from additive to another one.
 X <- as(minigwas[["genotypes"]], "numeric")
 martini:::encode_gwas(X, "recessive")
 }
+\keyword{internal}

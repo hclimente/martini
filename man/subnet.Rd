@@ -29,3 +29,4 @@ gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 martini:::subnet(gi, "gene", "A")
 martini:::subnet(gi, "name", c("1A1", "1A3"))
 }
+\keyword{internal}

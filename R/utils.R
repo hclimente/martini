@@ -15,6 +15,7 @@
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subnet(gi, "gene", "A")
 #' martini:::subnet(gi, "name", c("1A1", "1A3"))
+#' @keywords internal
 subnet <- function(net, attr, values, affirmative = TRUE) {
   vertices <- V(net)[(vertex_attr(net, attr) %in% values) == affirmative]
   induced_subgraph(net, vertices)
@@ -52,6 +53,7 @@ subvert <- function(net, attr, values, affirmative = TRUE) {
 #' @examples 
 #' martini:::check_installed("martini")
 #' \dontrun{martini:::check_installed("martinid")}
+#' @keywords internal
 check_installed <- function(pkg, fn = "this function") {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(paste(pkg, "needed for", fn, "to work. Please install it."),
@@ -71,6 +73,7 @@ check_installed <- function(pkg, fn = "this function") {
 #' @examples 
 #' X <- as(minigwas[["genotypes"]], "numeric")
 #' martini:::encode_gwas(X, "recessive")
+#' @keywords internal
 encode_gwas <- function(X, encoding) {
   
   if (! encoding %in% c("additive", "recessive", "dominant", "codominant")) {
@@ -98,6 +101,7 @@ encode_gwas <- function(X, encoding) {
 #' @return TRUE if the GWAS dataset is coherent. Else, raises an error.
 #' @examples 
 #' martini:::is_coherent(minigwas)
+#' @keywords internal
 is_coherent <- function(gwas) {
   
   mapSelfCoherence <- by(gwas[["map"]], gwas[["map"]][,1], function(chr) {
