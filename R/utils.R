@@ -4,7 +4,10 @@
 #' 
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
-#' @param values Possible values of \code{attr}
+#' @param values Possible values of \code{attr}.
+#' @param affirmative Logical. States if a condition must be its affirmation 
+#' (e.g. all nodes with gene name "X"), or its negation (all nodes not with gene
+#' name "X").
 #' @return A subgraph containing only the vertices with attribute equal to any
 #' of the values in \code{values}.
 #' @importFrom igraph V induced_subgraph vertex_attr %>%
@@ -12,8 +15,8 @@
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subnet(gi, "gene", "A")
 #' martini:::subnet(gi, "name", c("1A1", "1A3"))
-subnet <- function(net, attr, values) {
-  vertices <- V(net)[vertex_attr(net, attr) %in% values]
+subnet <- function(net, attr, values, affirmative = TRUE) {
+  vertices <- V(net)[(vertex_attr(net, attr) %in% values) == affirmative]
   induced_subgraph(net, vertices)
 }
 
@@ -24,6 +27,9 @@ subnet <- function(net, attr, values) {
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}
+#' @param affirmative Logical. States if a condition must be its affirmation 
+#' (e.g. all nodes with gene name "X"), or its negation (all nodes not with gene
+#' name "X").
 #' @return The vertices with attribute equal to any of the values in
 #' \code{values}.
 #' @importFrom igraph V vertex_attr
@@ -31,8 +37,8 @@ subnet <- function(net, attr, values) {
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subvert(gi, "gene", "A")
 #' martini:::subvert(gi, "name", c("1A1", "1A3"))
-subvert <- function(net, attr, values) {
-  V(net)[vertex_attr(net, attr) %in% values]
+subvert <- function(net, attr, values, affirmative = TRUE) {
+  V(net)[(vertex_attr(net, attr) %in% values) == affirmative]
 }
 
 #' Check package is installed
