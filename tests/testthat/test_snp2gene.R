@@ -1,5 +1,3 @@
-library(martini)
-
 # SNPs from https://www.ebi.ac.uk/gwas/search?query=breast%20cancer
 # mapped to fgfr2, tox3, fgfr2, none and none, respectively
 brca <- list()
@@ -68,4 +66,11 @@ test_that("we map snps to their known genes", {
   expect_equal(nrow(martini:::snp2gene(red, flank = 1)), 1)
   expect_equal(nrow(martini:::snp2gene(red)), NULL)
 
+})
+
+test_that("errors if a species is not in ensembl", {
+  
+  expect_error(martini:::snp2gene(minigwas, organism = 167), 
+               "unable to find an appropriate database for tsuccinifaciens.")
+  
 })

@@ -41,7 +41,7 @@ ldweight_edges <- function(net, ld, method = "inverse") {
     if (any(is.na(E(net)$weight))) {
         stop("NA values as edge weights.")
     } else if (any(E(net)$weight < 0)) {
-        stop("Edge weights cannpt be negative.")
+        stop("Edge weights cannot be negative.")
     }
     
     # remove edges with 0 weight

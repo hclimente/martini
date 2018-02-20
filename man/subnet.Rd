@@ -4,14 +4,18 @@
 \alias{subnet}
 \title{Subgraph of vertices with an attribute}
 \usage{
-subnet(net, attr, values)
+subnet(net, attr, values, affirmative = TRUE)
 }
 \arguments{
 \item{net}{An igraph network.}
 
 \item{attr}{An attribute of the vertices.}
 
-\item{values}{Possible values of \code{attr}}
+\item{values}{Possible values of \code{attr}.}
+
+\item{affirmative}{Logical. States if a condition must be its affirmation 
+(e.g. all nodes with gene name "X"), or its negation (all nodes not with gene
+name "X").}
 }
 \value{
 A subgraph containing only the vertices with attribute equal to any

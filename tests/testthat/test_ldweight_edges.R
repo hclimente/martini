@@ -1,4 +1,3 @@
-library(martini)
 load("examplegwas.rda")
 
 gwas <- examplegwas$gwas
@@ -26,6 +25,22 @@ test_that("snps not in perfect ld connected", {
   expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 0.5)
 })
 
+test_that("negative and NAs are not possible", {
+  
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 2, 0.5), symmetric = T)
+  colnames(ld) <- c("rs1101", "rs1102", "rs1103")
+  rownames(ld) <- colnames(ld)
+  expect_error(ldweight_edges(net, ld, method = "subtraction"),
+               "Edge weights cannot be negative.")
+  
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = T)
+  colnames(ld) <- c("rs1101", "rs1102", "rs1103")
+  rownames(ld) <- colnames(ld)
+  expect_error(ldweight_edges(net, ld, method = "subtraction"),
+               "NA values as edge weights.")
+  
+})
+
 # inverse tests
 ldnet <- ldweight_edges(net, ld, method = "inverse")
 ldnetDf <- igraph::as_data_frame(ldnet)
@@ -36,6 +51,22 @@ test_that("edges have the apropriate values", {
   expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1102")$weight, 1)
   expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1103")$weight, 0.5)
   expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 2/3)
+})
+
+test_that("negative and NAs are not possible", {
+  
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, -10, 0.5), symmetric = T)
+  colnames(ld) <- c("rs1101", "rs1102", "rs1103")
+  rownames(ld) <- colnames(ld)
+  expect_error(ldweight_edges(net, ld, method = "inverse"),
+               "Edge weights cannot be negative.")
+  
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = T)
+  colnames(ld) <- c("rs1101", "rs1102", "rs1103")
+  rownames(ld) <- colnames(ld)
+  expect_error(ldweight_edges(net, ld, method = "inverse"),
+               "NA values as edge weights.")
+  
 })
 
 # sigmoid tests
@@ -49,4 +80,3 @@ test_that("edges have the apropriate values", {
   expect_equal(subset(ldnetDf, from == "rs1101" & to == "rs1103")$weight, 1 / (1 + exp(10*(1 - 0.5))))
   expect_equal(subset(ldnetDf, from == "rs1102" & to == "rs1103")$weight, 1 / (1 + exp(10*(0.5 - 0.5))))
 })
-

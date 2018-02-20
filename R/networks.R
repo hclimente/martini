@@ -212,7 +212,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
       biomaRt::useMart("plants_mart", host="plants.ensembl.org", 
                        dataset=datasetName)  
     }, error = function(e) {
-      stop(e)
+      stop(paste0("unable to find an appropriate database for ", organism, "."))
     })
   })
   

@@ -4,7 +4,7 @@
 \alias{subvert}
 \title{Vertices with an attribute}
 \usage{
-subvert(net, attr, values)
+subvert(net, attr, values, affirmative = TRUE)
 }
 \arguments{
 \item{net}{An igraph network.}
@@ -12,6 +12,10 @@ subvert(net, attr, values)
 \item{attr}{An attribute of the vertices.}
 
 \item{values}{Possible values of \code{attr}}
+
+\item{affirmative}{Logical. States if a condition must be its affirmation 
+(e.g. all nodes with gene name "X"), or its negation (all nodes not with gene
+name "X").}
 }
 \value{
 The vertices with attribute equal to any of the values in
