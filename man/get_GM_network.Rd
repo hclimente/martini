@@ -4,7 +4,8 @@
 \alias{get_GM_network}
 \title{Get gene membership network.}
 \usage{
-get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))
+get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism),
+  col_genes = c("snp", "gene"))
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -12,8 +13,15 @@ get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas, organism))
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
 provided.}
 
-\item{snpMapping}{A data.frame with two columns: snp id (1st column) and gene
-it maps to (2nd column).}
+\item{snpMapping}{A data.frame informing how SNPs map to genes. It contains 
+minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
+one gene-SNP mapping. Unless column names are specified using 
+\code{col_genes}, involved columns must be named \code{'snp'} and 
+\code{'gene'}.}
+
+\item{col_genes}{Optional, length-2 character vector with the names of the 
+two columns involving the SNP-gene mapping. The first element is the column 
+of the SNP, and the second is the column of the gene.}
 }
 \value{
 An igraph network of the GM network of the SNPs.

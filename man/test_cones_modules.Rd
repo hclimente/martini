@@ -31,3 +31,4 @@ gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 cones <- search_cones(minigwas, gi)
 test_cones_modules(cones, gi, 100)
 }
+\keyword{internal}

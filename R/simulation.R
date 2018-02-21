@@ -126,8 +126,8 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
     }
     
     Y.sorted <- sort(Y, index.return = TRUE)
-    cases <- head(Y.sorted$ix, n = ncases)
-    controls <- tail(Y.sorted$ix, n = ncontrols)
+    cases <- head(Y.sorted[['ix']], n = ncases)
+    controls <- tail(Y.sorted[['ix']], n = ncontrols)
 
     Y[cases] <- 2
     Y[controls] <- 1

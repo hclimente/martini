@@ -25,18 +25,20 @@ get_GS_network <- function(gwas)  {
   map <- unique(map)
   map <- map[with(map, order(chr,pos)),]
   
-  gs <- by(map, map$chr, function(x){
-    chr <- unique(x$chr)
-    snp1 <- head(x$snp, n = length(x$snp) - 1)
-    snp2 <- tail(x$snp, n = length(x$snp) - 1)
+  gs <- by(map, map[,'chr'], function(x){
+    chr <- unique(x[,'chr'])
+    snp1 <- head(x[,'snp'], n = length(x[,'snp']) - 1)
+    snp2 <- tail(x[,'snp'], n = length(x[,'snp']) - 1)
     data.frame(snp1 = snp1, snp2 = snp2)
   })
-  gs <- do.call("rbind", gs)
+  gs <- do.call(rbind, gs)
   gs <- graph_from_data_frame(gs, directed = FALSE)
   gs <- simplify(gs)
   
-  gs <- set_vertex_attr(gs, "chr", index = match(map$snp, V(gs)$name), map$chr)
-  gs <- set_vertex_attr(gs, "pos", index = match(map$snp, V(gs)$name), map$pos)
+  gs <- set_vertex_attr(gs, "chr", 
+                        index = match(map[,'snp'], V(gs)$name), map[,'chr'])
+  gs <- set_vertex_attr(gs, "pos", 
+                        index = match(map[,'snp'], V(gs)$name), map[,'pos'])
   gs <- set_edge_attr(gs, "weight", value = 1)
 
   return(gs)
@@ -53,8 +55,14 @@ get_GS_network <- function(gwas)  {
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
 #' provided.
-#' @param snpMapping A data.frame with two columns: snp id (1st column) and gene
-#' it maps to (2nd column).
+#' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
+#' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
+#' one gene-SNP mapping. Unless column names are specified using 
+#' \code{col_genes}, involved columns must be named \code{'snp'} and 
+#' \code{'gene'}.
+#' @param col_genes Optional, length-2 character vector with the names of the 
+#' two columns involving the SNP-gene mapping. The first element is the column 
+#' of the SNP, and the second is the column of the gene.
 #' @return An igraph network of the GM network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
 #' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
@@ -67,9 +75,11 @@ get_GS_network <- function(gwas)  {
 #' get_GM_network(minigwas, snpMapping = minisnpMapping)
 #' @export
 get_GM_network <- function(gwas, organism = 9606, 
-                           snpMapping = snp2gene(gwas, organism))  {
+                           snpMapping = snp2gene(gwas, organism),
+                           col_genes = c('snp','gene')) {
   
-  colnames(snpMapping) <- c("snp","gene")
+  snpMapping <- subset(snpMapping, select = col_genes)
+  colnames(snpMapping) <- c('snp','gene')
   
   map <- gwas[["map"]]
   colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
@@ -77,27 +87,27 @@ get_GM_network <- function(gwas, organism = 9606,
   map <- subset(map, select = c("snp","gene"))
   # in some cases the same position is linked to two different variants
   map <- unique(map)
-  map$snp <- as.character(map$snp)
-  map$gene <- as.character(map$gene)
+  map[,'snp'] <- as.character(map[,'snp'])
+  map[,'gene'] <- as.character(map[,'gene'])
   
   nSnps <- aggregate(snp ~ ., data=map, length)
-  map <- map[map$gene %in% nSnps$gene[nSnps$snp > 1], ]
+  map <- subset(map, gene %in% nSnps[nSnps$snp > 1, 'gene'])
   
   gs <- get_GS_network(gwas)
   
   if (nrow(map) > 0) {
-    gm <- do.call(cbind, tapply(map$snp, map$gene, combn, 2)) %>% 
+    gm <- do.call(cbind, tapply(map[,'snp'], map[,'gene'], combn, 2)) %>% 
       t %>% 
       as.data.frame
     gm <- graph_from_data_frame(gm, directed = FALSE)
     gm <- simplify(gm + gs)
-    gm <- set_vertex_attr(gm, "gene", index = match(map$snp, V(gm)$name), 
-                          map$gene)
+    gm <- set_vertex_attr(gm, 'gene', index = match(map[,'snp'], V(gm)$name), 
+                          map[,'gene'])
     
     nGenes <- aggregate(gene ~ ., data=map, length)
     gm <- set_vertex_attr(gm, "nGenes", value = 0)
-    gm <- set_vertex_attr(gm, "nGenes", index = match(nGenes$snp, V(gm)$name), 
-                          nGenes$gene)
+    gm <- set_vertex_attr(gm, "nGenes", 
+                          index = match(nGenes[,'snp'], V(gm)$name),nGenes$gene)
   } else {
     warning("insufficient information to add gene information")
     gm <- gs
@@ -118,11 +128,20 @@ get_GM_network <- function(gwas, organism = 9606,
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
 #' provided.
-#' @param snpMapping A data.frame with minimum two columns: snp id (1st column)
-#' and gene it maps to (2nd column).
+#' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
+#' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
+#' one gene-SNP mapping. Unless column names are specified using 
+#' \code{col_genes}, involved columns must be named \code{'snp'} and 
+#' \code{'gene'}.
 #' @param ppi A data.frame describing protein-protein interactions with at least
-#' two colums. The first two columns must be the gene ids of the interacting
-#' proteins.
+#' two colums. Gene ids must be the contained in snpMapping. Unless column names
+#' are specified using \code{col_ppi}, involved columns must be named 
+#' \code{gene1} and \code{gene2}.
+#' @param col_genes Optional, length-2 character vector with the names of the 
+#' two columns involving the SNP-gene mapping. The first element is the column 
+#' of the SNP, and the second is the column of the gene.
+#' @param col_ppi Optional, length-2 character vector with the names of the two 
+#' columns involving the protein-protein interactions.
 #' @return An igraph network of the GI network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
 #' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
@@ -134,7 +153,9 @@ get_GM_network <- function(gwas, organism = 9606,
 #' @export
 get_GI_network <- function(gwas, organism, 
                            snpMapping = snp2gene(gwas, organism), 
-                           ppi = get_ppi(organism))  {
+                           ppi = get_ppi(organism), 
+                           col_ppi = c('gene1','gene2'),
+                           col_genes = c('snp','gene')) {
   
   colnames(snpMapping) <- c("snp","gene")
   
@@ -143,13 +164,15 @@ get_GI_network <- function(gwas, organism,
   map <-  subset(map, select = c("chr","snp","pos"))
   
   # read tab file  
-  ppi <- ppi[,c(1,2)]
+  ppi <- subset(ppi, select = col_ppi)
   colnames(ppi) <- c("gene1", "gene2")
   ppi <- unique(ppi)
   # remove self-interactions
-  ppi <- ppi[ppi$gene1 != ppi$gene2, ]
+  ppi <- subset(ppi, gene1 != gene2)
   
   # match all SNPs to pairwise PPI
+  snpMapping <- subset(snpMapping, select = col_genes)
+  colnames(snpMapping) <- c('snp','gene')
   snp2snp <- merge(ppi, snpMapping, by.x = "gene1", by.y = "gene")
   snp2snp <- merge(snp2snp, snpMapping, by.x = "gene2", by.y = "gene")
   snp2snp <- merge(snp2snp, map, by.x = "snp.x", by.y = "snp")
@@ -191,7 +214,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   # get map in appropriate format
   map <- gwas[["map"]]
   colnames(map) <- c("chr", "snp", "cm", "gpos", "allele1", "allele2")
-  map$chr <- gsub("[Cc]hr", "", map$chr)
+  map[,'chr'] <- gsub("[Cc]hr", "", map[,'chr'])
   
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
   urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
@@ -217,11 +240,12 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     })
   })
   
-  snp2gene <- by(map, map$chr, function(snps) {
+  snp2gene <- by(map, map[,'chr'], function(snps) {
     
     # get genes in the range defined by the snps
-    grange <- paste(unique(snps$chr), 
-                    min(snps$gpos) - flank, max(snps$gpos) + flank, sep = ":")
+    grange <- paste(unique(snps[,'chr']), 
+                    min(snps[,'gpos']) - flank, max(snps[,'gpos']) + flank, 
+                    sep = ":")
     genes <- biomaRt::getBM(
                    attributes = c("ensembl_gene_id","external_gene_name",
                                   "start_position","end_position"),
@@ -247,8 +271,10 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     olaps <- IRanges::findOverlaps(isnps, igenes)
     s2g <- cbind(snps[S4Vectors::queryHits(olaps),], 
                  genes[S4Vectors::subjectHits(olaps),])
-    hasName <- s2g$external_gene_name == "" | is.na(s2g$external_gene_name)
-    s2g$gene <- ifelse(hasName, s2g$ensembl_gene_id, s2g$external_gene_name)
+    hasName <- s2g[,'external_gene_name'] == "" | 
+               is.na(s2g[,'external_gene_name'])
+    s2g$gene <- ifelse(hasName, s2g[,'ensembl_gene_id'], 
+                                s2g[,'external_gene_name'])
     subset(s2g, select = c("snp", "gene"))
     
   })

@@ -73,17 +73,18 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
 get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
-  subnet <- induced_subgraph(net, as.character(selected$snp))
+  subnet <- induced_subgraph(net, as.character(selected[,'snp']))
   
   modules <- components(subnet)
-  modules <- as.data.frame(modules$membership)
+  modules <- as.data.frame(modules['membership'])
   colnames(modules) <- "module"
-  modules$snp <- rownames(modules)
+  modules['snp'] <- rownames(modules)
   
   modules <- merge(cones, modules, all.x = TRUE)
-  cones <- modules[match(cones$snp, modules$snp),]
+  cones <- modules[match(cones[,'snp'], modules[,'snp']),]
 
   return(cones)
+  
 }
 
 #' Get evo settings.
@@ -113,15 +114,15 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic",
   settings <- list()
   
   # unsigned int
-  settings$associationScore <- switch(associationScore, skat = 0, chi2 = 1)
-  if (length(settings$associationScore) == 0) {
+  settings[['associationScore']] <- switch(associationScore, skat = 0, chi2 = 1)
+  if (length(settings[['associationScore']]) == 0) {
     stop(paste("Error: invalid associationScore", associationScore))
   }
   
   # unsigned int
-  settings$modelScore <- switch(modelScore, consistency = 0, bic = 1, aic = 2, 
-                                            aicc = 3, mbic = 4)
-  if (length(settings$modelScore) == 0) {
+  settings[['modelScore']] <- switch(modelScore, consistency = 0, bic = 1, 
+                                     aic = 2, aicc = 3, mbic = 4)
+  if (length(settings[['modelScore']]) == 0) {
     stop(paste("Error: invalid modelScore", modelScore))
   }
   
@@ -129,21 +130,21 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic",
   if (! is.logical(debug)) {
     stop("Error: debug must be logical.")
   } else {
-    settings$debug = debug;
+    settings[['debug']] <- debug;
   }
   
   # VectorXd
   if (!is.numeric(etas)){
     stop("Error: etas must be numeric")
   } else {
-    settings$etas = etas
+    settings[['etas']] <- etas
   }
   
   # VectorXd
   if (!is.numeric(lambdas)){
     stop("Error: lambdas must be numeric")
   } else {
-    settings$lambdas = lambdas
+    settings[['lambdas']] <- lambdas
   }
   
   return(settings);

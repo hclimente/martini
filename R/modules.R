@@ -19,14 +19,14 @@
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' cones <- search_cones(minigwas, gi)
 #' test_cones_modules(cones, gi, 100)
-#' @export
+#' @keywords internal
 test_cones_modules <- function(cones, net, nperm = 100000) {
     
     numSNPs <- vcount(net)
     selected <- subset(cones, selected)
     
     # calculate one ecdf for each module size
-    moduleSizes <- unique(table(selected$module))
+    moduleSizes <- unique(table(selected[,'module']))
     names(moduleSizes) <- moduleSizes
     
     ecdfs <- lapply(moduleSizes, function(n) {
@@ -34,18 +34,18 @@ test_cones_modules <- function(cones, net, nperm = 100000) {
             sampled_C <- lapply(seq_len(nperm), function(i){
                 v <- sample(seq_len(numSNPs), 1)
                 snpmodule_i <- random_walk(net, v, n)
-                cones_module <- cones[cones$snp %in% snpmodule_i, ]
-                sum(cones_module$c)
+                cones_module <- subset(cones, snp %in% snpmodule_i)
+                sum(cones_module[,'c'])
             })
-            sampled_C <- do.call("c", sampled_C)
+            sampled_C <- do.call(c, sampled_C)
             
             ecdf(sampled_C)
         }
     })
     
-    modules <- by(selected, selected$module, function(k){
+    modules <- by(selected, selected[,'module'], function(k) {
         n <- nrow(k)
-        i <- unique(k$module)
+        i <- unique(k[,'module'])
         
         if (n > 1){
             snpmodule_C <- sum(k$c)
@@ -54,12 +54,13 @@ test_cones_modules <- function(cones, net, nperm = 100000) {
             p <- NA
         }
         
-        data.frame(k = i, ncomponents = n, p = p)
+        data.frame(k = i, ncomponents = n, pval = p)
+        
     })
     
-    modules <- do.call("rbind", modules)
+    modules <- do.call(rbind, modules)
     # minimum p-vaue = 1 / (nperm + 1)
-    modules$p[modules$p == 0] = 1 / (nperm + 1)
+    modules$pval[modules$pval == 0] <- 1 / (nperm + 1)
     
     return(modules)
     

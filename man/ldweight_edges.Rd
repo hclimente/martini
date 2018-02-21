@@ -24,7 +24,7 @@ Include linkage disequilibrium information in the SNP network.
 The weight of the edges will be lower the higher the linkage is.
 }
 \examples{
-ld <- snpStats::ld(minigwas$genotypes, depth = 2, stats = "R.squared")
+ld <- snpStats::ld(minigwas[['genotypes']], depth = 2, stats = "R.squared")
 # don't weight edges for which LD cannot be calculated
 ld[is.na(ld)] <- 0
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)

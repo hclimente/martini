@@ -1,6 +1,6 @@
 load("examplegwas.rda")
 
-gwas <- examplegwas$gwas
+gwas <- examplegwas[['gwas']]
 ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 1, 0.5), symmetric = T)
 colnames(ld) <- c("rs1101", "rs1102", "rs1103")
 rownames(ld) <- colnames(ld)

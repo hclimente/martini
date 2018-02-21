@@ -5,7 +5,8 @@
 \title{Get gene-interaction network.}
 \usage{
 get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
-  ppi = get_ppi(organism))
+  ppi = get_ppi(organism), col_ppi = c("gene1", "gene2"),
+  col_genes = c("snp", "gene"))
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -13,12 +14,23 @@ get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
 provided.}
 
-\item{snpMapping}{A data.frame with minimum two columns: snp id (1st column)
-and gene it maps to (2nd column).}
+\item{snpMapping}{A data.frame informing how SNPs map to genes. It contains 
+minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
+one gene-SNP mapping. Unless column names are specified using 
+\code{col_genes}, involved columns must be named \code{'snp'} and 
+\code{'gene'}.}
 
 \item{ppi}{A data.frame describing protein-protein interactions with at least
-two colums. The first two columns must be the gene ids of the interacting
-proteins.}
+two colums. Gene ids must be the contained in snpMapping. Unless column names
+are specified using \code{col_ppi}, involved columns must be named 
+\code{gene1} and \code{gene2}.}
+
+\item{col_ppi}{Optional, length-2 character vector with the names of the two 
+columns involving the protein-protein interactions.}
+
+\item{col_genes}{Optional, length-2 character vector with the names of the 
+two columns involving the SNP-gene mapping. The first element is the column 
+of the SNP, and the second is the column of the gene.}
 }
 \value{
 An igraph network of the GI network of the SNPs.

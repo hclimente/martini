@@ -85,9 +85,9 @@ encode_gwas <- function(X, encoding) {
                      AB = c(1,0,1,1),
                      BB = c(2,1,1,0))
   
-  X[X == 0] <- code$AA[code$e == encoding]
-  X[X == 1] <- code$AB[code$e == encoding]
-  X[X == 2] <- code$BB[code$e == encoding]
+  X[X == 0] <- code[code$e == encoding, 'AA']
+  X[X == 1] <- code[code$e == encoding, 'AB']
+  X[X == 2] <- code[code$e == encoding, 'BB']
   
   return(X)
   
