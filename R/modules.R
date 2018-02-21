@@ -18,7 +18,7 @@
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' cones <- search_cones(minigwas, gi)
-#' test_cones_modules(cones, gi, 100)
+#' martini:::test_cones_modules(cones, gi, 100)
 #' @keywords internal
 test_cones_modules <- function(cones, net, nperm = 100000) {
     
