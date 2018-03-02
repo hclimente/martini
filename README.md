@@ -1,9 +1,9 @@
 # martini
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.824643.svg)](https://doi.org/10.5281/zenodo.824643)
 [![Build Status](https://travis-ci.org/hclimente/martini.svg?branch=master)](https://travis-ci.org/hclimente/martini)
 [![Build status](https://ci.appveyor.com/api/projects/status/ehnhhg2n5cs7pkk6?svg=true)](https://ci.appveyor.com/project/hclimente/martini)
 [![codecov](https://codecov.io/gh/hclimente/martini/branch/master/graph/badge.svg)](https://codecov.io/gh/hclimente/martini)
+[![BioC](https://bioconductor.org/shields/years-in-bioc/martini.svg)](https://bioconductor.org/packages/devel/bioc/html/martini.html)
 
 `martini` is an R package to perform GWAS experiment that considers prior biological knowledge. This knowledge is modeled as a network of SNPs, were edges represent functional relationships between them (e.g. belonging to the same gene). Then, it looks for regions of the network associated with the phenotype using [SConES](https://academic.oup.com/bioinformatics/article/29/13/i171/198210).
 
