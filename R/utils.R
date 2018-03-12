@@ -10,14 +10,14 @@
 #' name "X").
 #' @return A subgraph containing only the vertices with attribute equal to any
 #' of the values in \code{values}.
-#' @importFrom igraph V induced_subgraph vertex_attr %>%
+#' @importFrom igraph induced_subgraph
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subnet(gi, "gene", "A")
 #' martini:::subnet(gi, "name", c("1A1", "1A3"))
 #' @keywords internal
 subnet <- function(net, attr, values, affirmative = TRUE) {
-  vertices <- V(net)[(vertex_attr(net, attr) %in% values) == affirmative]
+  vertices <- subvert(net, attr, values, affirmative)
   induced_subgraph(net, vertices)
 }
 
@@ -39,7 +39,15 @@ subnet <- function(net, attr, values, affirmative = TRUE) {
 #' martini:::subvert(gi, "gene", "A")
 #' martini:::subvert(gi, "name", c("1A1", "1A3"))
 subvert <- function(net, attr, values, affirmative = TRUE) {
-  V(net)[(vertex_attr(net, attr) %in% values) == affirmative]
+  
+  n_attr <- vertex_attr(net, attr)
+  select <- (n_attr %in% values) == affirmative
+  
+  if (affirmative) {
+    select <- !is.na(n_attr) & select
+  }
+  
+  V(net)[select]
 }
 
 #' Check package is installed
