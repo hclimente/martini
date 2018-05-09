@@ -7,6 +7,8 @@
 #' @param net An igraph network that connects the SNPs.
 #' @param encoding SNP encoding. Possible values: additive (default), resessive,
 #' dominant, codominant.
+#' @param sigmod Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
+#' prioritize tightly connected clusters of SNPs.
 #' @param ... Extra arguments for \code{\link{get_evo_settings}}.
 #' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
 #' following additions:
@@ -21,6 +23,7 @@
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
+#' @importFrom Matrix diag rowSums
 #' @importFrom methods as
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -28,7 +31,7 @@
 #' search_cones(minigwas, gi, encoding = "recessive")
 #' search_cones(minigwas, gi, associationScore = "skat")
 #' @export
-search_cones <- function(gwas, net, encoding = "additive", ...) {
+search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE, ...) {
 
   colnames(gwas[["map"]]) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   X <- as(gwas[['genotypes']], "numeric")
@@ -38,6 +41,7 @@ search_cones <- function(gwas, net, encoding = "additive", ...) {
   # remove redundant edges and self-edges
   net <- simplify(net)
   W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  diag(W) <- ifelse(sigmod, -rowSums(W), 0)
   
   # order according to order in map
   W <- W[gwas[["map"]][['snp']], gwas[["map"]][['snp']]]

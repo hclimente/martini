@@ -4,7 +4,7 @@
 \alias{search_cones}
 \title{Find connected explanatory SNPs.}
 \usage{
-search_cones(gwas, net, encoding = "additive", ...)
+search_cones(gwas, net, encoding = "additive", sigmod = FALSE, ...)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -13,6 +13,9 @@ search_cones(gwas, net, encoding = "additive", ...)
 
 \item{encoding}{SNP encoding. Possible values: additive (default), resessive,
 dominant, codominant.}
+
+\item{sigmod}{Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
+prioritize tightly connected clusters of SNPs.}
 
 \item{...}{Extra arguments for \code{\link{get_evo_settings}}.}
 }
