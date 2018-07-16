@@ -12,9 +12,8 @@
 Install `martini` like any Bioconductor package:
 
 ``` r
-# devtools requited, do install.packages('devtools') if necessary
-source("https://bioconductor.org/biocLite.R")
-biocLite("hclimente/martini")
+install.packages("BiocManager")
+BiocManager::install("martini")
 ```
 
 # Usage
