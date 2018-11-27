@@ -21,7 +21,7 @@ test_that("SNP frequency modulates the effect", {
   expect_equal(G[1], -G[3])
   expect_equal(G[2], 0)
 
-  sorted <- sort(rowSums(X), decreasing = T, index.return=T)$ix
+  sorted <- sort(rowSums(X), decreasing = TRUE, index.return = TRUE)$ix
 
   # check that more SNPs result in stronger effects
   expect_false(is.unsorted(G[sorted]))

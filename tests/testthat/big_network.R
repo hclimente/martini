@@ -53,7 +53,7 @@ gwas$fam <- data.frame(pedigree = 1:N,
                        member = 1:N,
                        father = NA,
                        mother = NA,
-                       sex = sample(c(1,2), N, replace = T),
+                       sex = sample(c(1,2), N, replace = TRUE),
                        affected = Y)
 
 ## MAKE NETWORKS

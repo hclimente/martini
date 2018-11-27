@@ -41,7 +41,7 @@ test_that("we get the requested number of phenotypes", {
   
   # less requested cases and controls than the total number of samples
   expect_equal(sum(is.na(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
-                                            effectSize = eff, qualitative = T, 
+                                            effectSize = eff, qualitative = TRUE, 
                                             ncases = 1400, ncontrols = 1350, 
                                             prevalence = 0.5)$fam$affected)), 250)
   
@@ -78,15 +78,15 @@ test_that("errors when it should", {
                "h2 must be between 0 and 1. Current value is -1.5.", fixed=TRUE)
   
   # errors related to qualitative phenotypes
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T), 
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = TRUE), 
                'argument "ncases" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4), 
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = TRUE, ncases = 1e4), 
                'argument "ncontrols" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500), 
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = TRUE, ncases = 1500, ncontrols = 1500), 
                'argument "prevalence" is missing, with no default', fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1e4, ncontrols = 1e4, prevalence = 0.1), 
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = TRUE, ncases = 1e4, ncontrols = 1e4, prevalence = 0.1), 
                "Requested number of cases and controls too high (> # samples).", fixed=TRUE)
-  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = T, ncases = 1500, ncontrols = 1500, prevalence = 0.1), 
+  expect_error(simulate_phenotype(examplegwas$gwas, causal, h2 = 1, effectSize = eff, qualitative = TRUE, ncases = 1500, ncontrols = 1500, prevalence = 0.1), 
                "Requested number of cases too high (> # samples * prevalence).", fixed=TRUE)
   
 })
