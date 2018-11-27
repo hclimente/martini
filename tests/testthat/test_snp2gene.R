@@ -41,18 +41,18 @@ test_that("output is as expected", {
 test_that("we map snps to their known genes", {
 
   # correct mapping in humans
-  expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981579"], "FGFR2")
-  expect_equal(brca_mapped$gene[brca_mapped$snp == "rs2981582"], "FGFR2")
-  expect_equal(length(brca_mapped$gene[brca_mapped$snp == "rs13387042"]), 0)
+  expect_equal(brca_mapped$feature[brca_mapped$snp == "rs2981579"], "FGFR2")
+  expect_equal(brca_mapped$feature[brca_mapped$snp == "rs2981582"], "FGFR2")
+  expect_equal(length(brca_mapped$feature[brca_mapped$snp == "rs13387042"]), 0)
 
   # correct mapping in arabidopsis
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297892"], "ACD6")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297535"], "ACD6")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8301059"], "BHLH104")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8300836"], "BHLH104")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
-  expect_equal(length(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"]), 0)
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8297892"], "ACD6")
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8297535"], "ACD6")
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8301059"], "BHLH104")
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8300836"], "BHLH104")
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
+  expect_equal(athal_mapped$feature[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
+  expect_equal(length(athal_mapped$feature[athal_mapped$snp == "Chr5_6485290"]), 0)
 
   # check flanks
   # off by one base to FGFR2 10: 121,478,334-121,598,458 
@@ -64,7 +64,7 @@ test_that("we map snps to their known genes", {
   red$map$gpos <- as.numeric(red$map$gpos)
 
   expect_equal(nrow(martini:::snp2gene(red, flank = 1)), 1)
-  expect_equal(nrow(martini:::snp2gene(red)), NULL)
+  expect_equal(nrow(martini:::snp2gene(red)), 0)
 
 })
 

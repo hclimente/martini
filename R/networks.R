@@ -207,9 +207,24 @@ get_GI_network <- function(gwas, organism,
 #' @keywords internal
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
-  check_installed("biomaRt", "snp2gene")
-  check_installed("httr", "snp2gene")
-  check_installed("IRanges", "snp2gene")
+  genes <- get_ensembl_genes(gwas, organism)
+  snp2feature(gwas, genes, flank)
+  
+}
+
+#' Get genomic position of the genes.
+#' 
+#' @description Get the genomic position of all the genes of an organism.
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @return A data.frame with four columns, corresponding to the gene, the 
+#' chromosome, the start and the end.
+#' @keywords internal
+get_ensembl_genes <- function(gwas, organism = 9606) {
+    
+  check_installed("biomaRt", "get_ensembl_genes")
+  check_installed("httr", "get_ensembl_genes")
+  check_installed("IRanges", "get_ensembl_genes")
   
   # get map in appropriate format
   map <- gwas[["map"]]
@@ -234,53 +249,25 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     tryCatch({
       datasetName <- paste0(organism, "_eg_gene")
       biomaRt::useMart("plants_mart", host="plants.ensembl.org", 
-                       dataset=datasetName)  
+               dataset=datasetName)  
     }, error = function(e) {
       stop(paste0("unable to find an appropriate database for ", organism, "."))
     })
   })
   
-  snp2gene <- by(map, map[,'chr'], function(snps) {
-    
-    # get genes in the range defined by the snps
-    grange <- paste(unique(snps[,'chr']), 
-                    min(snps[,'gpos']) - flank, max(snps[,'gpos']) + flank, 
-                    sep = ":")
-    genes <- biomaRt::getBM(
-                   attributes = c("ensembl_gene_id","external_gene_name",
-                                  "start_position","end_position"),
-                   filters = c("chromosomal_region", "biotype"),
-                   values = list(chromosomal_region=grange,
-                                 biotype="protein_coding"), 
-                   mart = ensembl)
-    
-    if(nrow(genes) == 0) {
-      return()
-    }
-    
-    # add a buffer before and after the gene
-    genes$start_position <- genes$start_position - flank
-    genes$start_position[genes$start_position < 0] <- 0
-    genes$end_position <- genes$end_position + flank
-    
-    # convert to genomic ranges and check overlaps
-    isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
-    igenes <- with(genes, 
-                   IRanges::IRanges(start_position, end_position, 
-                                    names=ensembl_gene_id))
-    olaps <- IRanges::findOverlaps(isnps, igenes)
-    s2g <- cbind(snps[S4Vectors::queryHits(olaps),], 
-                 genes[S4Vectors::subjectHits(olaps),])
-    hasName <- s2g[,'external_gene_name'] == "" | 
-               is.na(s2g[,'external_gene_name'])
-    s2g$gene <- ifelse(hasName, s2g[,'ensembl_gene_id'], 
-                                s2g[,'external_gene_name'])
-    subset(s2g, select = c("snp", "gene"))
-    
-  })
-  snp2gene <- do.call("rbind", snp2gene)
+  genes <- biomaRt::getBM(
+    attributes = c('ensembl_gene_id', 'external_gene_name', 
+             'chromosome_name', 'start_position', 'end_position'),
+    filters = 'biotype',
+    values = list(biotype='protein_coding'), 
+    mart = ensembl)
+  noName <- genes[,'external_gene_name'] == "" | 
+    is.na(genes[,'external_gene_name'])
+  genes$feature <- ifelse(noName, genes[,'ensembl_gene_id'], genes[,'external_gene_name'])
+  genes <- subset(genes, select = c('feature', 'chromosome_name', 
+                                    'start_position', 'end_position'))
   
-  return(snp2gene)
+  return(genes)
   
 }
 
@@ -335,4 +322,58 @@ get_ppi <- function(organism = 9606) {
   
   return(ppi)
   
+}
+
+#' Map SNPs to genomic features.
+#' 
+#' @description Maps SNPs from a GWAS experiment to genomic features
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @param flank A number with the flanking regions around features to be 
+#' considered part of the feature i.e. SNPs mapped to them will be considered 
+#' mapped to the feature.
+#' @return A data.frame with two columns: one for the SNP and another for the
+#' feature it has been mapped to.
+#' @keywords internal
+snp2feature <- function(gwas, features, flank = 0) {
+    
+    check_installed("IRanges", "snp2feature")
+    
+    # get map in appropriate format
+    map <- gwas[["map"]]
+    colnames(map) <- c("chr", "snp", "cm", "gpos", "allele1", "allele2")
+    map[,'chr'] <- gsub("[Cc]hr", "", map[,'chr'])
+    
+    snp2feat <- by(map, map[,'chr'], function(snps) {
+        
+        # get genes in the range defined by the snps
+        grange <- paste(unique(snps[,'chr']), 
+                        min(snps[,'gpos']) - flank, max(snps[,'gpos']) + flank, 
+                        sep = ":")
+        features <- subset(features, chromosome_name == unique(snps[,'chr']))
+        
+        if(nrow(features) == 0) {
+            return()
+        }
+        
+        # add a buffer before and after the gene
+        features$start_position <- features$start_position - flank
+        features$start_position[features$start_position < 0] <- 0
+        features$end_position <- features$end_position + flank
+        
+        # convert to genomic ranges and check overlaps
+        isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
+        ifeatures <- with(features, 
+                       IRanges::IRanges(start_position, end_position, 
+                                        names=feature))
+        olaps <- IRanges::findOverlaps(isnps, ifeatures)
+        s2f <- cbind(snps[S4Vectors::queryHits(olaps),], 
+                     features[S4Vectors::subjectHits(olaps),])
+        subset(s2f, select = c("snp", "feature"))
+        
+    })
+    snp2feat <- do.call("rbind", snp2feat)
+    
+    return(snp2feat)
+    
 }
