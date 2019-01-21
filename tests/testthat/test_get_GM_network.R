@@ -8,10 +8,10 @@ test_that("we interconnect snps from a gene", {
 })
 
 test_that("warns if snpMapping is insufficient to create a GM network", {
-  expect_warning(get_GM_network(gwas, snpMapping = data.frame(snp = "rs1", gene = "A")), 
-                 "insufficient information to add gene information")
-  expect_warning(get_GM_network(gwas, snpMapping = data.frame(snp = c("rs1", "rs2"), gene = c("A", "B"))), 
-                 "insufficient information to add gene information")
+  expect_error(get_GM_network(gwas, snpMapping = data.frame(snp = "rs1", gene = "A")), 
+               "insufficient information to add feature information")
+  expect_error(get_GM_network(gwas, snpMapping = data.frame(snp = c("rs1", "rs2"), gene = c("A", "B"))), 
+               "insufficient information to add feature information")
 })
 
 test_that("we add genomic information to the vertices", {
