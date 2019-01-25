@@ -1,0 +1,30 @@
+library(martini)
+
+set.seed(0)
+
+test_that("default args are being set", {
+  expect_equal(parse_scones_settings(c = 1)$modelScore, 'bic')
+  expect_equal(parse_scones_settings(c = 1)$associationScore, 'chi2')
+  expect_equal(parse_scones_settings(c = 1)$etas, rep(0, 10))
+  expect_equal(parse_scones_settings(c = 1)$lambdas, rep(0, 10))
+  expect_equal(parse_scones_settings(c = 1)$debug, FALSE)
+})
+
+test_that("default we can change values", {
+  expect_equal(parse_scones_settings(c = 1, modelScore = "consistency")$modelScore, "consistency")
+  expect_equal(parse_scones_settings(c = 1, modelScore = "bic")$modelScore, 'bic')
+  expect_equal(parse_scones_settings(c = 1, modelScore = "aic")$modelScore, 'aic')
+  expect_equal(parse_scones_settings(c = 1, modelScore = "aicc")$modelScore, 'aicc')
+  expect_equal(parse_scones_settings(c = 1, modelScore = "mbic")$modelScore, 'mbic')
+  expect_error(parse_scones_settings(c = 1, modelScore = "kk"))
+  expect_equal(parse_scones_settings(c = 1, associationScore = "skat")$associationScore, 'skat')
+  expect_equal(parse_scones_settings(c = 1, associationScore = "chi2")$associationScore, 'chi2')
+  expect_error(parse_scones_settings(c = 1, associationScore = "kk"))
+  expect_equal(parse_scones_settings(c = 1, etas = c(3,4,5))$etas, c(5,4,3))
+  expect_error(parse_scones_settings(etas = c("a","b"))$etas)
+  expect_equal(parse_scones_settings(c = 1, lambdas = c(3,4,5))$lambdas, c(5,4,3))
+  expect_error(parse_scones_settings(lambdas = c("a","b"))$lambdas)
+  expect_equal(parse_scones_settings(c = 1, debug = FALSE)$debug, FALSE)
+  expect_equal(parse_scones_settings(c = 1, debug = TRUE)$debug, TRUE)
+  expect_error(parse_scones_settings(c = 1, debug = 3))
+})

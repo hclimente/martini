@@ -25,11 +25,11 @@ namespace martini {
         }
     }
 
-    inline List run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+    inline Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
         typedef SEXP(*Ptr_run_scones)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_run_scones p_run_scones = NULL;
         if (p_run_scones == NULL) {
-            validateSignature("List(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
+            validateSignature("Eigen::VectorXd(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
             p_run_scones = (Ptr_run_scones)R_GetCCallable("martini", "_martini_run_scones");
         }
         RObject rcpp_result_gen;
@@ -39,9 +39,11 @@ namespace martini {
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<List >(rcpp_result_gen);
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
     }
 
 }
