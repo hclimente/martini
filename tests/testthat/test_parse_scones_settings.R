@@ -3,7 +3,7 @@ library(martini)
 set.seed(0)
 
 test_that("default args are being set", {
-  expect_equal(parse_scones_settings(c = 1)$modelScore, 'bic')
+  expect_equal(parse_scones_settings(c = 1)$modelScore, 'consistency')
   expect_equal(parse_scones_settings(c = 1)$associationScore, 'chi2')
   expect_equal(parse_scones_settings(c = 1)$etas, rep(0, 10))
   expect_equal(parse_scones_settings(c = 1)$lambdas, rep(0, 10))

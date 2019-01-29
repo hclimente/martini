@@ -37,6 +37,8 @@
 search_cones <- function(gwas, net, encoding = "additive", 
                          covars = data.frame(), sigmod = FALSE, ...) {
 
+  settings <- parse_scones_settings(c = 1, ...)
+    
   cones <- gwas[["map"]]
   colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   cones[['c']] <- single_snp_association(gwas[['genotypes']], 
@@ -44,8 +46,7 @@ search_cones <- function(gwas, net, encoding = "additive",
                                          covariates, 
                                          settings[['associationScore']])
   
-  settings <- parse_scones_settings(c = cones[['c']], 
-                                    modelScore = "consistency", ...)
+  settings <- parse_scones_settings(c = cones[['c']], ...)
   
   # prepare network
   ## remove redundant edges and self-edges
@@ -101,20 +102,42 @@ search_cones <- function(gwas, net, encoding = "additive",
   
 }
 
-#' @importFrom snpStats single.snp.tests chi.squared
+#' Calculate genotype-phhenotype associations 
+#' 
+#' @description Calculate the association between genotypes and a phenotype,
+#' adjusting by covariates.
+#' 
+#' @param genotypes A SnpMatrix object with the genotype information.
+#' @param phenotypes A numeric vector with the phenotypes.
+#' @param covars A data frame with the covariates. It must contain a column 
+#' 'sample' containing the sample IDs, and an additional columns for each 
+#' covariate.
+#' @param associationScore String with the association test to perform. Possible
+#' values: chi2, glm.
+#' @return A named vector with the association scores.
+#' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
+#' @keywords internal
 single_snp_association <- function(genotypes, phenotypes, 
                                    covars, associationScore) {
     
-    if (TRUE) {
+    if (associationScore == 'chi2') {
         
         tests <- single.snp.tests(phenotypes, snp.data = genotypes)
         c <- chi.squared(tests, df=1)
         
-    } else {
-        X <- as(gwas[['genotypes']], "numeric")
-        X <- encode_gwas(X, encoding)
-        Y <- gwas[['fam']][['affected']]
+    } else if (associationScore == 'glm') {
+      
+        if (nrow(covars) && nrow(covars) == nrow(genotypes)) {
+          covars <- covars[match(row.names(genotypes), covars[['sample']]), ]
+          covars <- subset(covars, select = -sample)
+          covars <- as.matrix(covars)
+          tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
+        } else {
+          tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes)
+        }
         
+        c <- chi.squared(tests)
+        names(c) <- names(tests)
     }
     
     c[is.na(c)] <- 0
@@ -122,23 +145,31 @@ single_snp_association <- function(genotypes, phenotypes,
     return(c)
 }
 
-score_fold <- function(folds, model_score) {
+#' Score the solutions of a k-fold
+#' 
+#' @description Take the k-solutions for a combination of hyperparameters, and 
+#' assign a score to it (the larger, the better).
+#' @param folds k \times d matrix, where k is the number of folds, and d the 
+#' number of SNPs.
+#' @param modelScore String with the method to use to score the folds.
+#' @keywords internal
+score_fold <- function(folds, modelScore) {
     
-    k <- nrow(folds)
-    score <- 0
+  k <- nrow(folds)
+  score <- 0
     
-    for (i in seq(k - 1)) {
-        for (j in seq(i + 1, k)) {
+  for (i in seq(k - 1)) {
+    for (j in seq(i + 1, k)) {
             
-            if (model_score == 'consistency') {
-                C <- sum(folds[i,] * folds[j,])
-                maxC <- max(sum(folds[i,]), sum(folds[j,]))
-                score <- score + ifelse(maxC == 0, 0, C/maxC)
-            }
-        }
+      if (modelScore == 'consistency') {
+        C <- sum(folds[i,] * folds[j,])
+        maxC <- max(sum(folds[i,]), sum(folds[j,]))
+        score <- score + ifelse(maxC == 0, 0, C/maxC)
+      }
     }
+  }
     
-    return(score)
+  return(score)
     
 }
 
@@ -177,7 +208,7 @@ get_snp_modules <- function(cones, net) {
 #' @description Creates a list composed by all \code{evo} settings, with the 
 #' values provided by the user, or the default ones if none is provided.
 #' @param associationScore Association score to measure association between 
-#' genotype and phenotype. Possible values: chi2 (default), skat, trend.
+#' genotype and phenotype. Possible values: chi2 (default), glm.
 #' @param modelScore Model selection criterion Possible values: consistency, 
 #' bic (default), aic, aicc, mbic.
 #' @param etas Numeric vector with the etas to explore in the grid search. If 
@@ -194,9 +225,10 @@ get_snp_modules <- function(cones, net) {
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
 #' martini:::parse_scones_settings(c = c(1,10,100), associationScore = "skat")
 #' @keywords internal
-parse_scones_settings <- function(associationScore = "chi2", modelScore = "bic", 
-                             etas = numeric(), lambdas = numeric(), 
-                             debug = FALSE, c = numeric()){
+parse_scones_settings <- function(associationScore = "chi2", 
+                                  modelScore = "consistency", 
+                                  etas = numeric(), lambdas = numeric(), 
+                                  debug = FALSE, c = numeric()) {
   
   settings <- list()
   
