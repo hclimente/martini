@@ -39,6 +39,7 @@ LinkingTo:
   Rcpp,
   RcppEigen (>= 0.3.3.3.0)
 RoxygenNote: 6.1.1
+Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr

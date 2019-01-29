@@ -7,7 +7,7 @@
 score_fold(folds, modelScore)
 }
 \arguments{
-\item{folds}{k \times d matrix, where k is the number of folds, and d the 
+\item{folds}{k-times-d matrix, where k is the number of folds, and d the 
 number of SNPs.}
 
 \item{modelScore}{String with the method to use to score the folds.}

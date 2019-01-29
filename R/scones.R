@@ -120,36 +120,36 @@ search_cones <- function(gwas, net, encoding = "additive",
 single_snp_association <- function(genotypes, phenotypes, 
                                    covars, associationScore) {
     
-    if (associationScore == 'chi2') {
-        
-        tests <- single.snp.tests(phenotypes, snp.data = genotypes)
-        c <- chi.squared(tests, df=1)
-        
-    } else if (associationScore == 'glm') {
-      
-        if (nrow(covars) && nrow(covars) == nrow(genotypes)) {
-          covars <- covars[match(row.names(genotypes), covars[['sample']]), ]
-          covars <- subset(covars, select = -sample)
-          covars <- as.matrix(covars)
-          tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
-        } else {
-          tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes)
-        }
-        
-        c <- chi.squared(tests)
-        names(c) <- names(tests)
+  if (associationScore == 'chi2') {
+    
+    tests <- single.snp.tests(phenotypes, snp.data = genotypes)
+    c <- chi.squared(tests, df=1)
+    
+  } else if (associationScore == 'glm') {
+    
+    if (nrow(covars) && nrow(covars) == nrow(genotypes)) {
+      covars <- covars[match(row.names(genotypes), covars[['sample']]), ]
+      covars <- subset(covars, select = -sample)
+      covars <- as.matrix(covars)
+      tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
+    } else {
+      tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes)
     }
     
-    c[is.na(c)] <- 0
-    
-    return(c)
+    c <- chi.squared(tests)
+    names(c) <- names(tests)
+  }
+  
+  c[is.na(c)] <- 0
+  
+  return(c)
 }
 
 #' Score the solutions of a k-fold
 #' 
 #' @description Take the k-solutions for a combination of hyperparameters, and 
 #' assign a score to it (the larger, the better).
-#' @param folds k \times d matrix, where k is the number of folds, and d the 
+#' @param folds k-times-d matrix, where k is the number of folds, and d the 
 #' number of SNPs.
 #' @param modelScore String with the method to use to score the folds.
 #' @keywords internal
@@ -304,41 +304,42 @@ get_evo_settings <- function(associationScore = "chi2", modelScore = "bic",
                              etas = numeric(), lambdas = numeric(), 
                              debug = FALSE){
     
-    settings <- list()
-    
-    # unsigned int
-    settings[['associationScore']] <- switch(associationScore, skat = 0, chi2 = 1)
-    if (length(settings[['associationScore']]) == 0) {
-        stop(paste("Error: invalid associationScore", associationScore))
-    }
-    
-    # unsigned int
-    settings[['modelScore']] <- switch(modelScore, consistency = 0, bic = 1, 
-                                       aic = 2, aicc = 3, mbic = 4)
-    if (length(settings[['modelScore']]) == 0) {
-        stop(paste("Error: invalid modelScore", modelScore))
-    }
-    
-    # bool
-    if (! is.logical(debug)) {
-        stop("Error: debug must be logical.")
-    } else {
-        settings[['debug']] <- debug;
-    }
-    
-    # VectorXd
-    if (!is.numeric(etas)){
-        stop("Error: etas must be numeric")
-    } else {
-        settings[['etas']] <- etas
-    }
-    
-    # VectorXd
-    if (!is.numeric(lambdas)){
-        stop("Error: lambdas must be numeric")
-    } else {
-        settings[['lambdas']] <- lambdas
-    }
-    
-    return(settings);
+  settings <- list()
+  
+  # unsigned int
+  settings[['associationScore']] <- switch(associationScore, skat = 0, chi2 = 1)
+  if (length(settings[['associationScore']]) == 0) {
+    stop(paste("Error: invalid associationScore", associationScore))
+  }
+  
+  # unsigned int
+  settings[['modelScore']] <- switch(modelScore, consistency = 0, bic = 1, 
+                                     aic = 2, aicc = 3, mbic = 4)
+  if (length(settings[['modelScore']]) == 0) {
+    stop(paste("Error: invalid modelScore", modelScore))
+  }
+  
+  # bool
+  if (! is.logical(debug)) {
+    stop("Error: debug must be logical.")
+  } else {
+    settings[['debug']] <- debug;
+  }
+  
+  # VectorXd
+  if (!is.numeric(etas)){
+    stop("Error: etas must be numeric")
+  } else {
+    settings[['etas']] <- etas
+  }
+  
+  # VectorXd
+  if (!is.numeric(lambdas)){
+    stop("Error: lambdas must be numeric")
+  } else {
+    settings[['lambdas']] <- lambdas
+  }
+  
+  return(settings);
+  
 }
