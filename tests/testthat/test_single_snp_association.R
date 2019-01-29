@@ -3,6 +3,7 @@ phenotypes <- minigwas[['fam']][['affected']]
 covars <- data.frame(sample = sort(minigwas[['fam']][['member']], decreasing = T), 
                      confounding = c(rep(1, nrow(genotypes)/2), rep(10, nrow(genotypes)/2)),
                      unrelated = c(rep(1, nrow(genotypes))))
+covars <- martini:::arrange_covars(minigwas, covars)
 
 test_that("chi2 are correctly calculated", {
   

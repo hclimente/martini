@@ -29,4 +29,14 @@ test_that("we recover causal SNPs", {
   expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
   expect_equal(cones$c[cones$selected], rep(99, sum(grepl("[AC]", cones$snp))), tolerance = 1e-5)
   
+  cones <- search_cones(minigwas, gi, 
+                        etas = seq(2, 0, length=10), 
+                        lambdas = seq(2, 0, length=10),
+                        modelScore = 'bic')
+  
+  skip_on_os("windows")
+  expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
+  expect_equal(cones$c[cones$selected], rep(99, sum(grepl("[AC]", cones$snp))), tolerance = 1e-5)
+  
+  
 })

@@ -37,6 +37,10 @@ search_cones <- function(gwas, net, encoding = "additive",
                          covars = data.frame(), sigmod = FALSE, ...) {
 
   settings <- parse_scones_settings(c = 1, ...)
+  
+  # reorder covariates
+  gwas <- permute_snpMatrix(gwas)
+  covars <- arrange_covars(gwas, covars)
     
   cones <- gwas[["map"]]
   colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
@@ -78,12 +82,13 @@ search_cones <- function(gwas, net, encoding = "additive",
   for (eta in settings$etas) {
       for (lambda in settings$lambdas) {
           
-          # TODO if solution is empty, break
+          # TODO if solution is empty, continue
           
           folds <- lapply(associationScores, run_scones, eta, lambda, W)
           folds <- do.call(rbind, folds)
+          score <- score_fold(folds, settings[['modelScore']], K, gwas, covars)
           
-          if (score_fold(folds, settings[['modelScore']]) > best_score) {
+          if (score > best_score) {
               best_eta <- eta
               best_lambda <- lambda
           }
@@ -127,8 +132,6 @@ single_snp_association <- function(genotypes, phenotypes,
   } else if (associationScore == 'glm') {
     
     if (ncol(covars) && nrow(covars) == nrow(genotypes)) {
-      covars <- covars[match(row.names(genotypes), covars[['sample']]), ]
-      covars <- subset(covars, select = -sample)
       covars <- as.matrix(covars)
       tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
     } else {
@@ -151,25 +154,43 @@ single_snp_association <- function(genotypes, phenotypes,
 #' @param folds k-times-d matrix, where k is the number of folds, and d the 
 #' number of SNPs.
 #' @param modelScore String with the method to use to score the folds.
+#' @param K Numeric vector of length equal to the number of samples. The 
+#' elements are integers from 1 to # folds. Indicates which samples belong to 
+#' which fold.
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @param covars A data frame with the covariates. It must contain a column 
+#' 'sample' containing the sample IDs, and an additional columns for each 
+#' covariate.
 #' @keywords internal
-score_fold <- function(folds, modelScore) {
-    
-  k <- nrow(folds)
+score_fold <- function(folds, modelScore, K, gwas, covars) {
+  
   score <- 0
-    
-  for (i in seq(k - 1)) {
-    for (j in seq(i + 1, k)) {
-            
-      if (modelScore == 'consistency') {
+  
+  if (modelScore == 'consistency') {
+    for (i in unique(K)) {
+      for (j in unique(K)) {
         C <- sum(folds[i,] * folds[j,])
         maxC <- max(sum(folds[i,]), sum(folds[j,]))
         score <- score + ifelse(maxC == 0, 0, C/maxC)
       }
+    } 
+  } else if (modelScore %in% c('bic', 'aic')) {
+    for (k in unique(K)) {
+      
+      phenotypes <- gwas[['fam']][['affected']][K == k]
+      genotypes <- as(gwas[['genotypes']][K == k, ], 'numeric')
+      genotypes <- as.data.frame(genotypes[ , folds[k,]])
+      genotypes <- cbind(genotypes, covars[K == k, ])
+      
+      model <- glm(phenotypes ~ 1, data = genotypes)
+      
+      if (modelScore == 'bic')      score <- score + BIC(model)
+      else if (modelScore == 'aic') score <- score + AIC(model)
     }
   }
-    
+  
   return(score)
-    
+  
 }
 
 #' Return groups of interconnected SNPs.
@@ -208,8 +229,8 @@ get_snp_modules <- function(cones, net) {
 #' values provided by the user, or the default ones if none is provided.
 #' @param associationScore Association score to measure association between 
 #' genotype and phenotype. Possible values: chi2 (default), glm.
-#' @param modelScore Model selection criterion Possible values: consistency, 
-#' bic (default), aic, aicc, mbic.
+#' @param modelScore Model selection criterion Possible values: consistency 
+#' (default), bic, aic.
 #' @param etas Numeric vector with the etas to explore in the grid search. If 
 #' ommited, it's automatically created based on the association
 #' scores.
@@ -240,7 +261,7 @@ parse_scones_settings <- function(associationScore = "chi2",
   }
   
   # unsigned int
-  valid_modelScore <- c('consistency', 'bic', 'aic', 'aicc', 'mbic')
+  valid_modelScore <- c('consistency', 'bic', 'aic')
   if (modelScore %in% valid_modelScore) {
     settings[['modelScore']] <- modelScore
   } else {

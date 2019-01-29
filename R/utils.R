@@ -129,3 +129,42 @@ is_coherent <- function(gwas) {
   return(TRUE)
   
 }
+
+#' Prepare covariates for \code{search_cones}
+#' 
+#' @description Prepares de covariates data.frame for the functions used in
+#' \code{search_cones}, like \code{single_snp_association} or \code{score_folds}
+#' .
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @param net An igraph network that connects the SNPs.
+#' @keywords internal
+arrange_covars <- function(gwas, covars) {
+  
+  if (ncol(covars)) {
+    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]), ]
+    covars <- subset(covars, select = -sample)
+  }
+  
+  return(covars)
+
+}
+
+#' Permute samples
+#' 
+#' @description Compute a permutation of the samples of a snpMatrix object. 
+#' Useful to make sure that the folds are not stratified by phenotype.
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @keywords internal
+permute_snpMatrix <- function(gwas) {
+  
+  n <- nrow(gwas[['genotypes']])
+  perm <- sample(n)
+  
+  gwas[['genotypes']] <- gwas[['genotypes']][perm,]
+  gwas[['fam']] <- gwas[['fam']][perm,]
+  
+  return(gwas)
+  
+}

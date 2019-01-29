@@ -12,8 +12,8 @@ parse_scones_settings(associationScore = "chi2",
 \item{associationScore}{Association score to measure association between 
 genotype and phenotype. Possible values: chi2 (default), glm.}
 
-\item{modelScore}{Model selection criterion Possible values: consistency, 
-bic (default), aic, aicc, mbic.}
+\item{modelScore}{Model selection criterion Possible values: consistency 
+(default), bic, aic.}
 
 \item{etas}{Numeric vector with the etas to explore in the grid search. If 
 ommited, it's automatically created based on the association
