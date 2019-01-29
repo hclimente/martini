@@ -31,8 +31,7 @@
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' search_cones(minigwas, gi)
-#' search_cones(minigwas, gi, encoding = "recessive")
-#' search_cones(minigwas, gi, associationScore = "skat")
+#' search_cones(minigwas, gi, associationScore = "glm")
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", 
                          covars = data.frame(), sigmod = FALSE, ...) {
@@ -43,7 +42,7 @@ search_cones <- function(gwas, net, encoding = "additive",
   colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
   cones[['c']] <- single_snp_association(gwas[['genotypes']], 
                                          gwas[['fam']][['affected']], 
-                                         covariates, 
+                                         covars, 
                                          settings[['associationScore']])
   
   settings <- parse_scones_settings(c = cones[['c']], ...)
@@ -127,7 +126,7 @@ single_snp_association <- function(genotypes, phenotypes,
     
   } else if (associationScore == 'glm') {
     
-    if (nrow(covars) && nrow(covars) == nrow(genotypes)) {
+    if (ncol(covars) && nrow(covars) == nrow(genotypes)) {
       covars <- covars[match(row.names(genotypes), covars[['sample']]), ]
       covars <- subset(covars, select = -sample)
       covars <- as.matrix(covars)
@@ -223,7 +222,7 @@ get_snp_modules <- function(cones, net) {
 #' @return A list of \code{evo} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-#' martini:::parse_scones_settings(c = c(1,10,100), associationScore = "skat")
+#' martini:::parse_scones_settings(c = c(1,10,100), associationScore = "glm")
 #' @keywords internal
 parse_scones_settings <- function(associationScore = "chi2", 
                                   modelScore = "consistency", 
@@ -233,7 +232,7 @@ parse_scones_settings <- function(associationScore = "chi2",
   settings <- list()
   
   # unsigned int
-  valid_associationScore <- c('skat', 'chi2')
+  valid_associationScore <- c('glm', 'chi2')
   if (associationScore %in% valid_associationScore) {
     settings[['associationScore']] <- associationScore
   } else  {
@@ -285,7 +284,7 @@ parse_scones_settings <- function(associationScore = "chi2",
 #' @description Creates a list composed by all \code{evo} settings, with the 
 #' values provided by the user, or the default ones if none is provided.
 #' @param associationScore Association score to measure association between 
-#' genotype and phenotype. Possible values: chi2 (default), skat, trend.
+#' genotype and phenotype. Possible values: chi2 (default), glm.
 #' @param modelScore Model selection criterion Possible values: consistency, 
 #' bic (default), aic, aicc, mbic.
 #' @param etas Numeric vector with the etas to explore in the grid search. If 

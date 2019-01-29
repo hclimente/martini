@@ -37,6 +37,6 @@ values provided by the user, or the default ones if none is provided.
 }
 \examples{
 martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-martini:::parse_scones_settings(c = c(1,10,100), associationScore = "skat")
+martini:::parse_scones_settings(c = c(1,10,100), associationScore = "glm")
 }
 \keyword{internal}

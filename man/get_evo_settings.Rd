@@ -9,7 +9,7 @@ get_evo_settings(associationScore = "chi2", modelScore = "bic",
 }
 \arguments{
 \item{associationScore}{Association score to measure association between 
-genotype and phenotype. Possible values: chi2 (default), skat, trend.}
+genotype and phenotype. Possible values: chi2 (default), glm.}
 
 \item{modelScore}{Model selection criterion Possible values: consistency, 
 bic (default), aic, aicc, mbic.}

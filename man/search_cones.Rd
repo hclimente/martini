@@ -41,8 +41,7 @@ Finds the SNPs maximally associated with a phenotype while being
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 search_cones(minigwas, gi)
-search_cones(minigwas, gi, encoding = "recessive")
-search_cones(minigwas, gi, associationScore = "skat")
+search_cones(minigwas, gi, associationScore = "glm")
 }
 \references{
 Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
