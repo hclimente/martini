@@ -14,8 +14,6 @@ test_that("default we can change values", {
   expect_equal(parse_scones_settings(c = 1, modelScore = "consistency")$modelScore, "consistency")
   expect_equal(parse_scones_settings(c = 1, modelScore = "bic")$modelScore, 'bic')
   expect_equal(parse_scones_settings(c = 1, modelScore = "aic")$modelScore, 'aic')
-  expect_equal(parse_scones_settings(c = 1, modelScore = "aicc")$modelScore, 'aicc')
-  expect_equal(parse_scones_settings(c = 1, modelScore = "mbic")$modelScore, 'mbic')
   expect_error(parse_scones_settings(c = 1, modelScore = "kk"))
   expect_equal(parse_scones_settings(c = 1, associationScore = "glm")$associationScore, 'glm')
   expect_equal(parse_scones_settings(c = 1, associationScore = "chi2")$associationScore, 'chi2')

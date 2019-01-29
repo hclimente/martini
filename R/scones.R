@@ -161,6 +161,7 @@ single_snp_association <- function(genotypes, phenotypes,
 #' @param covars A data frame with the covariates. It must contain a column 
 #' 'sample' containing the sample IDs, and an additional columns for each 
 #' covariate.
+#' @importFrom stats glm BIC AIC
 #' @keywords internal
 score_fold <- function(folds, modelScore, K, gwas, covars) {
   
