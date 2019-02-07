@@ -6,13 +6,11 @@ test_that("output is as expected", {
   W <- matrix(c(0,1,0,1,0,1,0,1,0,0,0,1), 3, 3)
   W <- as(W, "sparseMatrix")
   
-  test <- run_scones(c, 1, 2, W)
+  selected <- run_scones(c, 1, 2, W)
   
-  expect_equal(length(test), 2)
-  expect_equal(class(test), "list")
-  expect_equal(class(test$selected), "numeric")
-  expect_equal(class(test$score), "numeric")
-  
+  expect_equal(length(selected), 3)
+  expect_equal(class(selected), "numeric")
+
 })
 
 test_that("we recover causal SNPs", {
@@ -28,10 +26,9 @@ test_that("we recover causal SNPs", {
   diag(W) <- 0
   W <- as(W, "sparseMatrix")
   
-  test <- run_scones(c, 1, 2, W)
+  selected <- run_scones(c, 1, 2, W)
   
-  expect_equal(sum(test$selected), pCausal)
-  expect_true(all(as.logical(test$selected[1:pCausal])))
-  expect_equal(test$score, sum(c) - pCausal - 2)
+  expect_equal(sum(selected), pCausal)
+  expect_true(all(as.logical(selected[1:pCausal])))
   
 })

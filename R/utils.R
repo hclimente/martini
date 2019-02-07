@@ -69,38 +69,6 @@ check_installed <- function(pkg, fn = "this function") {
   }
 }
 
-#' Change encoding of dataset
-#' 
-#' @description Converts the encoding from additive to another one.
-#' 
-#' @param X Genotype matrix with SNPs encoded as 0 for major homozygous, 1 for
-#' heterozygous and 2 for minor homozygous.
-#' @param encoding Genetic model assumed: additive, recessive, dominant or
-#' codominant.
-#' @return A genotype matrix 
-#' @examples 
-#' X <- as(minigwas[["genotypes"]], "numeric")
-#' martini:::encode_gwas(X, "recessive")
-#' @keywords internal
-encode_gwas <- function(X, encoding) {
-  
-  if (! encoding %in% c("additive", "recessive", "dominant", "codominant")) {
-    stop("Invalid encoding.", call. = FALSE)
-  }
-  
-  code <- data.frame(e = c('additive', 'recessive', 'dominant', 'codominant'),
-                     AA = c(0,0,0,0),
-                     AB = c(1,0,1,1),
-                     BB = c(2,1,1,0))
-  
-  X[X == 0] <- code[code$e == encoding, 'AA']
-  X[X == 1] <- code[code$e == encoding, 'AB']
-  X[X == 2] <- code[code$e == encoding, 'BB']
-  
-  return(X)
-  
-}
-
 #' Check inner coherence of GWAS dataset
 #' 
 #' @description Checks that the different data structures have the SNPs in the 
@@ -127,5 +95,44 @@ is_coherent <- function(gwas) {
   }
   
   return(TRUE)
+  
+}
+
+#' Prepare covariates for \code{scones}
+#' 
+#' @description Prepares de covariates data.frame for the functions used in
+#' \code{scones}, like \code{single_snp_association} or \code{score_folds}
+#' .
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @param net An igraph network that connects the SNPs.
+#' @keywords internal
+arrange_covars <- function(gwas, covars) {
+  
+  if (ncol(covars)) {
+    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]), ]
+    covars <- subset(covars, select = -sample)
+  }
+  
+  return(covars)
+
+}
+
+#' Permute samples
+#' 
+#' @description Compute a permutation of the samples of a snpMatrix object. 
+#' Useful to make sure that the folds are not stratified by phenotype.
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @keywords internal
+permute_snpMatrix <- function(gwas) {
+  
+  n <- nrow(gwas[['genotypes']])
+  perm <- sample(n)
+  
+  gwas[['genotypes']] <- gwas[['genotypes']][perm,]
+  gwas[['fam']] <- gwas[['fam']][perm,]
+  
+  return(gwas)
   
 }

@@ -35,13 +35,15 @@ Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,
     exp.selectHyperparameters(10, s.modelScore(), s.associationScore());
   } else {
     exp.selectHyperparameters(10, s.modelScore(), s.associationScore(), 
-                                     s.etas(), s.lambdas());
+                              s.etas(), s.lambdas());
   }
   
   exp.selectSNPs();
   
   return Rcpp::List::create(Rcpp::Named("selected") = exp.selectedSnps(),
                             Rcpp::Named("c") = exp.c(),
+                            Rcpp::Named("lambdas") = exp.grid()->lambdas(),
+                            Rcpp::Named("etas") = exp.grid()->etas(),
                             Rcpp::Named("lambda") = exp.bestLambda(),
                             Rcpp::Named("eta") = exp.bestEta(),
                             Rcpp::Named("grid") = exp.grid()->scoredFolds());

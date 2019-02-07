@@ -20,14 +20,14 @@ using namespace Rcpp;
 //' @return A list with vector indicating if the feature was selected and the 
 //' objective score.
 // [[Rcpp::export]]
-List run_scones(Eigen::VectorXd c, double eta, double lambda, 
-                Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda, 
+                           Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   Scones s(c, eta, lambda, &W);
   s.selectSnps();
   
-  return Rcpp::List::create(Rcpp::Named("selected") = s.selected(),
-                            Rcpp::Named("score") = s.computeScore());
+  return s.selected();
+  
 }
 
 #endif //MARTINI_RUN_SCONES

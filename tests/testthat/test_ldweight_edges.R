@@ -27,13 +27,13 @@ test_that("snps not in perfect ld connected", {
 
 test_that("negative and NAs are not possible", {
   
-  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 2, 0.5), symmetric = T)
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 2, 0.5), symmetric = TRUE)
   colnames(ld) <- c("rs1101", "rs1102", "rs1103")
   rownames(ld) <- colnames(ld)
   expect_error(ldweight_edges(net, ld, method = "subtraction"),
                "Edge weights cannot be negative.")
   
-  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = T)
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = TRUE)
   colnames(ld) <- c("rs1101", "rs1102", "rs1103")
   rownames(ld) <- colnames(ld)
   expect_error(ldweight_edges(net, ld, method = "subtraction"),

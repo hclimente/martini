@@ -53,7 +53,7 @@ gwas$fam <- data.frame(pedigree = 1:N,
                        member = 1:N,
                        father = NA,
                        mother = NA,
-                       sex = sample(c(1,2), N, replace = T),
+                       sex = sample(c(1,2), N, replace = TRUE),
                        affected = Y)
 
 ## MAKE NETWORKS
@@ -72,7 +72,7 @@ gm <- get_GM_network(gwas, snpMapping = snpMapping)
 gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
 W <- as_adj(gi)
 
-solution <- search_cones(gwas, gi)
+solution <- scones.cv(gwas, gi)
 
 # CREATE MINI
 # minigwas = gwas
