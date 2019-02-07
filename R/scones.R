@@ -5,13 +5,9 @@
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
-#' @param encoding SNP encoding. Possible values: additive (default), resessive,
-#' dominant, codominant.
 #' @param covars A data frame with the covariates. It must contain a column 
 #' 'sample' containing the sample IDs, and an additional columns for each 
 #' covariate.
-#' @param sigmod Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
-#' prioritize tightly connected clusters of SNPs
 #' @param ... Extra arguments for \code{\link{parse_scones_settings}}.
 #' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
 #' following additions:
@@ -30,74 +26,56 @@
 #' @importFrom methods as
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' search_cones(minigwas, gi)
-#' search_cones(minigwas, gi, associationScore = "glm")
+#' scones.cv(minigwas, gi)
+#' scones.cv(minigwas, gi, score = "glm")
 #' @export
-search_cones <- function(gwas, net, encoding = "additive", 
-                         covars = data.frame(), sigmod = FALSE, ...) {
-
-  settings <- parse_scones_settings(c = 1, ...)
+scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   
-  # reorder covariates
+  # prepare data: remove redundant edges and self-edges in network and sort
   gwas <- permute_snpMatrix(gwas)
-  covars <- arrange_covars(gwas, covars)
-    
+  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
+  
   cones <- gwas[["map"]]
   colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
-  cones[['c']] <- single_snp_association(gwas[['genotypes']], 
-                                         gwas[['fam']][['affected']], 
-                                         covars, 
-                                         settings[['associationScore']])
   
-  settings <- parse_scones_settings(c = cones[['c']], ...)
-  
-  # prepare network
-  ## remove redundant edges and self-edges
   net <- simplify(net)
   W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  diag(W) <- ifelse(sigmod, -rowSums(W), 0)
-  
-  ## order according to order in map
   W <- W[cones[['snp']], cones[['snp']]]
+
+  # set options
+  opts <- parse_scones_settings(c = 1, ...)
+  cones[['c']] <- single_snp_association(gwas,covars,opts[['score']])
+  opts <- parse_scones_settings(c = cones[['c']], ...)
   
-  # K-fold association
-  associationScores <- list()
+  # grid search
   ids <- gwas[['fam']][['affected']]
   
-  K <- 10
-  K <- cut(seq(1, length(ids)), breaks=K,labels=FALSE)
-  for (k in unique(K)) {
-      
-      genotypes <- gwas[['genotypes']][K != k, ]
-      phenotypes <- gwas[['fam']][['affected']][K != k]
-      covariates <- covars[K != k, ]
-      
-      associationScores[[k]] <- single_snp_association(genotypes, phenotypes, 
-                                    covariates, settings[['associationScore']])
-
-  }
+  K <- cut(seq(1, length(ids)), breaks = 10, labels = FALSE)
+  scores <- lapply(unique(K), function(k) {
+    single_snp_association(gwas, covars, opts[['score']], 
+                           samples = (K != k) )
+  })
   
-  best_eta <- best_lambda <- best_score <- 0
+  grid_scores <- lapply(opts[['etas']], function(eta){
+    lapply(opts[['lambdas']], function(lambda){
+      folds <- lapply(scores, run_scones, eta, lambda, -W)
+      folds <- do.call(rbind, folds)
+      score_fold(folds, opts[['criterion']], K, gwas, covars)
+    }) %>% unlist
+  })
+  grid_scores <- do.call(rbind, grid_scores)
+  dimnames(grid_scores) <- list(opts[['etas']], opts[['lambdas']])
   
-  for (eta in settings$etas) {
-      for (lambda in settings$lambdas) {
-          
-          # TODO if solution is empty, continue
-          
-          folds <- lapply(associationScores, run_scones, eta, lambda, W)
-          folds <- do.call(rbind, folds)
-          score <- score_fold(folds, settings[['modelScore']], K, gwas, covars)
-          
-          if (score > best_score) {
-              best_eta <- eta
-              best_lambda <- lambda
-          }
-      }
-  }
-
-  cat("eta =", best_eta, "\nlambda =", best_lambda, "\n")
+  cat('Grid of', opts[['criterion']], 'scores (etas x lambdas):\n')
+  print(grid_scores)
   
-  selected <- run_scones(cones[['c']], best_eta, best_lambda, W)
+  best <- which(grid_scores == max(grid_scores), arr.ind = TRUE)
+  best_eta <- opts[['etas']][best[1, 'row']]
+  best_lambda <- opts[['lambdas']][best[1, 'col']]
+  
+  cat("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda, "\n")
+  
+  selected <- run_scones(cones[['c']], best_eta, best_lambda, -W)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
@@ -116,20 +94,24 @@ search_cones <- function(gwas, net, encoding = "additive",
 #' @param covars A data frame with the covariates. It must contain a column 
 #' 'sample' containing the sample IDs, and an additional columns for each 
 #' covariate.
-#' @param associationScore String with the association test to perform. Possible
+#' @param score String with the association test to perform. Possible
 #' values: chi2, glm.
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
-single_snp_association <- function(genotypes, phenotypes, 
-                                   covars, associationScore) {
+single_snp_association <- function(gwas, covars, score, 
+                                   samples = rep(TRUE, nrow(gwas[['fam']])) ) {
+  
+  genotypes <- gwas[['genotypes']][samples, ]
+  phenotypes <- gwas[['fam']][['affected']][samples]
+  covars <- covars[samples, ]
     
-  if (associationScore == 'chi2') {
+  if (score == 'chi2') {
     
     tests <- single.snp.tests(phenotypes, snp.data = genotypes)
     c <- chi.squared(tests, df=1)
     
-  } else if (associationScore == 'glm') {
+  } else if (score == 'glm') {
     
     if (ncol(covars) && nrow(covars) == nrow(genotypes)) {
       covars <- as.matrix(covars)
@@ -153,7 +135,7 @@ single_snp_association <- function(genotypes, phenotypes,
 #' assign a score to it (the larger, the better).
 #' @param folds k-times-d matrix, where k is the number of folds, and d the 
 #' number of SNPs.
-#' @param modelScore String with the method to use to score the folds.
+#' @param criterion String with the method to use to score the folds.
 #' @param K Numeric vector of length equal to the number of samples. The 
 #' elements are integers from 1 to # folds. Indicates which samples belong to 
 #' which fold.
@@ -163,31 +145,46 @@ single_snp_association <- function(genotypes, phenotypes,
 #' covariate.
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(folds, modelScore, K, gwas, covars) {
+score_fold <- function(folds, criterion, K, gwas, covars) {
   
   score <- 0
   
-  if (modelScore == 'consistency') {
-    for (i in unique(K)) {
-      for (j in unique(K)) {
+  # penalize trivial solutions
+  if (!sum(folds) | ( sum(folds)/length(folds) > 0.5) ){
+    score <- -Inf
+  } else if (criterion == 'consistency') {
+    
+    folds_diff <- unique(K)
+    
+    for (i in folds_diff) {
+      for (j in folds_diff[folds_diff > 1]) {
         C <- sum(folds[i,] * folds[j,])
         maxC <- max(sum(folds[i,]), sum(folds[j,]))
         score <- score + ifelse(maxC == 0, 0, C/maxC)
       }
     } 
-  } else if (modelScore %in% c('bic', 'aic')) {
+  } else if (criterion %in% c('bic', 'aic', 'aicc')) {
     for (k in unique(K)) {
       
-      phenotypes <- gwas[['fam']][['affected']][K == k]
-      genotypes <- as(gwas[['genotypes']][K == k, ], 'numeric')
+      phenotypes <- gwas[['fam']][['affected']][K != k]
+      genotypes <- as(gwas[['genotypes']][K != k, ], 'numeric')
       genotypes <- as.data.frame(genotypes[ , folds[k,]])
-      genotypes <- cbind(genotypes, covars[K == k, ])
+      genotypes <- cbind(genotypes, covars[K != k, ])
       
       model <- glm(phenotypes ~ 1, data = genotypes)
       
-      if (modelScore == 'bic')      score <- score + BIC(model)
-      else if (modelScore == 'aic') score <- score + AIC(model)
+      if (criterion == 'bic') {
+        score <- score + BIC(model)
+      } else if (criterion == 'aic') {
+        score <- score + AIC(model)
+      } else if (criterion == 'aicc') {
+        k <- ncol(genotypes)
+        n <- nrow(genotypes)
+        score <- score + AIC(model) + (2*k^2 + 2*k)/(n - k - 1)
+      }
     }
+    # invert scores, as best models have the lowest scores
+    score <- -score
   }
   
   return(score)
@@ -204,7 +201,7 @@ score_fold <- function(folds, modelScore, K, gwas, covars) {
 #' @importFrom igraph induced_subgraph components
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' cones <- search_cones(minigwas, gi)
+#' cones <- scones.cv(minigwas, gi)
 #' martini:::get_snp_modules(cones, gi)
 #' @keywords internal
 get_snp_modules <- function(cones, net) {
@@ -224,56 +221,46 @@ get_snp_modules <- function(cones, net) {
   
 }
 
-#' Parse search_cones settings.
+#' Parse \code{scones.cv} settings.
 #' 
-#' @description Creates a list composed by all \code{evo} settings, with the 
-#' values provided by the user, or the default ones if none is provided.
-#' @param associationScore Association score to measure association between 
+#' @description Creates a list composed by all \code{scones.cv} settings, with 
+#' the values provided by the user, or the default ones if none is provided.
+#' @param score Association score to measure association between 
 #' genotype and phenotype. Possible values: chi2 (default), glm.
-#' @param modelScore Model selection criterion Possible values: consistency 
-#' (default), bic, aic.
+#' @param criterion String with the function to measure the quality of a split. 
+#' Possible values: consistency (default), bic, aic, aicc.
 #' @param etas Numeric vector with the etas to explore in the grid search. If 
 #' ommited, it's automatically created based on the association
 #' scores.
 #' @param lambdas Numeric vector with the lambdas to explore in the grid search.
 #' If ommited, it's automatically created based on the association scores.
-#' @param debug Display additional information. Possible values: TRUE, FALSE
-#' (default).
 #' @param c Numeric vector with the association scores of the SNPs. Specify it 
 #' to automatically an appropriate range of etas and lambas.
 #' @return A list of \code{evo} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-#' martini:::parse_scones_settings(c = c(1,10,100), associationScore = "glm")
+#' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
 #' @keywords internal
-parse_scones_settings <- function(associationScore = "chi2", 
-                                  modelScore = "consistency", 
+parse_scones_settings <- function(score = "chi2", criterion = "consistency", 
                                   etas = numeric(), lambdas = numeric(), 
-                                  debug = FALSE, c = numeric()) {
+                                  c = numeric()) {
   
   settings <- list()
   
   # unsigned int
-  valid_associationScore <- c('glm', 'chi2')
-  if (associationScore %in% valid_associationScore) {
-    settings[['associationScore']] <- associationScore
+  valid_score <- c('glm', 'chi2')
+  if (score %in% valid_score) {
+    settings[['score']] <- score
   } else  {
-    stop(paste("Error: invalid associationScore", associationScore))
+    stop(paste("Error: invalid score", score))
   }
   
   # unsigned int
-  valid_modelScore <- c('consistency', 'bic', 'aic')
-  if (modelScore %in% valid_modelScore) {
-    settings[['modelScore']] <- modelScore
+  valid_criterion <- c('consistency', 'bic', 'aic', 'aicc')
+  if (criterion %in% valid_criterion) {
+    settings[['criterion']] <- criterion
   } else {
-    stop(paste("Error: invalid modelScore", modelScore))
-  }
-  
-  # bool
-  if (! is.logical(debug)) {
-    stop("Error: debug must be logical.")
-  } else {
-    settings[['debug']] <- debug;
+    stop(paste("Error: invalid criterion", criterion))
   }
   
   # VectorXd
@@ -281,84 +268,20 @@ parse_scones_settings <- function(associationScore = "chi2",
   minc <- min(logc)
   maxc <- max(logc)
   if (length(etas) & is.numeric(etas)) {
-    settings[['etas']] <- sort(etas, decreasing = TRUE)
+    settings[['etas']] <- sort(etas)
   } else if (length(logc)) {
-    settings[['etas']] <- seq(maxc, minc, length=10)
+    settings[['etas']] <- 10^seq(maxc, minc, length=10)
   } else {
       stop("Error: specify a valid etas or an association vector.")
   }
   
   # VectorXd
   if (length(lambdas) & is.numeric(lambdas)) {
-      settings[['lambdas']] <- sort(lambdas, decreasing = TRUE)
+      settings[['lambdas']] <- sort(lambdas)
   } else if (length(logc)) {
-      settings[['lambdas']] <- seq(maxc, minc, length=10)
+      settings[['lambdas']] <- 10^seq(maxc, minc, length=10)
   } else {
       stop("Error: specify a valid lambdas or an association vector.")
-  }
-  
-  return(settings);
-  
-}
-
-#' Get evo settings.
-#' 
-#' @description Creates a list composed by all \code{evo} settings, with the 
-#' values provided by the user, or the default ones if none is provided.
-#' @param associationScore Association score to measure association between 
-#' genotype and phenotype. Possible values: chi2 (default), glm.
-#' @param modelScore Model selection criterion Possible values: consistency, 
-#' bic (default), aic, aicc, mbic.
-#' @param etas Numeric vector with the etas to explore in the grid search. If 
-#' ommited, it's automatically created based on the association
-#' scores.
-#' @param lambdas Numeric vector with the lambdas to explore in the grid search.
-#' If ommited, it's automatically created based on the association scores.
-#' @param debug Display additional information. Possible values: TRUE, FALSE
-#' (default).
-#' @return A list of \code{evo} settings.
-#' @examples 
-#' martini:::get_evo_settings()
-#' martini:::get_evo_settings(associationScore = "skat")
-#' @keywords internal
-get_evo_settings <- function(associationScore = "chi2", modelScore = "bic", 
-                             etas = numeric(), lambdas = numeric(), 
-                             debug = FALSE){
-    
-  settings <- list()
-  
-  # unsigned int
-  settings[['associationScore']] <- switch(associationScore, skat = 0, chi2 = 1)
-  if (length(settings[['associationScore']]) == 0) {
-    stop(paste("Error: invalid associationScore", associationScore))
-  }
-  
-  # unsigned int
-  settings[['modelScore']] <- switch(modelScore, consistency = 0, bic = 1, 
-                                     aic = 2, aicc = 3, mbic = 4)
-  if (length(settings[['modelScore']]) == 0) {
-    stop(paste("Error: invalid modelScore", modelScore))
-  }
-  
-  # bool
-  if (! is.logical(debug)) {
-    stop("Error: debug must be logical.")
-  } else {
-    settings[['debug']] <- debug;
-  }
-  
-  # VectorXd
-  if (!is.numeric(etas)){
-    stop("Error: etas must be numeric")
-  } else {
-    settings[['etas']] <- etas
-  }
-  
-  # VectorXd
-  if (!is.numeric(lambdas)){
-    stop("Error: lambdas must be numeric")
-  } else {
-    settings[['lambdas']] <- lambdas
   }
   
   return(settings);

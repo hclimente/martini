@@ -2,18 +2,17 @@
 % Please edit documentation in R/scones.R
 \name{parse_scones_settings}
 \alias{parse_scones_settings}
-\title{Parse search_cones settings.}
+\title{Parse \code{scones.cv} settings.}
 \usage{
-parse_scones_settings(associationScore = "chi2",
-  modelScore = "consistency", etas = numeric(), lambdas = numeric(),
-  debug = FALSE, c = numeric())
+parse_scones_settings(score = "chi2", criterion = "consistency",
+  etas = numeric(), lambdas = numeric(), c = numeric())
 }
 \arguments{
-\item{associationScore}{Association score to measure association between 
+\item{score}{Association score to measure association between 
 genotype and phenotype. Possible values: chi2 (default), glm.}
 
-\item{modelScore}{Model selection criterion Possible values: consistency 
-(default), bic, aic.}
+\item{criterion}{String with the function to measure the quality of a split. 
+Possible values: consistency (default), bic, aic, aicc.}
 
 \item{etas}{Numeric vector with the etas to explore in the grid search. If 
 ommited, it's automatically created based on the association
@@ -22,9 +21,6 @@ scores.}
 \item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
 If ommited, it's automatically created based on the association scores.}
 
-\item{debug}{Display additional information. Possible values: TRUE, FALSE
-(default).}
-
 \item{c}{Numeric vector with the association scores of the SNPs. Specify it 
 to automatically an appropriate range of etas and lambas.}
 }
@@ -32,11 +28,11 @@ to automatically an appropriate range of etas and lambas.}
 A list of \code{evo} settings.
 }
 \description{
-Creates a list composed by all \code{evo} settings, with the 
-values provided by the user, or the default ones if none is provided.
+Creates a list composed by all \code{scones.cv} settings, with 
+the values provided by the user, or the default ones if none is provided.
 }
 \examples{
 martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-martini:::parse_scones_settings(c = c(1,10,100), associationScore = "glm")
+martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
 }
 \keyword{internal}

@@ -21,22 +21,13 @@ test_that("we recover causal SNPs", {
   # wrong eta and lambda return the trivial solution
   expect_equal(sum(cones$selected), nrow(cones))
   
-  cones <- search_cones(minigwas, gi, 
-                        etas = seq(2, 0, length=10), 
-                        lambdas = seq(2, 0, length=10))
+  cones <- search_cones(minigwas, gi)
+  scores <- c(95.4, 95.4, 94.1, 96.1, 94.1, 93.3, 0.0, 0.3, 
+              0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 96.1, 96.1, 95.1, 
+              95.4, 95.4, 96.1, 0.2, 0.3, 0.0, 0.3, 0.0)
   
   skip_on_os("windows")
   expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
-  expect_equal(cones$c[cones$selected], rep(99, sum(grepl("[AC]", cones$snp))), tolerance = 1e-5)
-  
-  cones <- search_cones(minigwas, gi, 
-                        etas = seq(2, 0, length=10), 
-                        lambdas = seq(2, 0, length=10),
-                        modelScore = 'bic')
-  
-  skip_on_os("windows")
-  expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
-  expect_equal(cones$c[cones$selected], rep(99, sum(grepl("[AC]", cones$snp))), tolerance = 1e-5)
-  
+  expect_equal(cones$c, scores, tolerance = .1)
   
 })

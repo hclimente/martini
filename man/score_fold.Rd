@@ -4,13 +4,13 @@
 \alias{score_fold}
 \title{Score the solutions of a k-fold}
 \usage{
-score_fold(folds, modelScore, K, gwas, covars)
+score_fold(folds, criterion, K, gwas, covars)
 }
 \arguments{
 \item{folds}{k-times-d matrix, where k is the number of folds, and d the 
 number of SNPs.}
 
-\item{modelScore}{String with the method to use to score the folds.}
+\item{criterion}{String with the method to use to score the folds.}
 
 \item{K}{Numeric vector of length equal to the number of samples. The 
 elements are integers from 1 to # folds. Indicates which samples belong to 

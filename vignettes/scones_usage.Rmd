@@ -75,12 +75,12 @@ Once we have the network, we can find ConES (connected explanatory SNPs), the se
 $$argmax_{S \subseteq V} \sum_{p \in S} c_p - \sum_{p \in S} \eta - \sum_{p \in S} \sum_{q \notin S} \lambda W_{pq} .$$
 where $c$ represents an association measure with the phenotype (e.g. $\chi^2_1$) and $W_{pq}$ is the weight of the edge between $p$ and $q$. $\eta$ and $\lambda$ are parameters that enforce sparsity and connectivity on the subset respectively. Essentially, we are looking for a small subset of SNPs maximally associated with the phenotype that is mostly interconnected among itself in the network. 
 
-We can find ConES in `martini` with the function `search_cones`, which implements SConES [@Azencott2013]. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
+We can find ConES in `martini` with the function `scones`, which implements SConES [@Azencott2013]. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
 
 ```{r find cones gridsearch}
-cones <- search_cones(minigwas, gi)
+cones <- scones.cv(minigwas, gi)
 ```
-`search_cones` informs us of the optimal values for $\eta$ and $\lambda$. The results is a data frame that looks like this:
+`scones` informs us of the optimal values for $\eta$ and $\lambda$. The results is a data frame that looks like this:
 
 ```{r}
 head(cones)

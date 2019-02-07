@@ -37,7 +37,7 @@ Depends: R (>= 3.5)
 LinkingTo:
   Rgin,
   Rcpp,
-  RcppEigen (>= 0.3.3.3.0)
+  RcppEigen (>= 0.3.3.5.0)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 

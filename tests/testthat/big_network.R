@@ -72,7 +72,7 @@ gm <- get_GM_network(gwas, snpMapping = snpMapping)
 gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
 W <- as_adj(gi)
 
-solution <- search_cones(gwas, gi)
+solution <- scones.cv(gwas, gi)
 
 # CREATE MINI
 # minigwas = gwas

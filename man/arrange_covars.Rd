@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{arrange_covars}
 \alias{arrange_covars}
-\title{Prepare covariates for \code{search_cones}}
+\title{Prepare covariates for \code{scones}}
 \usage{
 arrange_covars(gwas, covars)
 }
@@ -13,7 +13,7 @@ arrange_covars(gwas, covars)
 }
 \description{
 Prepares de covariates data.frame for the functions used in
-\code{search_cones}, like \code{single_snp_association} or \code{score_folds}
+\code{scones}, like \code{single_snp_association} or \code{score_folds}
 .
 }
 \keyword{internal}

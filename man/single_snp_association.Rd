@@ -4,19 +4,20 @@
 \alias{single_snp_association}
 \title{Calculate genotype-phhenotype associations}
 \usage{
-single_snp_association(genotypes, phenotypes, covars, associationScore)
+single_snp_association(gwas, covars, score, samples = rep(TRUE,
+  nrow(gwas[["fam"]])))
 }
 \arguments{
-\item{genotypes}{A SnpMatrix object with the genotype information.}
-
-\item{phenotypes}{A numeric vector with the phenotypes.}
-
 \item{covars}{A data frame with the covariates. It must contain a column 
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{associationScore}{String with the association test to perform. Possible
+\item{score}{String with the association test to perform. Possible
 values: chi2, glm.}
+
+\item{genotypes}{A SnpMatrix object with the genotype information.}
+
+\item{phenotypes}{A numeric vector with the phenotypes.}
 }
 \value{
 A named vector with the association scores.

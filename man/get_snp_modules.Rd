@@ -19,7 +19,7 @@ Find modules composed by interconnected SNPs.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-cones <- search_cones(minigwas, gi)
+cones <- scones.cv(minigwas, gi)
 martini:::get_snp_modules(cones, gi)
 }
 \keyword{internal}
