@@ -13,6 +13,7 @@ test_that("default we can change values", {
   expect_equal(parse_scones_settings(c = 1, criterion = "consistency")$criterion, "consistency")
   expect_equal(parse_scones_settings(c = 1, criterion = "bic")$criterion, 'bic')
   expect_equal(parse_scones_settings(c = 1, criterion = "aic")$criterion, 'aic')
+  expect_equal(parse_scones_settings(c = 1, criterion = "aicc")$criterion, 'aicc')
   expect_error(parse_scones_settings(c = 1, criterion = "kk"))
   expect_equal(parse_scones_settings(c = 1, score = "glm")$score, 'glm')
   expect_equal(parse_scones_settings(c = 1, score = "chi2")$score, 'chi2')

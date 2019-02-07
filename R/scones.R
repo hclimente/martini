@@ -1,7 +1,8 @@
 #' Find connected explanatory SNPs.
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
-#'  connected in an underlying network (Azencott et al., 2013).
+#'  connected in an underlying network (Azencott et al., 2013). Select the 
+#'  hyperparameters by cross-validation.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
@@ -12,7 +13,7 @@
 #' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
 #' following additions:
 #' \itemize{
-#' \item{C: contains the univariate association score for every single SNP.}
+#' \item{c: contains the univariate association score for every single SNP.}
 #' \item{selected: logical vector indicating if the SNP was selected by SConES 
 #' or not.}
 #' \item{module: integer with the number of the module the SNP belongs to.}
@@ -22,8 +23,6 @@
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
-#' @importFrom Matrix diag rowSums
-#' @importFrom methods as
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
@@ -44,7 +43,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
 
   # set options
   opts <- parse_scones_settings(c = 1, ...)
-  cones[['c']] <- single_snp_association(gwas,covars,opts[['score']])
+  cones[['c']] <- single_snp_association(gwas, covars, opts[['score']])
   opts <- parse_scones_settings(c = cones[['c']], ...)
   
   # grid search
@@ -76,6 +75,60 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   cat("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda, "\n")
   
   selected <- run_scones(cones[['c']], best_eta, best_lambda, -W)
+  cones[['selected']] <- as.logical(selected)
+  
+  cones <- get_snp_modules(cones, net)
+  
+  return(cones)
+  
+}
+
+#' Find connected explanatory SNPs.
+#' 
+#' @description Finds the SNPs maximally associated with a phenotype while being
+#' connected in an underlying network (Azencott et al., 2013).
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @param net An igraph network that connects the SNPs.
+#' @param score Association score to measure association between genotype and 
+#' phenotype. Possible values: chi2 (default), glm.
+#' @param eta Value of the eta parameter.
+#' @param lambda Value of the lambda parameter.
+#' @param covars A data frame with the covariates. It must contain a column 
+#' 'sample' containing the sample IDs, and an additional columns for each 
+#' covariate.
+#' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
+#' following additions:
+#' \itemize{
+#' \item{c: contains the univariate association score for every single SNP.}
+#' \item{selected: logical vector indicating if the SNP was selected by SConES 
+#' or not.}
+#' \item{module: integer with the number of the module the SNP belongs to.}
+#' }
+#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
+#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
+#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @importFrom igraph simplify as_adj
+#' @examples
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' scones(minigwas, gi, 10, 1)
+#' @export
+scones <- function(gwas, net, eta, lambda, score = 'chi2', covars = data.frame()) {
+  
+  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
+  
+  cones <- gwas[["map"]]
+  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  cones[['c']] <- single_snp_association(gwas, covars, score)
+  
+  # prepare data: remove redundant edges and self-edges in network and sort
+  net <- simplify(net)
+  W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  W <- W[cones[['snp']], cones[['snp']]]
+
+  # run scores
+  selected <- run_scones(cones[['c']], eta, lambda, -W)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
