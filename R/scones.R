@@ -211,8 +211,8 @@ score_fold <- function(folds, criterion, K, gwas, covars) {
     
     for (i in folds_diff) {
       for (j in folds_diff[folds_diff > 1]) {
-        C <- sum(folds[i,] * folds[j,])
-        maxC <- max(sum(folds[i,]), sum(folds[j,]))
+        C <- sum(folds[i,] & folds[j,])
+        maxC <- sum(folds[i,] | folds[j,])
         score <- score + ifelse(maxC == 0, 0, C/maxC)
       }
     } 
