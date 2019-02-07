@@ -27,7 +27,7 @@ test_that("we recover causal SNPs", {
               95.4, 95.4, 96.1, 0.2, 0.3, 0.0, 0.3, 0.0)
   
   skip_on_os("windows")
-  expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
+  expect_equal(cones$selected, cones$c > 0)
   expect_equal(cones$c, scores, tolerance = .1)
   
 })
