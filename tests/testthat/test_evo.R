@@ -13,8 +13,8 @@ test_that("output is as expected", {
   
   expect_equal(length(test), 7)
   expect_equal(class(test), "list")
-  expect_equal(test$eta, 3)
-  expect_equal(test$lambda, 2.5)
+  expect_true(test$eta %in% settings[['etas']])
+  expect_true(test$lambda %in% settings[['lambdas']])
   expect_equal(dim(test$grid), c(3,2))
   expect_equal(class(test$selected), "numeric")
   expect_equal(class(test$c), "numeric")
