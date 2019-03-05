@@ -2,17 +2,15 @@ citHeader("To cite martini in publications use:")
 
 citEntry(entry = "Misc",
   title        = "martini: GWAS incorporating networks in R",
-  author       = personList(as.person("Hector Climente"),
+  author       = personList(as.person("Hector Climente-Gonzalez"),
                    as.person("Chloe-Agathe Azencott")),
-  journal      = "Zenodo",
   year         = "2017",
-  url          = "http://doi.org/10.5281/zenodo.824643/",
+  url          = "https://doi.org/doi:10.18129/B9.bioc.martini",
 
   textVersion  =
   paste("Hector Climente-Gonzalez, Chloe-Agathe Azencott (2017).",
-        "hclimente/martini v0.1-alpha.",
-        "Zenodo.",
-        "URL http://doi.org/10.5281/zenodo.824643/")
+        "martini: GWAS incorporating networks in R.",
+        "URL https://doi.org/doi:10.18129/B9.bioc.martini")
 
 )
 
