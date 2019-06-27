@@ -31,7 +31,7 @@ data(minigwas)
 gs <- get_GS_network(minigwas)
 
 # 3. Find connected, explanatory SNPs (cones)
-cones <- scones.cv(minigwas, gs)
+cones <- search_cones(minigwas, gs)
 
 # cones$selected informs about whether the SNP is selected as cones or not
 head(cones)

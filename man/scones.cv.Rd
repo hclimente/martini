@@ -29,8 +29,8 @@ or not.}
 }
 \description{
 Finds the SNPs maximally associated with a phenotype while being
- connected in an underlying network (Azencott et al., 2013). Select the 
- hyperparameters by cross-validation.
+connected in an underlying network (Azencott et al., 2013). Select the 
+hyperparameters by cross-validation.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)

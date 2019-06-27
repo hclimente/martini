@@ -78,7 +78,7 @@ where $c$ represents an association measure with the phenotype (e.g. $\chi^2_1$)
 We can find ConES in `martini` with the function `scones`, which implements SConES [@Azencott2013]. By default, it takes a GWAS experiment and a SNP network, uses $\chi^2_1$ as association measure and performs a grid search over $\eta$ and $\lambda$ to find the combination that results in the best BIC.
 
 ```{r find cones gridsearch}
-cones <- scones.cv(minigwas, gi)
+cones <- search_cones(minigwas, gi)
 ```
 `scones` informs us of the optimal values for $\eta$ and $\lambda$. The results is a data frame that looks like this:
 

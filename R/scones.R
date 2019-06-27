@@ -1,9 +1,8 @@
 #' Find connected explanatory SNPs.
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
-#'  connected in an underlying network (Azencott et al., 2013). Select the 
-#'  hyperparameters by cross-validation.
-#' 
+#' connected in an underlying network (Azencott et al., 2013). Select the 
+#' hyperparameters by cross-validation.
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
 #' @param covars A data frame with the covariates. It must contain a column 
