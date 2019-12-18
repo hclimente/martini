@@ -4,8 +4,12 @@
 \alias{get_GM_network}
 \title{Get gene membership network.}
 \usage{
-get_GM_network(gwas, organism = 9606, snpMapping = snp2gene(gwas,
-  organism), col_genes = c("snp", "gene"))
+get_GM_network(
+  gwas,
+  organism = 9606,
+  snpMapping = snp2gene(gwas, organism),
+  col_genes = c("snp", "gene")
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

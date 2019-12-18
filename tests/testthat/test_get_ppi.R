@@ -20,11 +20,11 @@ test_that("output is as expected", {
 test_that("we retrieve known interactions", {
 
   # known interactions
-  expect_equal(sum(dog$geneA == "CREBBP"	& dog$geneB == "SP1"), 1)
-  expect_equal(sum(dog$geneA == "DTNA"	& dog$geneB == "ACTB"), 1)
+  expect_equal(sum(dog$geneA == "CREBBP" & dog$geneB == "SP1"), 1)
+  expect_equal(sum(dog$geneA == "DTNA" & dog$geneB == "ACTB"), 1)
   
   # expected order
-  expect_equal(sum(dog$geneA == "SP1"	& dog$geneB == "CREBBP"), 0)
-  expect_equal(sum(dog$geneA == "ACTB"	& dog$geneB == "DTNA"), 0)
+  expect_equal(sum(dog$geneA == "SP1" & dog$geneB == "CREBBP"), 0)
+  expect_equal(sum(dog$geneA == "ACTB" & dog$geneB == "DTNA"), 0)
 
 })

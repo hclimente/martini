@@ -4,9 +4,14 @@
 \alias{get_GI_network}
 \title{Get gene-interaction network.}
 \usage{
-get_GI_network(gwas, organism, snpMapping = snp2gene(gwas, organism),
-  ppi = get_ppi(organism), col_ppi = c("gene1", "gene2"),
-  col_genes = c("snp", "gene"))
+get_GI_network(
+  gwas,
+  organism,
+  snpMapping = snp2gene(gwas, organism),
+  ppi = get_ppi(organism),
+  col_ppi = c("gene1", "gene2"),
+  col_genes = c("snp", "gene")
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

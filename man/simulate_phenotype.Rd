@@ -4,9 +4,17 @@
 \alias{simulate_phenotype}
 \title{Simulate phenotype}
 \usage{
-simulate_phenotype(gwas, snps, h2, model = "additive",
-  effectSize = rnorm(length(snps)), qualitative = FALSE, ncases,
-  ncontrols, prevalence)
+simulate_phenotype(
+  gwas,
+  snps,
+  h2,
+  model = "additive",
+  effectSize = rnorm(length(snps)),
+  qualitative = FALSE,
+  ncases,
+  ncontrols,
+  prevalence
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

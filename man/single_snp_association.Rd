@@ -4,8 +4,12 @@
 \alias{single_snp_association}
 \title{Calculate genotype-phhenotype associations}
 \usage{
-single_snp_association(gwas, covars, score, samples = rep(TRUE,
-  nrow(gwas[["fam"]])))
+single_snp_association(
+  gwas,
+  covars,
+  score,
+  samples = rep(TRUE, nrow(gwas[["fam"]]))
+)
 }
 \arguments{
 \item{covars}{A data frame with the covariates. It must contain a column 

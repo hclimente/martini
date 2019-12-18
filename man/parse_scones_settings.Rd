@@ -4,8 +4,13 @@
 \alias{parse_scones_settings}
 \title{Parse \code{scones.cv} settings.}
 \usage{
-parse_scones_settings(score = "chi2", criterion = "consistency",
-  etas = numeric(), lambdas = numeric(), c = numeric())
+parse_scones_settings(
+  score = "chi2",
+  criterion = "consistency",
+  etas = numeric(),
+  lambdas = numeric(),
+  c = numeric()
+)
 }
 \arguments{
 \item{score}{Association score to measure association between 

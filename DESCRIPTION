@@ -6,7 +6,6 @@ Authors@R: c(person("Hector", "Climente-Gonzalez",
                     email = "hector.climente@curie.fr",
                     role = c("aut", "cre")),
              person("Chloe-Agathe", "Azencott", role = "aut"))
-Maintainer: Hector Climente-Gonzalez <hector.climente@curie.fr>
 Description: martini deals with the low power inherent to GWAS studies by using 
     prior knowledge represented as a network. SNPs are the vertices of the 
     network, and the edges represent biological relationships between them 
@@ -31,14 +30,14 @@ Suggests:
   IRanges (>= 2.8.2),
   knitr,
   testthat,
-  tidyverse,
+  readr,
   rmarkdown
-Depends: R (>= 3.5)
+Depends: R (>= 3.6)
 LinkingTo:
   Rgin,
   Rcpp,
   RcppEigen (>= 0.3.3.5.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1
 Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network

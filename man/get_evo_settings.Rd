@@ -4,8 +4,13 @@
 \alias{get_evo_settings}
 \title{Get evo settings.}
 \usage{
-get_evo_settings(associationScore = "chi2", modelScore = "bic",
-  etas = numeric(), lambdas = numeric(), debug = FALSE)
+get_evo_settings(
+  associationScore = "chi2",
+  modelScore = "bic",
+  etas = numeric(),
+  lambdas = numeric(),
+  debug = FALSE
+)
 }
 \arguments{
 \item{associationScore}{Association score to measure association between 
