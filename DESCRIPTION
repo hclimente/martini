@@ -3,7 +3,7 @@ Type: Package
 Title: GWAS Incorporating Networks
 Version: 1.7.0
 Authors@R: c(person("Hector", "Climente-Gonzalez", 
-                    email = "hector.climente@curie.fr",
+                    email = "hector.climente@riken.fr",
                     role = c("aut", "cre")),
              person("Chloe-Agathe", "Azencott", role = "aut"))
 Description: martini deals with the low power inherent to GWAS studies by using 
