@@ -37,7 +37,7 @@ LinkingTo:
   Rgin,
   Rcpp,
   RcppEigen (>= 0.3.3.5.0)
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network

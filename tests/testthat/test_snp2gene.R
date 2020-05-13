@@ -55,11 +55,11 @@ test_that("we map snps to their known genes", {
   expect_equal(length(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"]), 0)
 
   # check flanks
-  # off by one base to FGFR2 10: 121,478,334-121,598,458 
+  # off by one base to FGFR2 10: 121,478,332-121,598,458 
   red <- list()
   red$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
-                       10 outbound 0 121478333 A G
+                       10 outbound 0 121478331 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
   red$map$gpos <- as.numeric(red$map$gpos)
 
