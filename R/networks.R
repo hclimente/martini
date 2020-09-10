@@ -217,7 +217,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   map[,'chr'] <- gsub("[Cc]hr", "", map[,'chr'])
   
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
-  urlTaxonomy <- "https://rest.ensembl.org/taxonomy"
+  urlTaxonomy <- "http://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy,"/id/",organism,"?content-type=application/json")
   organism <- httr::GET(query)
   httr::stop_for_status(organism)
