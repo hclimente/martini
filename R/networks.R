@@ -326,7 +326,7 @@ get_gxg_biogrid <- function(organism = 9606) {
                              col_types="cccccccccccccccccccccccc")
     p <- subset(biogrid, select=c("Official Symbol Interactor A",
                                   "Official Symbol Interactor B"))
-    colnames(p) <- c("geneA","geneB")
+    colnames(p) <- c("gene1","gene2")
     return(p)
   })
   
