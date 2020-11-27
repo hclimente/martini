@@ -54,7 +54,7 @@ get_GS_network <- function(gwas)  {
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
-#' provided.
+#' provided. The default is 9606 (human).
 #' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
 #' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
 #' one gene-SNP mapping. Unless column names are specified using 
@@ -127,7 +127,7 @@ get_GM_network <- function(gwas, organism = 9606,
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param organism Tax ID of the studied organism. Required if snpMapping is not
-#' provided.
+#' provided. The default is 9606 (human).
 #' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
 #' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
 #' one gene-SNP mapping. Unless column names are specified using 
@@ -151,9 +151,9 @@ get_GM_network <- function(gwas, organism = 9606,
 #' @examples 
 #' get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' @export
-get_GI_network <- function(gwas, organism, 
+get_GI_network <- function(gwas, organism = 9606,
                            snpMapping = snp2gene(gwas, organism), 
-                           ppi = get_ppi(organism), 
+                           ppi = get_gxg_biogrid(organism), 
                            col_ppi = c('gene1','gene2'),
                            col_genes = c('snp','gene')) {
   
@@ -294,11 +294,11 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' @return A data.frame with two columns with pairs of interacting proteins.
 #' @examples 
 #' # download dog interactions
-#' martini:::get_ppi(9615)
+#' martini:::get_gxg_biogrid(9615)
 #' @keywords internal
-get_ppi <- function(organism = 9606) {
+get_gxg_biogrid <- function(organism = 9606) {
   
-  check_installed("httr", "get_ppi")
+  check_installed("httr", "get_gxg_biogrid")
   
   # construct query: all interactions in the requested organism
   baseUrl <- "http://webservice.thebiogrid.org/interactions/?"

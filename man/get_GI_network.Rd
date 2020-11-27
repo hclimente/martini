@@ -6,9 +6,9 @@
 \usage{
 get_GI_network(
   gwas,
-  organism,
+  organism = 9606,
   snpMapping = snp2gene(gwas, organism),
-  ppi = get_ppi(organism),
+  ppi = get_gxg_biogrid(organism),
   col_ppi = c("gene1", "gene2"),
   col_genes = c("snp", "gene")
 )
@@ -17,7 +17,7 @@ get_GI_network(
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
-provided.}
+provided. The default is 9606 (human).}
 
 \item{snpMapping}{A data.frame informing how SNPs map to genes. It contains 
 minimum two columns: SNP id and a gene it maps to. Each row corresponds to 

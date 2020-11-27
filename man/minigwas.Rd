@@ -4,12 +4,14 @@
 \name{minigwas}
 \alias{minigwas}
 \title{Description of the minigwas dataset.}
-\format{A list with 3 items:
+\format{
+A list with 3 items:
 \describe{
   \item{genotypes}{Genotype and phenotype information.}
   \item{fam}{Simulated network.}
   \item{map}{Result of runing \code{find_cones} with gwas and net.}
-}}
+}
+}
 \description{
 Small GWAS example.
 }

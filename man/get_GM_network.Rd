@@ -15,7 +15,7 @@ get_GM_network(
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{organism}{Tax ID of the studied organism. Required if snpMapping is not
-provided.}
+provided. The default is 9606 (human).}
 
 \item{snpMapping}{A data.frame informing how SNPs map to genes. It contains 
 minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
