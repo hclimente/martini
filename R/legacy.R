@@ -33,7 +33,7 @@
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE, ...) {
   
-  colnames(gwas[["map"]]) <- sanitize_map(map)
+  gwas[["map"]] <- sanitize_map(gwas)
   X <- as(gwas[['genotypes']], "numeric")
   X <- encode_gwas(X, encoding)
   Y <- gwas[['fam']][['affected']]
