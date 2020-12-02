@@ -8,9 +8,10 @@ get_GI_network(
   gwas,
   organism = 9606,
   snpMapping = snp2gene(gwas, organism),
-  ppi = get_gxg_biogrid(organism),
+  ppi = get_gxg("biogrid", organism, flush),
   col_ppi = c("gene1", "gene2"),
-  col_genes = c("snp", "gene")
+  col_genes = c("snp", "gene"),
+  flush = FALSE
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ columns involving the protein-protein interactions.}
 \item{col_genes}{Optional, length-2 character vector with the names of the 
 two columns involving the SNP-gene mapping. The first element is the column 
 of the SNP, and the second is the column of the gene.}
+
+\item{flush}{Remove cached results? Boolean value.}
 }
 \value{
 An igraph network of the GI network of the SNPs.

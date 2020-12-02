@@ -143,6 +143,7 @@ get_GM_network <- function(gwas, organism = 9606,
 #' of the SNP, and the second is the column of the gene.
 #' @param col_ppi Optional, length-2 character vector with the names of the two 
 #' columns involving the protein-protein interactions.
+#' @param flush Remove cached results? Boolean value.
 #' @return An igraph network of the GI network of the SNPs.
 #' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
 #' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
@@ -154,9 +155,10 @@ get_GM_network <- function(gwas, organism = 9606,
 #' @export
 get_GI_network <- function(gwas, organism = 9606,
                            snpMapping = snp2gene(gwas, organism), 
-                           ppi = get_gxg_biogrid(organism), 
+                           ppi = get_gxg('biogrid', organism, flush), 
                            col_ppi = c('gene1','gene2'),
-                           col_genes = c('snp','gene')) {
+                           col_genes = c('snp','gene'),
+                           flush = FALSE) {
   
   snpMapping <- sanitize_snpMapping(snpMapping, col_genes) 
   
@@ -197,8 +199,7 @@ get_GI_network <- function(gwas, organism = 9606,
 #' @description Maps SNPs from a GWAS experiment to genes.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
-#' @param organism Organism: hsapiens represents human, athaliana for
-#' Arabidopsis thaliana, etc.
+#' @param organism Organism: 9606 represents human, etc.
 #' @param flank A number with the flanking regions around genes to be considered
 #' part of the gene i.e. SNPs mapped to them will be considered mapped to the
 #' gene.
@@ -333,5 +334,42 @@ get_gxg_biogrid <- function(organism = 9606) {
   ppi <- unique(ppi)
   
   return(ppi)
+  
+}
+
+#' Memoised version of get_gxg_biogrid
+#' 
+#' @importFrom memoise memoise
+#' @keywords internal
+mget_gxg_biogrid <- memoise(get_gxg_biogrid)
+
+#' Get gene interactions
+#' 
+#' @description Wrapper for the different functions to get gene-gene 
+#' interactions. Supports cached results.
+#' @param db String containing the database to obtain the gene-gene interactions
+#' from. Possible values: 'biogrid'.
+#' @param organism Organism: 9606 represents human, etc.
+#' @param flush Remove cached results? Boolean value.
+#' @importFrom memoise memoise drop_cache has_cache
+#' @keywords internal
+get_gxg <- function(db, organism, flush) {
+  
+  if (db == 'biogrid') {
+    f <- mget_gxg_biogrid
+  } else {
+    stop(paste('unknown gene interaction database', db))
+  }
+  
+  if (has_cache(f)(organism)) {
+    if (flush) {
+      message('cache flushed!')
+      drop_cache(f)(organism)
+    } else {
+      warning('using cache. Use flush = TRUE to get new gene interactions.')
+    }
+  }
+  
+  return(f(organism))
   
 }
