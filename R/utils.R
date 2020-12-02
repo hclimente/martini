@@ -136,3 +136,41 @@ permute_snpMatrix <- function(gwas) {
   return(gwas)
   
 }
+
+#' Check snpMapping
+#' 
+#' @description Check that snpMapping is a proper data.frame.
+#' 
+#' @param snpMapping data.frame containing the correspondence between SNPs and
+#' genes.
+#' @param col_genes Length 2 character vector containing the colnames containing
+#' the SNP and the gene ids, respectively.
+#' @keywords internal
+sanitize_snpMapping <- function(snpMapping, col_genes) {
+  
+  if(!is.null(snpMapping) && nrow(snpMapping)) {
+    snpMapping <- subset(snpMapping, select = col_genes)
+  } else {
+    warning("no mappings between SNPs and genes were provided.")
+    snpMapping <- data.frame(matrix(ncol = 2, nrow = 0))
+  }
+  colnames(snpMapping) <- c('snp','gene')
+  
+  return(snpMapping)
+  
+}
+
+#' Check map
+#' 
+#' @description Check that map is a proper data.frame.
+#' 
+#' @param gwas A SnpMatrix object with the GWAS information.
+#' @keywords internal
+sanitize_map <- function(gwas) {
+  
+  map <- gwas[["map"]]
+  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  
+  return(map)
+  
+}

@@ -33,8 +33,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   gwas <- permute_snpMatrix(gwas)
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
   
-  cones <- gwas[["map"]]
-  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  cones <- sanitize_map(gwas)
   
   net <- simplify(net)
   W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
@@ -116,9 +115,8 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
 scones <- function(gwas, net, eta, lambda, score = 'chi2', covars = data.frame()) {
   
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
-  
-  cones <- gwas[["map"]]
-  colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+ 
+  cones <- sanitize_map(gwas)
   cones[['c']] <- single_snp_association(gwas, covars, score)
   
   # prepare data: remove redundant edges and self-edges in network and sort

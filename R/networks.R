@@ -19,8 +19,7 @@
 #' @export
 get_GS_network <- function(gwas)  {
   
-  map <- gwas[["map"]]
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  map <- sanitize_map(gwas)
   map <- subset(map, select = c("chr","pos","snp"))
   map <- unique(map)
   map <- map[with(map, order(chr,pos)),]
@@ -78,24 +77,26 @@ get_GM_network <- function(gwas, organism = 9606,
                            snpMapping = snp2gene(gwas, organism),
                            col_genes = c('snp','gene')) {
   
-  snpMapping <- subset(snpMapping, select = col_genes)
-  colnames(snpMapping) <- c('snp','gene')
+  snpMapping <- sanitize_snpMapping(snpMapping, col_genes) 
+  map <- sanitize_map(gwas)
   
-  map <- gwas[["map"]]
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  gs <- get_GS_network(gwas)
+  
   map <- merge(map, snpMapping)
   map <- subset(map, select = c("snp","gene"))
   # in some cases the same position is linked to two different variants
   map <- unique(map)
   map[,'snp'] <- as.character(map[,'snp'])
   map[,'gene'] <- as.character(map[,'gene'])
-  
-  nSnps <- aggregate(snp ~ ., data=map, length)
-  map <- subset(map, gene %in% nSnps[nSnps$snp > 1, 'gene'])
-  
-  gs <- get_GS_network(gwas)
-  
-  if (nrow(map) > 0) {
+ 
+  # use only genes that map to more than 1 snp
+  gene_freq <- table(map[,'gene'])
+  genes <- names(gene_freq)[gene_freq > 1]
+   
+  if (length(genes)) {
+    
+    map <- subset(map, gene %in% genes)
+    
     gm <- do.call(cbind, tapply(map[,'snp'], map[,'gene'], combn, 2)) %>% 
       t %>% 
       as.data.frame
@@ -157,10 +158,9 @@ get_GI_network <- function(gwas, organism = 9606,
                            col_ppi = c('gene1','gene2'),
                            col_genes = c('snp','gene')) {
   
-  colnames(snpMapping) <- c("snp","gene")
+  snpMapping <- sanitize_snpMapping(snpMapping, col_genes) 
   
-  map <- gwas[["map"]]
-  colnames(map) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+  map <- sanitize_map(gwas)
   map <-  subset(map, select = c("chr","snp","pos"))
   
   # read tab file  
@@ -212,8 +212,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   check_installed("IRanges", "snp2gene")
   
   # get map in appropriate format
-  map <- gwas[["map"]]
-  colnames(map) <- c("chr", "snp", "cm", "gpos", "allele1", "allele2")
+  map <- sanitize_map(gwas)
   map[,'chr'] <- gsub("[Cc]hr", "", map[,'chr'])
   
   # convert taxid to ensembl species name e.g. human databases are hsapiens_*
@@ -244,7 +243,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     
     # get genes in the range defined by the snps
     grange <- paste(unique(snps[,'chr']), 
-                    min(snps[,'gpos']) - flank, max(snps[,'gpos']) + flank, 
+                    min(snps[,'pos']) - flank, max(snps[,'pos']) + flank, 
                     sep = ":")
     genes <- biomaRt::getBM(
                    attributes = c("ensembl_gene_id","external_gene_name",
@@ -264,7 +263,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
     genes$end_position <- genes$end_position + flank
     
     # convert to genomic ranges and check overlaps
-    isnps <- with(snps, IRanges::IRanges(gpos, width=1, names=snp))
+    isnps <- with(snps, IRanges::IRanges(pos, width=1, names=snp))
     igenes <- with(genes, 
                    IRanges::IRanges(start_position, end_position, 
                                     names=ensembl_gene_id))
