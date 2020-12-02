@@ -9,8 +9,7 @@ snp2gene(gwas, organism = 9606, flank = 0)
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{organism}{Organism: hsapiens represents human, athaliana for
-Arabidopsis thaliana, etc.}
+\item{organism}{Organism: 9606 represents human, etc.}
 
 \item{flank}{A number with the flanking regions around genes to be considered
 part of the gene i.e. SNPs mapped to them will be considered mapped to the
