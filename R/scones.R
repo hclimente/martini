@@ -1,14 +1,14 @@
 #' Find connected explanatory SNPs.
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
-#' connected in an underlying network (Azencott et al., 2013). Select the 
-#' hyperparameters by cross-validation.
+#' connected in an underlying network. Select the hyperparameters by
+#' cross-validation.
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
 #' @param covars A data frame with the covariates. It must contain a column 
 #' 'sample' containing the sample IDs, and an additional columns for each 
 #' covariate.
-#' @param ... Extra arguments for \code{\link{parse_scones_settings}}.
+#' @template params_scones
 #' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
 #' following additions:
 #' \itemize{
@@ -85,7 +85,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
 #' Find connected explanatory SNPs.
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
-#' connected in an underlying network (Azencott et al., 2013).
+#' connected in an underlying network.
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param net An igraph network that connects the SNPs.
@@ -276,17 +276,7 @@ get_snp_modules <- function(cones, net) {
 #' 
 #' @description Creates a list composed by all \code{scones.cv} settings, with 
 #' the values provided by the user, or the default ones if none is provided.
-#' @param score Association score to measure association between 
-#' genotype and phenotype. Possible values: chi2 (default), glm.
-#' @param criterion String with the function to measure the quality of a split. 
-#' Possible values: consistency (default), bic, aic, aicc.
-#' @param etas Numeric vector with the etas to explore in the grid search. If 
-#' ommited, it's automatically created based on the association
-#' scores.
-#' @param lambdas Numeric vector with the lambdas to explore in the grid search.
-#' If ommited, it's automatically created based on the association scores.
-#' @param c Numeric vector with the association scores of the SNPs. Specify it 
-#' to automatically an appropriate range of etas and lambas.
+#' @template params_scones
 #' @return A list of \code{evo} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))

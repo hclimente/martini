@@ -15,7 +15,21 @@ scones.cv(gwas, net, covars = data.frame(), ...)
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{...}{Extra arguments for \code{\link{parse_scones_settings}}.}
+\item{score}{Association score to measure association between 
+genotype and phenotype. Possible values: chi2 (default), glm.}
+
+\item{criterion}{String with the function to measure the quality of a split. 
+Possible values: consistency (default), bic, aic, aicc.}
+
+\item{etas}{Numeric vector with the etas to explore in the grid search. If 
+ommited, it's automatically created based on the association
+scores.}
+
+\item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
+If ommited, it's automatically created based on the association scores.}
+
+\item{c}{Numeric vector with the association scores of the SNPs. Specify it 
+to automatically an appropriate range of etas and lambas.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
@@ -29,8 +43,8 @@ or not.}
 }
 \description{
 Finds the SNPs maximally associated with a phenotype while being
-connected in an underlying network (Azencott et al., 2013). Select the 
-hyperparameters by cross-validation.
+connected in an underlying network. Select the hyperparameters by
+cross-validation.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)

@@ -4,3 +4,4 @@
 ^appveyor\.yml$
 ^\.git$
 ^configure\.ac$
+^man-roxygen
