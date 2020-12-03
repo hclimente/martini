@@ -154,8 +154,8 @@ get_GM_network <- function(gwas, organism = 9606,
 #' get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' @export
 get_GI_network <- function(gwas, organism = 9606,
-                           snpMapping = snp2gene(gwas, organism), 
-                           ppi = get_gxg_string(organism), 
+                           snpMapping = snp2gene(gwas, organism),
+                           ppi = get_gxg('biogrid', organism, flush),
                            col_ppi = c('gene1','gene2'),
                            col_genes = c('snp','gene'),
                            flush = FALSE) {
@@ -378,7 +378,7 @@ mget_gxg_string <- memoise(get_gxg_string)
 #' from. Possible values: 'biogrid', 'string'.
 #' @param organism Organism: 9606 represents human, etc.
 #' @param flush Remove cached results? Boolean value.
-#' @importFrom memoise memoise has_cache
+#' @importFrom memoise memoise has_cache drop_cache
 #' @keywords internal
 get_gxg <- function(db, organism, flush) {
   
@@ -392,9 +392,8 @@ get_gxg <- function(db, organism, flush) {
   
   if (has_cache(f)(organism)) {
     if (flush) {
-      # TODO re-enable, add to importFrom
-      #message('cache flushed!')
-      #drop_cache(f)(organism)
+      message('cache flushed!')
+      drop_cache(f)(organism)
     } else {
       warning('using cache. Use flush = TRUE to get new gene interactions.')
     }
