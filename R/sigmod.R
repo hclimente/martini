@@ -11,6 +11,14 @@
 #' sigmod.cv(minigwas, gi, score = "glm")
 #' @export
 sigmod.cv <- function(gwas, net, covars = data.frame(), ...) {
+
+  map <- sanitize_map(gwas)
+  
+  # get adjacency
+  net <- simplify(net)
+  A <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  A <- W[map[['snp']], map[['snp']]]
+  diag(A) <- -rowSums(A)
   
   # flip sign of lambdas
   opts <- parse_scones_settings(c = 1, ...)
@@ -18,12 +26,8 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), ...) {
   opts <- parse_scones_settings(c = c, ...)
   opts[['lambdas']] <- -opts[['lambdas']]
   
-  # pack the data and run scones
-  data <- list(gwas = gwas, net = net, covars = covars)
-  cones <- do.call(scones.cv, c(data, opts))
-  
-  return(cones)
-  
+  return(mincut.cv(gwas, net, A, covars, opts))
+    
 }
 
 #' @inherit scones

@@ -23,6 +23,7 @@
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
 #' @importFrom utils capture.output
+#' @importFrom Matrix diag rowSums
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
@@ -30,20 +31,31 @@
 #' @export
 scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   
+  map <- sanitize_map(gwas)
+  
+  # get laplacian
+  net <- simplify(net)
+  L <- -as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  L <- L[map[['snp']], map[['snp']]]
+
+  # set options
+  opts <- parse_scones_settings(c = 1, ...)
+  c <- single_snp_association(gwas, covars, opts[['score']])
+  opts <- parse_scones_settings(c = c, ...)
+  
+  return(mincut.cv(gwas, net, L, covars, opts))
+  
+}
+
+#' @keywords internal
+mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
+  
   # prepare data: remove redundant edges and self-edges in network and sort
   gwas <- permute_snpMatrix(gwas)
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
   
   cones <- sanitize_map(gwas)
-  
-  net <- simplify(net)
-  W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  W <- W[cones[['snp']], cones[['snp']]]
-
-  # set options
-  opts <- parse_scones_settings(c = 1, ...)
   cones[['c']] <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = cones[['c']], ...)
   
   # grid search
   y <- gwas[['fam']][['affected']]
@@ -56,7 +68,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   
   grid_scores <- lapply(opts[['etas']], function(eta){
     lapply(opts[['lambdas']], function(lambda){
-      folds <- lapply(scores, run_scones, eta, lambda, -W)
+      folds <- lapply(scores, run_scones, eta, lambda, net_matrix)
       folds <- do.call(rbind, folds)
       score_fold(folds, opts[['criterion']], K, gwas, covars)
     }) %>% unlist
@@ -71,9 +83,9 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   best_eta <- opts[['etas']][best[1, 'row']]
   best_lambda <- opts[['lambdas']][best[1, 'col']]
   
-  message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda, "\n")
+  message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
   
-  selected <- run_scones(cones[['c']], best_eta, best_lambda, -W)
+  selected <- run_scones(cones[['c']], best_eta, best_lambda, net_matrix)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
