@@ -31,12 +31,7 @@
 #' @export
 scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   
-  map <- sanitize_map(gwas)
-  
-  # get laplacian
-  net <- simplify(net)
-  L <- -as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  L <- L[map[['snp']], map[['snp']]]
+  L <- get_L(gwas, net)
 
   # set options
   opts <- parse_scones_settings(c = 1, ...)
@@ -44,6 +39,22 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   opts <- parse_scones_settings(c = c, ...)
   
   return(mincut.cv(gwas, net, L, covars, opts))
+  
+}
+
+#' @keywords internal
+get_L <- function(gwas, net) {
+  
+  map <- sanitize_map(gwas)
+  
+  # remove redundant edges and self-edges in network and sort
+  net <- simplify(net)
+  L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  L <- L[map[['snp']], map[['snp']]]
+  L <- -L
+  diag(L) <- rowSums(abs(L))
+  
+  return(L)
   
 }
 
@@ -125,20 +136,23 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones(minigwas, gi, 10, 1)
 #' @export
-scones <- function(gwas, net, eta, lambda, score = 'chi2', covars = data.frame()) {
+scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
+  
+  L <- get_L(gwas, net)
+  return(mincut(gwas, net, L, covars, eta, lambda, score))
+  
+}
+
+#' @keywords internal
+mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
   
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
- 
+  
   cones <- sanitize_map(gwas)
   cones[['c']] <- single_snp_association(gwas, covars, score)
   
-  # prepare data: remove redundant edges and self-edges in network and sort
-  net <- simplify(net)
-  W <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  W <- W[cones[['snp']], cones[['snp']]]
-
   # run scores
-  selected <- run_scones(cones[['c']], eta, lambda, -W)
+  selected <- run_scones(cones[['c']], eta, lambda, net_matrix)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)

@@ -4,7 +4,7 @@
 \alias{scones}
 \title{Find connected explanatory SNPs.}
 \usage{
-scones(gwas, net, eta, lambda, score = "chi2", covars = data.frame())
+scones(gwas, net, eta, lambda, covars = data.frame(), score = "chi2")
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -15,12 +15,12 @@ scones(gwas, net, eta, lambda, score = "chi2", covars = data.frame())
 
 \item{lambda}{Value of the lambda parameter.}
 
-\item{score}{Association score to measure association between genotype and 
-phenotype. Possible values: chi2 (default), glm.}
-
 \item{covars}{A data frame with the covariates. It must contain a column 
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
+
+\item{score}{Association score to measure association between genotype and 
+phenotype. Possible values: chi2 (default), glm.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 

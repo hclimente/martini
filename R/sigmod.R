@@ -12,13 +12,8 @@
 #' @export
 sigmod.cv <- function(gwas, net, covars = data.frame(), ...) {
 
-  map <- sanitize_map(gwas)
-  
   # get adjacency
-  net <- simplify(net)
-  A <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  A <- W[map[['snp']], map[['snp']]]
-  diag(A) <- -rowSums(A)
+  A <- get_A(gwas, net)
   
   # flip sign of lambdas
   opts <- parse_scones_settings(c = 1, ...)
@@ -32,8 +27,36 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), ...) {
 
 #' @inherit scones
 #' @export
-sigmod <- function(gwas, net, eta, lambda, score = 'chi2', covars = data.frame()) {
+sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
   
-  return(scones(gwas, net, eta, -lambda, score, covars))
+  A <- get_A(gwas, net)
+  return(mincut(gwas, net, A, covars, eta, lambda, score))
   
+}
+
+#' @keywords internal
+get_A <- function(gwas, net) {
+  
+  map <- sanitize_map(gwas)
+  
+  # remove redundant edges and self-edges in network and sort
+  net <- simplify(net)
+  A <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  A <- W[map[['snp']], map[['snp']]]
+  diag(A) <- -rowSums(A)
+  
+  return(A)
+  
+}
+
+#' @keywords internal
+parse_sigmod_settings <- function(gwas, covars, ...) {
+  
+  opts <- parse_scones_settings(c = 1, ...)
+  c <- single_snp_association(gwas, covars, opts[['score']])
+  opts <- parse_scones_settings(c = c, ...)
+  # flip sign of lambdas
+  opts[['lambdas']] <- -opts[['lambdas']]
+  
+  return(opts)
 }

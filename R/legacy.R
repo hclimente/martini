@@ -33,6 +33,8 @@
 #' @export
 search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE, ...) {
   
+  .Deprecated('scones.cv')
+  
   gwas[["map"]] <- sanitize_map(gwas)
   X <- as(gwas[['genotypes']], "numeric")
   X <- encode_gwas(X, encoding)
