@@ -155,7 +155,7 @@ get_GM_network <- function(gwas, organism = 9606,
 #' @export
 get_GI_network <- function(gwas, organism = 9606,
                            snpMapping = snp2gene(gwas, organism), 
-                           ppi = get_gxg('biogrid', organism, flush), 
+                           ppi = get_gxg_string(organism), 
                            col_ppi = c('gene1','gene2'),
                            col_genes = c('snp','gene'),
                            flush = FALSE) {
@@ -271,7 +271,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' @return A data.frame with two columns with pairs of interacting proteins.
 #' @examples 
 #' # download dog interactions
-#' martini:::get_gxg_biogrid(9615)
+#' \dontrun{martini:::get_gxg_biogrid(9615)}
 #' @keywords internal
 get_gxg_biogrid <- function(organism = 9606) {
   
@@ -322,7 +322,7 @@ get_gxg_biogrid <- function(organism = 9606) {
 #' @importFrom igraph as_edgelist
 #' @examples 
 #' # download frog interactions
-#' martini:::get_gxg_string(8364)
+#' \dontrun{martini:::get_gxg_string(8364)}
 #' @keywords internal
 get_gxg_string <- function(organism = 9606) {
   
@@ -378,7 +378,7 @@ mget_gxg_string <- memoise(get_gxg_string)
 #' from. Possible values: 'biogrid', 'string'.
 #' @param organism Organism: 9606 represents human, etc.
 #' @param flush Remove cached results? Boolean value.
-#' @importFrom memoise memoise drop_cache has_cache
+#' @importFrom memoise memoise has_cache
 #' @keywords internal
 get_gxg <- function(db, organism, flush) {
   
@@ -392,8 +392,9 @@ get_gxg <- function(db, organism, flush) {
   
   if (has_cache(f)(organism)) {
     if (flush) {
-      message('cache flushed!')
-      drop_cache(f)(organism)
+      # TODO re-enable, add to importFrom
+      #message('cache flushed!')
+      #drop_cache(f)(organism)
     } else {
       warning('using cache. Use flush = TRUE to get new gene interactions.')
     }

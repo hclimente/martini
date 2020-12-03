@@ -42,7 +42,7 @@ get_A <- function(gwas, net) {
   # remove redundant edges and self-edges in network and sort
   net <- simplify(net)
   A <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  A <- W[map[['snp']], map[['snp']]]
+  A <- A[map[['snp']], map[['snp']]]
   diag(A) <- -rowSums(A)
   
   return(A)

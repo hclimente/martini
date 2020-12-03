@@ -8,7 +8,7 @@ get_GI_network(
   gwas,
   organism = 9606,
   snpMapping = snp2gene(gwas, organism),
-  ppi = get_gxg("biogrid", organism, flush),
+  ppi = get_gxg_string(organism),
   col_ppi = c("gene1", "gene2"),
   col_genes = c("snp", "gene"),
   flush = FALSE
