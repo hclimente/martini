@@ -1,3 +1,5 @@
+skip_if(skip_long)
+
 ppi <- martini:::get_gxg_string(9606)
 
 test_that("output is as expected", {

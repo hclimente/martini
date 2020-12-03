@@ -1,4 +1,6 @@
 testthat::skip_on_bioc()
+skip_if(skip_long)
+
 library(martini)
 
 good_dog <- martini:::get_gxg_biogrid(9615)

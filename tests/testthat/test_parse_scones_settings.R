@@ -6,7 +6,8 @@ test_that("default args are being set", {
   expect_equal(parse_scones_settings(c = 1)$criterion, 'consistency')
   expect_equal(parse_scones_settings(c = 1)$score, 'chi2')
   expect_equal(parse_scones_settings(c = 1)$etas, rep(1, 10))
-  expect_equal(parse_scones_settings(c = 1)$lambdas, rep(1, 10))
+  expect_equal(parse_scones_settings(c = 1)$lambdas, 
+              10^seq(-1, 1, length.out = 10), tolerance=0.01)
 })
 
 test_that("default we can change values", {

@@ -1,4 +1,5 @@
 testthat::skip_on_bioc()
+skip_if(skip_long)
 
 # SNPs from https://www.ebi.ac.uk/gwas/search?query=breast%20cancer
 # mapped to fgfr2, tox3, fgfr2, none and none, respectively

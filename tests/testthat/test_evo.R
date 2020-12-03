@@ -1,3 +1,5 @@
+skip_if(skip_legacy)
+
 library(martini)
 
 miniX <- as(minigwas$genotypes, "numeric")

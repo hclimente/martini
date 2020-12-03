@@ -46,9 +46,9 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   opts <- parse_scones_settings(c = cones[['c']], ...)
   
   # grid search
-  ids <- gwas[['fam']][['affected']]
+  y <- gwas[['fam']][['affected']]
   
-  K <- cut(seq(1, length(ids)), breaks = 10, labels = FALSE)
+  K <- cut(seq(1, length(y)), breaks = 10, labels = FALSE)
   scores <- lapply(unique(K), function(k) {
     single_snp_association(gwas, covars, opts[['score']], 
                            samples = (K != k) )
@@ -201,14 +201,14 @@ score_fold <- function(folds, criterion, K, gwas, covars) {
   score <- 0
   
   # penalize trivial solutions
-  if (!sum(folds) | ( sum(folds)/length(folds) > 0.5) ){
+  if (!sum(folds) | ( sum(folds)/length(folds) > .5) ){
     score <- -Inf
   } else if (criterion == 'consistency') {
     
     folds_diff <- unique(K)
     
     for (i in folds_diff) {
-      for (j in folds_diff[folds_diff > 1]) {
+      for (j in folds_diff[folds_diff > i]) {
         C <- sum(folds[i,] & folds[j,])
         maxC <- sum(folds[i,] | folds[j,])
         score <- score + ifelse(maxC == 0, 0, C/maxC)
@@ -316,23 +316,27 @@ parse_scones_settings <- function(score = "chi2", criterion = "consistency",
   
   # VectorXd
   logc <- log10(c[c != 0])
-  minc <- min(logc)
-  maxc <- max(logc)
   if (length(etas) & is.numeric(etas)) {
     settings[['etas']] <- sort(etas)
   } else if (length(logc)) {
-    settings[['etas']] <- 10^seq(maxc, minc, length=10)
+    minc <- min(logc)
+    maxc <- max(logc)
+    settings[['etas']] <- 10^seq(minc, maxc, length=10)
+    settings[['etas']] <- signif(settings[['etas']], 3)
   } else {
-      stop("Error: specify a valid etas or an association vector.")
+    stop("Error: specify a valid etas or an association vector.")
   }
   
   # VectorXd
   if (length(lambdas) & is.numeric(lambdas)) {
-      settings[['lambdas']] <- sort(lambdas)
+    settings[['lambdas']] <- sort(lambdas)
   } else if (length(logc)) {
-      settings[['lambdas']] <- 10^seq(maxc, minc, length=10)
+    minc <- min(logc)
+    maxc <- max(logc)
+    settings[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
+    settings[['lambdas']] <- signif(settings[['lambdas']], 3)
   } else {
-      stop("Error: specify a valid lambdas or an association vector.")
+    stop("Error: specify a valid lambdas or an association vector.")
   }
   
   return(settings);

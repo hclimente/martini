@@ -1,3 +1,5 @@
+skip_if(skip_legacy)
+
 library(igraph)
 library(martini)
 
