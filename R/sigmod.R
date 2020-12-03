@@ -1,4 +1,5 @@
 #' @inherit scones.cv
+#' @template params_scones
 #' @references Liu, Y., Brossard, M., Roqueiro, D., Margaritte-Jeannin, P., 
 #' Sarnowski, C., Bouzigon, E., Demenais, F. (2017). SigMod: an exact and
 #' efficient method to identify a strongly interconnected disease-associated
