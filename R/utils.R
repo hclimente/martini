@@ -174,3 +174,52 @@ sanitize_map <- function(gwas) {
   return(map)
   
 }
+
+#' Tax id to ensembl species name
+#' @description Converts taxid to ensembl species name e.g. human databases are 
+#' hsapiens_*
+#' @param id Integer containing the tax id (e.g. 9606 for human)
+#' @keywords internal
+organism_id2name <- function(id) {
+  
+  check_installed("httr", "organism_id2name")
+  
+  urlTaxonomy <- "http://rest.ensembl.org/taxonomy"
+  query <- paste0(urlTaxonomy,"/id/",id,"?content-type=application/json")
+  name <- httr::GET(query)
+  httr::stop_for_status(name)
+  name <- httr::content(name,type ="application/json",encoding="UTF-8")
+  name <- unlist(strsplit(name$name, " "))
+  name <- tolower(paste0(substr(name[1], 1,1), name[2]))
+  
+  return(name)
+  
+}
+
+#' Open a biomaRt connection
+#' @description Opens a biomaRt connection for the relevant species.
+#' @param organism String containing the ensembl species name (e.g. hsapiens 
+#' for human)
+#' @keywords internal
+connect_biomart <- function(organism) {
+  
+  check_installed("biomaRt", "connect_biomart")
+  
+  # create mart from ENSEMBL
+  # consider vertebrates and plants
+  conn <- tryCatch({
+    datasetName <- paste0(organism, "_gene_ensembl")
+    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
+  }, error = function(e){
+    tryCatch({
+      datasetName <- paste0(organism, "_eg_gene")
+      biomaRt::useMart("plants_mart", host="plants.ensembl.org", 
+                       dataset=datasetName)  
+    }, error = function(e) {
+      stop(paste0("unable to find an appropriate database for ", organism, "."))
+    })
+  })
+  
+  return(conn)
+  
+}

@@ -30,6 +30,7 @@ Imports:
   utils
 Suggests:
   biomaRt (>= 2.34.1),
+  STRINGdb,
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
   knitr,

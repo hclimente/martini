@@ -208,37 +208,14 @@ get_GI_network <- function(gwas, organism = 9606,
 #' @keywords internal
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
-  check_installed("biomaRt", "snp2gene")
-  check_installed("httr", "snp2gene")
   check_installed("IRanges", "snp2gene")
   
   # get map in appropriate format
   map <- sanitize_map(gwas)
   map[,'chr'] <- gsub("[Cc]hr", "", map[,'chr'])
   
-  # convert taxid to ensembl species name e.g. human databases are hsapiens_*
-  urlTaxonomy <- "http://rest.ensembl.org/taxonomy"
-  query <- paste0(urlTaxonomy,"/id/",organism,"?content-type=application/json")
-  organism <- httr::GET(query)
-  httr::stop_for_status(organism)
-  organism <- httr::content(organism,type ="application/json",encoding="UTF-8")
-  organism <- unlist(strsplit(organism$name, " "))
-  organism <- tolower(paste0(substr(organism[1], 1,1), organism[2]))
-  
-  # create mart from ENSEMBL
-  # consider vertebrates and plants
-  ensembl <- tryCatch({
-    datasetName <- paste0(organism, "_gene_ensembl")
-    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
-  }, error = function(e){
-    tryCatch({
-      datasetName <- paste0(organism, "_eg_gene")
-      biomaRt::useMart("plants_mart", host="plants.ensembl.org", 
-                       dataset=datasetName)  
-    }, error = function(e) {
-      stop(paste0("unable to find an appropriate database for ", organism, "."))
-    })
-  })
+  organism <- organism_id2name(organism)
+  ensembl <- connect_biomart(organism)
   
   snp2gene <- by(map, map[,'chr'], function(snps) {
     
@@ -284,7 +261,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
 }
 
-#' Get protein-protein interactions.
+#' Get BioGRID protein-protein interactions.
 #' 
 #' @description Get all protein-protein interactions for an organism from
 #' BioGRID.
@@ -337,18 +314,68 @@ get_gxg_biogrid <- function(organism = 9606) {
   
 }
 
+#' Get STRING protein-protein interactions.
+#' @description Get all protein-protein interactions for an organism from
+#' STRING. It uses a score cut-off of 400.
+#' @param organism Organism: 9606 represents human, etc.
+#' @return A data.frame with two columns with pairs of interacting proteins.
+#' @importFrom igraph as_edgelist
+#' @examples 
+#' # download frog interactions
+#' martini:::get_gxg_string(8364)
+#' @keywords internal
+get_gxg_string <- function(organism = 9606) {
+  
+  check_installed("STRINGdb", "get_gxg_string")
+  
+  string_db <- STRINGdb::STRINGdb$new(version = '11', species = organism,
+                                      score_threshold = 400)
+  
+  # download ppi
+  ppi <- string_db$get_graph()
+  ppi <- as_edgelist(ppi)
+  ppi <- as.data.frame(ppi)
+  
+  ppi[['V1']] <- gsub(paste0(organism, '.'), '', ppi[['V1']])
+  ppi[['V2']] <- gsub(paste0(organism, '.'), '', ppi[['V2']])
+  
+  # convert protein ids to gene ids
+  organism <- organism_id2name(organism)
+  ensembl <- connect_biomart(organism)
+  
+  genes <- unique(c(ppi[['V1']], ppi[['V2']]))
+  ensp2hgnc <- biomaRt::getBM(filters = "ensembl_peptide_id", 
+        attributes = c("ensembl_peptide_id", "hgnc_symbol"),
+        values = genes, mart = ensembl)
+  ensp2hgnc <- ensp2hgnc[ensp2hgnc[["hgnc_symbol"]] != "",]
+  
+  ppi <- merge(ppi, ensp2hgnc, by.x = 'V1', by.y = "ensembl_peptide_id")
+  ppi <- merge(ppi, ensp2hgnc, by.x = 'V2', by.y = "ensembl_peptide_id")
+  ppi <- ppi[,c('hgnc_symbol.x', 'hgnc_symbol.y')]
+  ppi <- unique(ppi)
+  colnames(ppi) <- c("gene1","gene2")
+  
+  return(ppi)
+}
+
 #' Memoised version of get_gxg_biogrid
 #' 
 #' @importFrom memoise memoise
 #' @keywords internal
 mget_gxg_biogrid <- memoise(get_gxg_biogrid)
 
+#' Memoised version of get_gxg_stringdb
+#' 
+#' @importFrom memoise memoise
+#' @keywords internal
+mget_gxg_string <- memoise(get_gxg_string)
+
 #' Get gene interactions
 #' 
 #' @description Wrapper for the different functions to get gene-gene 
 #' interactions. Supports cached results.
 #' @param db String containing the database to obtain the gene-gene interactions
-#' from. Possible values: 'biogrid'.
+#' from. Possible values: 'biogrid', 'string'.
 #' @param organism Organism: 9606 represents human, etc.
 #' @param flush Remove cached results? Boolean value.
 #' @importFrom memoise memoise drop_cache has_cache
@@ -357,6 +384,8 @@ get_gxg <- function(db, organism, flush) {
   
   if (db == 'biogrid') {
     f <- mget_gxg_biogrid
+  } else if (db == 'string') {
+    f <- mget_gxg_string
   } else {
     stop(paste('unknown gene interaction database', db))
   }

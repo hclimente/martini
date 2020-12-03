@@ -8,7 +8,7 @@ get_gxg(db, organism, flush)
 }
 \arguments{
 \item{db}{String containing the database to obtain the gene-gene interactions
-from. Possible values: 'biogrid'.}
+from. Possible values: 'biogrid', 'string'.}
 
 \item{organism}{Organism: 9606 represents human, etc.}
 

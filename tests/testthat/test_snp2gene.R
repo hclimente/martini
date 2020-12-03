@@ -69,10 +69,3 @@ test_that("we map snps to their known genes", {
   expect_equal(nrow(martini:::snp2gene(red)), NULL)
 
 })
-
-test_that("errors if a species is not in ensembl", {
-  
-  expect_error(martini:::snp2gene(minigwas, organism = 167), 
-               "unable to find an appropriate database for tsuccinifaciens.")
-  
-})

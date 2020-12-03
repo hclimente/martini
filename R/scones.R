@@ -22,6 +22,7 @@
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
 #' @importFrom igraph simplify as_adj
+#' @importFrom utils capture.output
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
