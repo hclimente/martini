@@ -63,14 +63,14 @@ scones.cv <- function(gwas, net, covars = data.frame(), ...) {
   grid_scores <- do.call(rbind, grid_scores)
   dimnames(grid_scores) <- list(opts[['etas']], opts[['lambdas']])
   
-  cat('Grid of', opts[['criterion']], 'scores (etas x lambdas):\n')
-  print(grid_scores)
+  message('Grid of ', opts[['criterion']], ' scores (etas x lambdas):\n')
+  message(paste0(capture.output(grid_scores), collapse = "\n") )
   
   best <- which(grid_scores == max(grid_scores), arr.ind = TRUE)
   best_eta <- opts[['etas']][best[1, 'row']]
   best_lambda <- opts[['lambdas']][best[1, 'col']]
   
-  cat("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda, "\n")
+  message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda, "\n")
   
   selected <- run_scones(cones[['c']], best_eta, best_lambda, -W)
   cones[['selected']] <- as.logical(selected)

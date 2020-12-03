@@ -49,7 +49,7 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE, ...) 
   settings <- get_evo_settings(...)
   
   test <- evo(X, Y, W, settings)
-  cat("eta =", test[['eta']], "\nlambda =", test[['lambda']], "\n")
+  message("eta =", test[['eta']], "\nlambda =", test[['lambda']], "\n")
   
   cones <- gwas[["map"]]
   cones[['c']] <- test[['c']]
