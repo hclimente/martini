@@ -1,7 +1,6 @@
 # martini
 
-[![Build Status](https://travis-ci.org/hclimente/martini.svg?branch=master)](https://travis-ci.org/hclimente/martini)
-[![Build status](https://ci.appveyor.com/api/projects/status/ehnhhg2n5cs7pkk6?svg=true)](https://ci.appveyor.com/project/hclimente/martini)
+![R-CMD-check-bioc](https://github.com/hclimente/martini/workflows/R-CMD-check-bioc/badge.svg)
 [![codecov](https://codecov.io/gh/hclimente/martini/branch/master/graph/badge.svg)](https://codecov.io/gh/hclimente/martini)
 [![BioC](https://bioconductor.org/shields/years-in-bioc/martini.svg)](https://bioconductor.org/packages/devel/bioc/html/martini.html)
 
