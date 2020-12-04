@@ -37,7 +37,7 @@ Suggests:
   readr,
   rmarkdown
 Remotes:
-  r-lib/memoise (>= 1.1.0.9000)
+  r-lib/memoise (>= 1.1.0.9000),
 Depends: R (>= 3.6)
 LinkingTo:
   Rgin,
