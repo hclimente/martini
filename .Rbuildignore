@@ -5,3 +5,4 @@
 ^\.git$
 ^configure\.ac$
 ^man-roxygen
+^\.github$
