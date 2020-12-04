@@ -38,7 +38,7 @@ connected in an underlying network.
 }
 \examples{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-scones(minigwas, gi, 10, 1)
+sigmod(minigwas, gi, 10, 1)
 }
 \references{
 Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 

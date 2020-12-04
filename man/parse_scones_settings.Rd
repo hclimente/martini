@@ -5,14 +5,17 @@
 \title{Parse \code{scones.cv} settings.}
 \usage{
 parse_scones_settings(
+  c = numeric(),
   score = "chi2",
   criterion = "consistency",
   etas = numeric(),
-  lambdas = numeric(),
-  c = numeric()
+  lambdas = numeric()
 )
 }
 \arguments{
+\item{c}{Numeric vector with the association scores of the SNPs. Specify it 
+to automatically an appropriate range of etas and lambas.}
+
 \item{score}{Association score to measure association between 
 genotype and phenotype. Possible values: chi2 (default), glm.}
 
@@ -25,9 +28,6 @@ scores.}
 
 \item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
 If ommited, it's automatically created based on the association scores.}
-
-\item{c}{Numeric vector with the association scores of the SNPs. Specify it 
-to automatically an appropriate range of etas and lambas.}
 }
 \value{
 A list of \code{evo} settings.

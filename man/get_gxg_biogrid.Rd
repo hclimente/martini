@@ -19,6 +19,6 @@ BioGRID.
 }
 \examples{
 # download dog interactions
-martini:::get_gxg_biogrid(9615)
+\dontrun{martini:::get_gxg_biogrid(9615)}
 }
 \keyword{internal}

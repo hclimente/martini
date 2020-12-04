@@ -18,6 +18,6 @@ STRING. It uses a score cut-off of 400.
 }
 \examples{
 # download frog interactions
-martini:::get_gxg_string(8364)
+\dontrun{martini:::get_gxg_string(8364)}
 }
 \keyword{internal}

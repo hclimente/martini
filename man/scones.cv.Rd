@@ -4,7 +4,15 @@
 \alias{scones.cv}
 \title{Find connected explanatory SNPs.}
 \usage{
-scones.cv(gwas, net, covars = data.frame(), ...)
+scones.cv(
+  gwas,
+  net,
+  covars = data.frame(),
+  score = "chi2",
+  criterion = "consistency",
+  etas = numeric(),
+  lambdas = numeric()
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -27,9 +35,6 @@ scores.}
 
 \item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
 If ommited, it's automatically created based on the association scores.}
-
-\item{c}{Numeric vector with the association scores of the SNPs. Specify it 
-to automatically an appropriate range of etas and lambas.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 

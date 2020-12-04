@@ -21,27 +21,29 @@
 #' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph simplify as_adj
-#' @importFrom utils capture.output
-#' @importFrom Matrix diag rowSums
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
 #' scones.cv(minigwas, gi, score = "glm")
 #' @export
-scones.cv <- function(gwas, net, covars = data.frame(), ...) {
+scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2", 
+                      criterion = "consistency", etas = numeric(), 
+                      lambdas = numeric()) {
   
   L <- get_L(gwas, net)
 
   # set options
-  opts <- parse_scones_settings(c = 1, ...)
+  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
   c <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = c, ...)
+  opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
   
   return(mincut.cv(gwas, net, L, covars, opts))
   
 }
 
+#' Compute Laplacian matrix
+#' @importFrom igraph simplify as_adj
+#' @importFrom Matrix diag rowSums
 #' @keywords internal
 get_L <- function(gwas, net) {
   
@@ -58,6 +60,7 @@ get_L <- function(gwas, net) {
   
 }
 
+#' @importFrom utils capture.output
 #' @keywords internal
 mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
@@ -119,19 +122,7 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
 #' @param covars A data frame with the covariates. It must contain a column 
 #' 'sample' containing the sample IDs, and an additional columns for each 
 #' covariate.
-#' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
-#' following additions:
-#' \itemize{
-#' \item{c: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by SConES 
-#' or not.}
-#' \item{module: integer with the number of the module the SNP belongs to.}
-#' }
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph simplify as_adj
+#' @inherit scones.cv return references
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones(minigwas, gi, 10, 1)
@@ -302,15 +293,17 @@ get_snp_modules <- function(cones, net) {
 #' 
 #' @description Creates a list composed by all \code{scones.cv} settings, with 
 #' the values provided by the user, or the default ones if none is provided.
+#' @param c Numeric vector with the association scores of the SNPs. Specify it 
+#' to automatically an appropriate range of etas and lambas.
 #' @template params_scones
 #' @return A list of \code{evo} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
 #' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
 #' @keywords internal
-parse_scones_settings <- function(score = "chi2", criterion = "consistency", 
-                                  etas = numeric(), lambdas = numeric(), 
-                                  c = numeric()) {
+parse_scones_settings <- function(c = numeric(), score = "chi2", 
+                                  criterion = "consistency", etas = numeric(), 
+                                  lambdas = numeric()) {
   
   settings <- list()
   

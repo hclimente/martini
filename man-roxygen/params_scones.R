@@ -7,5 +7,3 @@
 #' scores.
 #' @param lambdas Numeric vector with the lambdas to explore in the grid search.
 #' If ommited, it's automatically created based on the association scores.
-#' @param c Numeric vector with the association scores of the SNPs. Specify it 
-#' to automatically an appropriate range of etas and lambas.
