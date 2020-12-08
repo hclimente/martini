@@ -12,16 +12,14 @@ single_snp_association(
 )
 }
 \arguments{
+\item{gwas}{A SnpMatrix object with the GWAS information.}
+
 \item{covars}{A data frame with the covariates. It must contain a column 
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{score}{String with the association test to perform. Possible
-values: chi2, glm.}
-
-\item{genotypes}{A SnpMatrix object with the genotype information.}
-
-\item{phenotypes}{A numeric vector with the phenotypes.}
+\item{score}{Association score to measure association between genotype and 
+phenotype. Possible values: chi2 (default), glm.}
 }
 \value{
 A named vector with the association scores.

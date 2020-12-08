@@ -45,6 +45,10 @@ sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2'
 }
 
 #' Compute adjacency matrix
+#' 
+#' @template params_gwas
+#' @template params_net
+#' @return An adjacency matrix.
 #' @importFrom igraph simplify as_adj
 #' @importFrom Matrix diag rowSums
 #' @keywords internal
@@ -62,11 +66,28 @@ get_A <- function(gwas, net) {
   
 }
 
+#' Parse \code{sigmod.cv} settings
+#' 
+#' @description Creates a list composed by all \code{sigmod.cv} settings, with 
+#' the values provided by the user, or the default ones if none is provided.
+#' @template params_gwas
+#' @template params_covars
+#' @template params_c
+#' @template params_score
+#' @template params_criterion
+#' @template params_scones
+#' @return A list of \code{sigmod.cv} settings.
+#' @examples 
+#' martini:::parse_sigmod_settings(minigwas, etas = c(1,2,3), lambdas = c(4,5,6))
+#' martini:::parse_sigmod_settings(minigwas, c = c(1,10,100), score = "glm")
 #' @keywords internal
-parse_sigmod_settings <- function(gwas, covars, ...) {
+parse_sigmod_settings <- function(gwas, covars = data.frame(),
+                                  c = as.numeric(), ...) {
   
-  opts <- parse_scones_settings(c = 1, ...)
-  c <- single_snp_association(gwas, covars, opts[['score']])
+  if (!length(c)) {
+    opts <- parse_scones_settings(c = 1, ...)
+    c <- single_snp_association(gwas, covars, opts[['score']])
+  }
   opts <- parse_scones_settings(c = c, ...)
   # flip sign of lambdas
   opts[['lambdas']] <- -opts[['lambdas']]

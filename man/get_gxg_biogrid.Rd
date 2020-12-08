@@ -7,8 +7,7 @@
 get_gxg_biogrid(organism = 9606)
 }
 \arguments{
-\item{organism}{Organism: human represents human, arabidopsis for Arabidopsis
-thaliana, etc.}
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
 }
 \value{
 A data.frame with two columns with pairs of interacting proteins.

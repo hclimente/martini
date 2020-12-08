@@ -7,9 +7,9 @@
 get_snp_modules(cones, net)
 }
 \arguments{
-\item{cones}{Results from \code{evo}.}
+\item{cones}{Results from \code{scones.cv}.}
 
-\item{net}{The same SNP network provided to \code{evo}.}
+\item{net}{An igraph network that connects the SNPs.}
 }
 \value{
 A list with the modules of selected SNPs.

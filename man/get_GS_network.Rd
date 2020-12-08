@@ -2,7 +2,7 @@
 % Please edit documentation in R/networks.R
 \name{get_GS_network}
 \alias{get_GS_network}
-\title{Get genomic sequence network.}
+\title{Get genomic sequence network}
 \usage{
 get_GS_network(gwas)
 }

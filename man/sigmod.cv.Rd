@@ -23,8 +23,8 @@ sigmod.cv(
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{score}{Association score to measure association between 
-genotype and phenotype. Possible values: chi2 (default), glm.}
+\item{score}{Association score to measure association between genotype and 
+phenotype. Possible values: chi2 (default), glm.}
 
 \item{criterion}{String with the function to measure the quality of a split. 
 Possible values: consistency (default), bic, aic, aicc.}

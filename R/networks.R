@@ -1,15 +1,11 @@
-#' Get genomic sequence network.
+#' Get genomic sequence network
 #' 
 #' @description Creates a network of SNPs where each SNP is connected to its 
 #' adjacent SNPs in the genome sequence. Corresponds to the genomic sequence 
 #' (GS) network described by Azencott et al.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
+#' @template params_gwas
 #' @return An igraph network of the GS network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
-#' mapping with graph cuts. Bioinformatics, 29(13), 171-179.
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @template reference_azencott
 #' @importFrom igraph graph_from_data_frame simplify set_vertex_attr V
 #' set_edge_attr
 #' @importFrom stats aggregate
@@ -50,23 +46,12 @@ get_GS_network <- function(gwas)  {
 #' \link[=get_GS_network]{GS} network and, in addition, to all the other SNPs 
 #' pertaining to the same gene. Corresponds to the gene membership (GM) network 
 #' described by Azencott et al.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param organism Tax ID of the studied organism. Required if snpMapping is not
-#' provided. The default is 9606 (human).
-#' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
-#' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
-#' one gene-SNP mapping. Unless column names are specified using 
-#' \code{col_genes}, involved columns must be named \code{'snp'} and 
-#' \code{'gene'}.
-#' @param col_genes Optional, length-2 character vector with the names of the 
-#' two columns involving the SNP-gene mapping. The first element is the column 
-#' of the SNP, and the second is the column of the gene.
+#' @template params_gwas
+#' @template params_organism
+#' @template params_snpMapping
+#' @template params_col_genes
 #' @return An igraph network of the GM network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
-#' mapping with graph cuts. Bioinformatics, 29(13), 171-179.
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @template reference_azencott
 #' @importFrom igraph %>% graph_from_data_frame simplify set_vertex_attr V
 #' set_edge_attr
 #' @importFrom utils combn
@@ -126,29 +111,19 @@ get_GM_network <- function(gwas, organism = 9606,
 #' pertaining to any interactor of the gene it is mapped to. Corresponds to the 
 #' gene-interaction (GI) network described by Azencott et al.
 #' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param organism Tax ID of the studied organism. Required if snpMapping is not
-#' provided. The default is 9606 (human).
-#' @param snpMapping A data.frame informing how SNPs map to genes. It contains 
-#' minimum two columns: SNP id and a gene it maps to. Each row corresponds to 
-#' one gene-SNP mapping. Unless column names are specified using 
-#' \code{col_genes}, involved columns must be named \code{'snp'} and 
-#' \code{'gene'}.
+#' @template params_gwas
+#' @template params_organism
+#' @template params_snpMapping
 #' @param ppi A data.frame describing protein-protein interactions with at least
 #' two colums. Gene ids must be the contained in snpMapping. Unless column names
 #' are specified using \code{col_ppi}, involved columns must be named 
 #' \code{gene1} and \code{gene2}.
-#' @param col_genes Optional, length-2 character vector with the names of the 
-#' two columns involving the SNP-gene mapping. The first element is the column 
-#' of the SNP, and the second is the column of the gene.
+#' @template params_col_genes
 #' @param col_ppi Optional, length-2 character vector with the names of the two 
 #' columns involving the protein-protein interactions.
-#' @param flush Remove cached results? Boolean value.
+#' @template params_flush
 #' @return An igraph network of the GI network of the SNPs.
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
-#' mapping with graph cuts. Bioinformatics, 29(13), 171-179.
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @template reference_azencott
 #' @importFrom igraph graph_from_data_frame simplify set_edge_attr
 #' @examples 
 #' get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -197,9 +172,8 @@ get_GI_network <- function(gwas, organism = 9606,
 #' Map SNPs to genes.
 #' 
 #' @description Maps SNPs from a GWAS experiment to genes.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param organism Organism: 9606 represents human, etc.
+#' @template params_gwas
+#' @template params_organism
 #' @param flank A number with the flanking regions around genes to be considered
 #' part of the gene i.e. SNPs mapped to them will be considered mapped to the
 #' gene.
@@ -265,9 +239,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' 
 #' @description Get all protein-protein interactions for an organism from
 #' BioGRID.
-#' 
-#' @param organism Organism: human represents human, arabidopsis for Arabidopsis
-#' thaliana, etc.
+#' @template params_organism
 #' @return A data.frame with two columns with pairs of interacting proteins.
 #' @examples 
 #' # download dog interactions
@@ -315,9 +287,10 @@ get_gxg_biogrid <- function(organism = 9606) {
 }
 
 #' Get STRING protein-protein interactions.
+#' 
 #' @description Get all protein-protein interactions for an organism from
 #' STRING. It uses a score cut-off of 400.
-#' @param organism Organism: 9606 represents human, etc.
+#' @template params_organism
 #' @return A data.frame with two columns with pairs of interacting proteins.
 #' @importFrom igraph as_edgelist
 #' @examples 
@@ -376,8 +349,8 @@ mget_gxg_string <- memoise(get_gxg_string)
 #' interactions. Supports cached results.
 #' @param db String containing the database to obtain the gene-gene interactions
 #' from. Possible values: 'biogrid', 'string'.
-#' @param organism Organism: 9606 represents human, etc.
-#' @param flush Remove cached results? Boolean value.
+#' @template params_organism
+#' @template params_flush
 #' @importFrom memoise memoise has_cache drop_cache
 #' @keywords internal
 get_gxg <- function(db, organism, flush) {

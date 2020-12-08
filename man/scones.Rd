@@ -2,7 +2,7 @@
 % Please edit documentation in R/scones.R
 \name{scones}
 \alias{scones}
-\title{Find connected explanatory SNPs.}
+\title{Find connected explanatory SNPs}
 \usage{
 scones(gwas, net, eta, lambda, covars = data.frame(), score = "chi2")
 }
@@ -41,8 +41,8 @@ gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 scones(minigwas, gi, 10, 1)
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
+mapping with graph cuts. Bioinformatics, 29(13), 171-179.
 \url{https://doi.org/10.1093/bioinformatics/btt238}
 }

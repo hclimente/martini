@@ -10,7 +10,8 @@ score_fold(folds, criterion, K, gwas, covars)
 \item{folds}{k-times-d matrix, where k is the number of folds, and d the 
 number of SNPs.}
 
-\item{criterion}{String with the method to use to score the folds.}
+\item{criterion}{String with the function to measure the quality of a split. 
+Possible values: consistency (default), bic, aic, aicc.}
 
 \item{K}{Numeric vector of length equal to the number of samples. The 
 elements are integers from 1 to # folds. Indicates which samples belong to 

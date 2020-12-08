@@ -3,24 +3,14 @@
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network. Select the hyperparameters by
 #' cross-validation.
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
+#' @template params_gwas
+#' @template params_net
+#' @template params_covars
+#' @template params_score
+#' @template params_criterion
 #' @template params_scones
-#' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
-#' following additions:
-#' \itemize{
-#' \item{c: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by SConES 
-#' or not.}
-#' \item{module: integer with the number of the module the SNP belongs to.}
-#' }
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @template return_cones
+#' @template reference_azencott
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
@@ -42,6 +32,10 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
 }
 
 #' Compute Laplacian matrix
+#' 
+#' @template params_gwas
+#' @template params_net
+#' @return A Laplacian matrix.
 #' @importFrom igraph simplify as_adj
 #' @importFrom Matrix diag rowSums
 #' @keywords internal
@@ -60,6 +54,10 @@ get_L <- function(gwas, net) {
   
 }
 
+#' Run the cross-validated min-cut algorithm
+#'
+#' @template params_gwas
+#' @template params_net
 #' @importFrom utils capture.output
 #' @keywords internal
 mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
@@ -108,20 +106,17 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
 }
 
-#' Find connected explanatory SNPs.
+#' Find connected explanatory SNPs
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
-#' @param score Association score to measure association between genotype and 
-#' phenotype. Possible values: chi2 (default), glm.
+#' @template params_gwas
+#' @template params_net
 #' @param eta Value of the eta parameter.
 #' @param lambda Value of the lambda parameter.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
+#' @template params_covars
+#' @template params_score
+#' @template return_cones
 #' @inherit scones.cv return references
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -134,6 +129,9 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2'
   
 }
 
+#' Run min-cut algorithm
+#'
+#' @template return_cones
 #' @keywords internal
 mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
   
@@ -156,14 +154,9 @@ mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
 #' 
 #' @description Calculate the association between genotypes and a phenotype,
 #' adjusting by covariates.
-#' 
-#' @param genotypes A SnpMatrix object with the genotype information.
-#' @param phenotypes A numeric vector with the phenotypes.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
-#' @param score String with the association test to perform. Possible
-#' values: chi2, glm.
+#' @template params_gwas
+#' @template params_covars
+#' @template params_score
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
@@ -203,14 +196,12 @@ single_snp_association <- function(gwas, covars, score,
 #' assign a score to it (the larger, the better).
 #' @param folds k-times-d matrix, where k is the number of folds, and d the 
 #' number of SNPs.
-#' @param criterion String with the method to use to score the folds.
+#' @template params_criterion
 #' @param K Numeric vector of length equal to the number of samples. The 
 #' elements are integers from 1 to # folds. Indicates which samples belong to 
 #' which fold.
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
+#' @template params_gwas
+#' @template params_covars
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
 score_fold <- function(folds, criterion, K, gwas, covars) {
@@ -263,8 +254,8 @@ score_fold <- function(folds, criterion, K, gwas, covars) {
 #' 
 #' @description Find modules composed by interconnected SNPs.
 #' 
-#' @param cones Results from \code{evo}.
-#' @param net The same SNP network provided to \code{evo}.
+#' @param cones Results from \code{scones.cv}.
+#' @template params_net
 #' @return A list with the modules of selected SNPs.
 #' @importFrom igraph induced_subgraph components
 #' @examples
@@ -289,14 +280,15 @@ get_snp_modules <- function(cones, net) {
   
 }
 
-#' Parse \code{scones.cv} settings.
+#' Parse \code{scones.cv} settings
 #' 
 #' @description Creates a list composed by all \code{scones.cv} settings, with 
 #' the values provided by the user, or the default ones if none is provided.
-#' @param c Numeric vector with the association scores of the SNPs. Specify it 
-#' to automatically an appropriate range of etas and lambas.
+#' @template params_c
+#' @template params_score
+#' @template params_criterion
 #' @template params_scones
-#' @return A list of \code{evo} settings.
+#' @return A list of \code{scones.cv} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
 #' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")

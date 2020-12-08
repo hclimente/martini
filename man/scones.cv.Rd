@@ -23,8 +23,8 @@ scones.cv(
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{score}{Association score to measure association between 
-genotype and phenotype. Possible values: chi2 (default), glm.}
+\item{score}{Association score to measure association between genotype and 
+phenotype. Possible values: chi2 (default), glm.}
 
 \item{criterion}{String with the function to measure the quality of a split. 
 Possible values: consistency (default), bic, aic, aicc.}
@@ -57,8 +57,8 @@ scones.cv(minigwas, gi)
 scones.cv(minigwas, gi, score = "glm")
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
+mapping with graph cuts. Bioinformatics, 29(13), 171-179.
 \url{https://doi.org/10.1093/bioinformatics/btt238}
 }

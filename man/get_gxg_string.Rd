@@ -7,7 +7,7 @@
 get_gxg_string(organism = 9606)
 }
 \arguments{
-\item{organism}{Organism: 9606 represents human, etc.}
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
 }
 \value{
 A data.frame with two columns with pairs of interacting proteins.

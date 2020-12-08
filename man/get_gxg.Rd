@@ -10,7 +10,7 @@ get_gxg(db, organism, flush)
 \item{db}{String containing the database to obtain the gene-gene interactions
 from. Possible values: 'biogrid', 'string'.}
 
-\item{organism}{Organism: 9606 represents human, etc.}
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
 
 \item{flush}{Remove cached results? Boolean value.}
 }
