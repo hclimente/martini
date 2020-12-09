@@ -82,6 +82,7 @@ simulate_causal_snps <- function(net, ngenes = 20, pcausal = 1) {
 #' @references Inspired from GCTA simulation tool:
 #' \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importClassesFrom snpStats SnpMatrix
+#' @importFrom methods as
 #' @importFrom stats rnorm var
 #' @importFrom utils head tail
 #' @examples 

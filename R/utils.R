@@ -104,8 +104,9 @@ is_coherent <- function(gwas) {
 #' \code{scones}, like \code{single_snp_association} or \code{score_folds}
 #' .
 #' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
+#' @template params_gwas
+#' @template params_covars
+#' @return The covars data.frame, with the rows in the same order as gwas. 
 #' @keywords internal
 arrange_covars <- function(gwas, covars) {
   

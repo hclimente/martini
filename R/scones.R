@@ -202,6 +202,7 @@ single_snp_association <- function(gwas, covars, score,
 #' which fold.
 #' @template params_gwas
 #' @template params_covars
+#' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
 score_fold <- function(folds, criterion, K, gwas, covars) {

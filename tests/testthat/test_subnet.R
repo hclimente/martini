@@ -19,4 +19,3 @@ test_that("we don't recover the SNPs we don't want", {
   expect_true(all(snpNotA %in% names(igraph::V(subgi))))
   
 })
-

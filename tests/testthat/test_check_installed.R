@@ -7,4 +7,3 @@ test_that("detects when a package is not installed", {
   expect_error(check_installed("martini"), NA)
   
 })
-
