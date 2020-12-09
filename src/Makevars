@@ -3,7 +3,7 @@ include Makevars.common
 #################################
 ##            Flags            ##
 #################################
-PKG_CXXFLAGS = $(PKG_CXXFLAGS0) $(SHLIB_OPENMP_CXXFLAGS) -lz
+PKG_CXXFLAGS = $(PKG_CXXFLAGS0) $(SHLIB_OPENMP_CXXFLAGS)
 PKG_LIBS = $(PKG_LIBS0) $(SHLIB_OPENMP_CXXFLAGS) -pthread
 
 #################################
