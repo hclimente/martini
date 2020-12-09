@@ -6,7 +6,7 @@ test_that("output is as expected", {
   W <- matrix(c(0,1,0,1,0,1,0,1,0,0,0,1), 3, 3)
   W <- as(W, "sparseMatrix")
   
-  selected <- run_scones(c, 1, 2, W)
+  selected <- mincut_c(c, 1, 2, W)
   
   expect_equal(length(selected), 3)
   expect_equal(class(selected), "numeric")
@@ -26,7 +26,7 @@ test_that("we recover causal SNPs", {
   diag(W) <- 0
   W <- as(W, "sparseMatrix")
   
-  selected <- run_scones(c, 1, 2, W)
+  selected <- mincut_c(c, 1, 2, W)
   
   expect_equal(sum(selected), pCausal)
   expect_true(all(as.logical(selected[1:pCausal])))

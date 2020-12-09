@@ -14,18 +14,17 @@ evo <- function(X, Y, W, opts) {
     .Call('_martini_evo', PACKAGE = 'martini', X, Y, W, opts)
 }
 
-#' Run shake.
+#' Min-cut algorithm
 #' 
-#' @description Run scones.
-#' 
+#' @description Run the mincut algorithm.
 #' @param c A vector with the association of each SNP with the phenotype.
 #' @param eta A numeric with the value of the eta parameter.
 #' @param lambda A numeric with the value of the eta parameter.
 #' @param W A sparse matrix with the connectivity.
 #' @return A list with vector indicating if the feature was selected and the 
 #' objective score.
-run_scones <- function(c, eta, lambda, W) {
-    .Call('_martini_run_scones', PACKAGE = 'martini', c, eta, lambda, W)
+mincut_c <- function(c, eta, lambda, W) {
+    .Call('_martini_mincut_c', PACKAGE = 'martini', c, eta, lambda, W)
 }
 
 # Register entry points for exported C++ functions

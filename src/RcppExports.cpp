@@ -23,24 +23,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// run_scones
-Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W);
-static SEXP _martini_run_scones_try(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEXP WSEXP) {
+// mincut_c
+Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W);
+static SEXP _martini_mincut_c_try(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEXP WSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type c(cSEXP);
     Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_scones(c, eta, lambda, W));
+    rcpp_result_gen = Rcpp::wrap(mincut_c(c, eta, lambda, W));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _martini_run_scones(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEXP WSEXP) {
+RcppExport SEXP _martini_mincut_c(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEXP WSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_martini_run_scones_try(cSEXP, etaSEXP, lambdaSEXP, WSEXP));
+        rcpp_result_gen = PROTECT(_martini_mincut_c_try(cSEXP, etaSEXP, lambdaSEXP, WSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -65,21 +65,21 @@ RcppExport SEXP _martini_run_scones(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, S
 static int _martini_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("Eigen::VectorXd(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
+        signatures.insert("Eigen::VectorXd(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
     }
     return signatures.find(sig) != signatures.end();
 }
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _martini_RcppExport_registerCCallable() { 
-    R_RegisterCCallable("martini", "_martini_run_scones", (DL_FUNC)_martini_run_scones_try);
+    R_RegisterCCallable("martini", "_martini_mincut_c", (DL_FUNC)_martini_mincut_c_try);
     R_RegisterCCallable("martini", "_martini_RcppExport_validate", (DL_FUNC)_martini_RcppExport_validate);
     return R_NilValue;
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_martini_evo", (DL_FUNC) &_martini_evo, 4},
-    {"_martini_run_scones", (DL_FUNC) &_martini_run_scones, 4},
+    {"_martini_mincut_c", (DL_FUNC) &_martini_mincut_c, 4},
     {"_martini_RcppExport_registerCCallable", (DL_FUNC) &_martini_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };

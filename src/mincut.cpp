@@ -1,5 +1,5 @@
-#ifndef MARTINI_RUN_SCONES
-#define MARTINI_RUN_SCONES
+#ifndef MARTINI_MINCUTC
+#define MARTINI_MINCUTC
 
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::depends(RcppEigen)]]
@@ -9,10 +9,9 @@
 
 using namespace Rcpp;
 
-//' Run shake.
+//' Min-cut algorithm
 //' 
-//' @description Run scones.
-//' 
+//' @description Run the mincut algorithm.
 //' @param c A vector with the association of each SNP with the phenotype.
 //' @param eta A numeric with the value of the eta parameter.
 //' @param lambda A numeric with the value of the eta parameter.
@@ -20,8 +19,8 @@ using namespace Rcpp;
 //' @return A list with vector indicating if the feature was selected and the 
 //' objective score.
 // [[Rcpp::export]]
-Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda, 
-                           Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, 
+                         Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   Scones s(c, eta, lambda, &W);
   s.selectSnps();
@@ -30,4 +29,4 @@ Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda,
   
 }
 
-#endif //MARTINI_RUN_SCONES
+#endif //MARTINI_MINCUTC

@@ -80,7 +80,7 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
   grid_scores <- lapply(opts[['etas']], function(eta){
     lapply(opts[['lambdas']], function(lambda){
-      folds <- lapply(scores, run_scones, eta, lambda, net_matrix)
+      folds <- lapply(scores, mincut_c, eta, lambda, net_matrix)
       folds <- do.call(rbind, folds)
       score_fold(folds, opts[['criterion']], K, gwas, covars)
     }) %>% unlist
@@ -97,7 +97,7 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
   message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
   
-  selected <- run_scones(cones[['c']], best_eta, best_lambda, net_matrix)
+  selected <- mincut_c(cones[['c']], best_eta, best_lambda, net_matrix)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
@@ -141,7 +141,7 @@ mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
   cones[['c']] <- single_snp_association(gwas, covars, score)
   
   # run scores
-  selected <- run_scones(cones[['c']], eta, lambda, net_matrix)
+  selected <- mincut_c(cones[['c']], eta, lambda, net_matrix)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
