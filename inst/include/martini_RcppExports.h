@@ -25,6 +25,27 @@ namespace martini {
         }
     }
 
+    inline Eigen::VectorXd maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W) {
+        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
+        static Ptr_maxflow p_maxflow = NULL;
+        if (p_maxflow == NULL) {
+            validateSignature("Eigen::VectorXd(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
+            p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(W)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+    }
+
     inline Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
         typedef SEXP(*Ptr_mincut_c)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_mincut_c p_mincut_c = NULL;

@@ -9,19 +9,40 @@
 
 using namespace Rcpp;
 
-// evo
-Rcpp::List evo(Eigen::MatrixXd X, Eigen::VectorXd Y, Eigen::SparseMatrix<double,                Eigen::ColMajor> W, Rcpp::List opts);
-RcppExport SEXP _martini_evo(SEXP XSEXP, SEXP YSEXP, SEXP WSEXP, SEXP optsSEXP) {
+// maxflow
+Eigen::VectorXd maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W);
+static SEXP _martini_maxflow_try(SEXP ASEXP, SEXP WSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,                Eigen::ColMajor> >::type W(WSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type opts(optsSEXP);
-    rcpp_result_gen = Rcpp::wrap(evo(X, Y, W, opts));
+    Rcpp::traits::input_parameter< Eigen::MatrixXd const& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> const& >::type W(WSEXP);
+    rcpp_result_gen = Rcpp::wrap(maxflow(A, W));
     return rcpp_result_gen;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _martini_maxflow(SEXP ASEXP, SEXP WSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_martini_maxflow_try(ASEXP, WSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 // mincut_c
 Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W);
@@ -65,6 +86,7 @@ RcppExport SEXP _martini_mincut_c(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEX
 static int _martini_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
+        signatures.insert("Eigen::VectorXd(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
         signatures.insert("Eigen::VectorXd(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
     }
     return signatures.find(sig) != signatures.end();
@@ -72,13 +94,14 @@ static int _martini_RcppExport_validate(const char* sig) {
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _martini_RcppExport_registerCCallable() { 
+    R_RegisterCCallable("martini", "_martini_maxflow", (DL_FUNC)_martini_maxflow_try);
     R_RegisterCCallable("martini", "_martini_mincut_c", (DL_FUNC)_martini_mincut_c_try);
     R_RegisterCCallable("martini", "_martini_RcppExport_validate", (DL_FUNC)_martini_RcppExport_validate);
     return R_NilValue;
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_martini_evo", (DL_FUNC) &_martini_evo, 4},
+    {"_martini_maxflow", (DL_FUNC) &_martini_maxflow, 2},
     {"_martini_mincut_c", (DL_FUNC) &_martini_mincut_c, 4},
     {"_martini_RcppExport_registerCCallable", (DL_FUNC) &_martini_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}

@@ -1,0 +1,48 @@
+#################################
+##         .o to compile       ##
+#################################
+MAXFLOWOBJ = lib/maxflow/maxflow.o
+CEPHESOBJ_0 = acosh.o airy.o asin.o asinh.o atan.o atanh.o bdtr.o beta.o \
+	btdtr.o cbrt.o chbevl.o chdtr.o clog.o cmplx.o const.o \
+	cosh.o dawsn.o drand.o ei.o ellie.o ellik.o ellpe.o ellpj.o ellpk.o \
+	exp.o exp10.o exp2.o expn.o expx2.o fabs.o fac.o fdtr.o \
+	fresnl.o gamma.o gdtr.o hyp2f1.o hyperg.o i0.o i1.o igami.o incbet.o \
+	incbi.o igam.o isnan.o iv.o j0.o j1.o jn.o jv.o k0.o k1.o kn.o kolmogorov.o \
+	log.o log2.o log10.o lrand.o nbdtr.o ndtr.o ndtri.o pdtr.o planck.o \
+	polevl.o polmisc.o polylog.o polyn.o pow.o powi.o psi.o rgamma.o round.o \
+	shichi.o sici.o sin.o sindg.o sinh.o spence.o stdtr.o struve.o \
+	tan.o tandg.o tanh.o unity.o yn.o zeta.o zetac.o \
+	sqrt.o floor.o setprec.o mtherr.o
+CEPHESOBJ=$(CEPHESOBJ_0:%=lib/Cephes/double/%)
+
+#################################
+##            Flags            ##
+#################################
+PKG_LIBS0 = -pthread \
+  $(SHLIB_OPENMP_CFLAGS) \
+  "${R_PACKAGE_DIR}/usrlib${R_ARCH}/libmaxflow.a" \
+  "${R_PACKAGE_DIR}/usrlib${R_ARCH}/libcephes.a"
+PKG_CXXFLAGS0 = -std=c++11 $(SHLIB_OPENMP_CFLAGS) \
+  $(DFLAGS) -I./lib \
+  `${R_HOME}/bin/Rscript -e "Rcpp:::CxxFlags()"` \
+  -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+DFLAGS = -D_USE_KNETFILE -D_FILE_OFFSET_BITS=64 \
+  -U_FORTIFY_SOURCE -DBGZF_CACHE
+
+#################################
+##           Compile           ##
+#################################
+.PHONY: all libs clean
+
+all: $(SHLIB)
+
+$(SHLIB): libs
+
+libs: libs0
+	cp -r lib/Cephes "${R_PACKAGE_DIR}/include"
+	cp -r lib/maxflow "${R_PACKAGE_DIR}/include"
+	mkdir -p "${R_PACKAGE_DIR}/usrlib${R_ARCH}"
+	cp libmaxflow.a libcephes.a "${R_PACKAGE_DIR}/usrlib${R_ARCH}"
+
+clean:
+	rm -r $(MAXFLOWOBJ) $(CEPHESOBJ) *.a *.o *.so *.dll

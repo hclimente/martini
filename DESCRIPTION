@@ -22,7 +22,7 @@ Imports:
   igraph (>= 1.0.1),
   Matrix,
   methods (>= 3.3.2),
-  memoise,
+  memoise (>= 1.1.0.9000),
   Rcpp (>= 0.12.8),
   snpStats (>= 1.20.0),
   S4Vectors (>= 0.12.2),
@@ -37,11 +37,8 @@ Suggests:
   testthat,
   readr,
   rmarkdown
-Remotes:
-  r-lib/memoise
 Depends: R (>= 3.6)
 LinkingTo:
-  Rgin,
   Rcpp,
   RcppEigen (>= 0.3.3.5.0)
 RoxygenNote: 7.1.1
