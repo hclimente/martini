@@ -1,0 +1,24 @@
+include Makevars.common
+
+#################################
+##            Flags            ##
+#################################
+PKG_CXXFLAGS = ${PKG_CXXFLAGS0}
+PKG_CFLAGS = ${PKG_CFLAGS0} -D_LARGEFILE64_SOURCE
+PKG_LIBS = ${PKG_LIBS0} -lws2_32
+
+#################################
+##           Compile           ##
+#################################
+%.o: %.c
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c $< -o $@
+%.o: %.cc
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+%.o: %.cpp
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+
+libs0: libmaxflow.a libcephes.a
+
+libmaxflow.a: $(MAXFLOWOBJ)
+
+libcephes.a: $(CEPHESOBJ)
