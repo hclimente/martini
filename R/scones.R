@@ -83,7 +83,7 @@ mincut.cv <- function(gwas, net, covars, opts) {
   grid_scores <- lapply(opts[['etas']], function(eta){
     lapply(opts[['lambdas']], function(lambda){
       folds <- lapply(scores, function(c) {
-        c <- if (opts[['sigmod']]) c - lambda * diag(L) else c
+        c <- if (opts[['sigmod']]) c + lambda * diag(L) else c
         mincut_c(c, eta, lambda, L)
       })
       folds <- do.call(rbind, folds)
@@ -102,7 +102,7 @@ mincut.cv <- function(gwas, net, covars, opts) {
   
   message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
   
-  c <- if (opts[['sigmod']]) cones[['c']] - best_lambda * diag(L) else cones[['c']]
+  c <- if (opts[['sigmod']]) cones[['c']] + best_lambda * diag(L) else cones[['c']]
   selected <- mincut_c(c, best_eta, best_lambda, L)
   cones[['selected']] <- as.logical(selected)
   
@@ -146,7 +146,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
   
   cones <- sanitize_map(gwas)
   cones[['c']] <- single_snp_association(gwas, covars, score)
-  c <- if (sigmod) cones[['c']] - lambda * diag(L) else cones[['c']]
+  c <- if (sigmod) cones[['c']] + lambda * diag(L) else cones[['c']]
      
   # run scores
   selected <- mincut_c(c, eta, lambda, L)
@@ -297,6 +297,7 @@ get_snp_modules <- function(cones, net) {
 #' @template params_score
 #' @template params_criterion
 #' @template params_scones
+#' @param sigmod Logical value stating if the settings are for SigMod.
 #' @return A list of \code{scones.cv} settings.
 #' @examples 
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))

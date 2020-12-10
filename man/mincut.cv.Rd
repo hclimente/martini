@@ -4,12 +4,16 @@
 \alias{mincut.cv}
 \title{Run the cross-validated min-cut algorithm}
 \usage{
-mincut.cv(gwas, net, net_matrix, covars, opts)
+mincut.cv(gwas, net, covars, opts)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{net}{An igraph network that connects the SNPs.}
+
+\item{covars}{A data frame with the covariates. It must contain a column 
+'sample' containing the sample IDs, and an additional columns for each 
+covariate.}
 }
 \description{
 Run the cross-validated min-cut algorithm

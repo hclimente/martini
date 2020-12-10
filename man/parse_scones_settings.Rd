@@ -9,7 +9,8 @@ parse_scones_settings(
   score = "chi2",
   criterion = "consistency",
   etas = numeric(),
-  lambdas = numeric()
+  lambdas = numeric(),
+  sigmod = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ scores.}
 
 \item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
 If ommited, it's automatically created based on the association scores.}
+
+\item{sigmod}{Logical value stating if the settings are for SigMod.}
 }
 \value{
 A list of \code{scones.cv} settings.
