@@ -240,6 +240,7 @@ jobs:
               `quit-with-status` = TRUE,
               `no-check-R-ver` = TRUE,
               `no-check-bioc-help` = TRUE
+          )
 
       - name: Run BiocCheck
         if: runner.os != 'Linux'
