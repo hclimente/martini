@@ -14,7 +14,9 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
                       criterion = "consistency", etas = numeric(), 
                       lambdas = numeric()) {
 
-  opts <- parse_scones_settings(numeric(), score, criterion, etas, lambdas, TRUE)
+  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
+  c <- single_snp_association(gwas, covars, opts[['score']])
+  opts <- parse_scones_settings(c, score, criterion, etas, lambdas, TRUE)
   
   return(mincut.cv(gwas, net, covars, opts))
     

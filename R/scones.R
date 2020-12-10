@@ -56,6 +56,8 @@ get_L <- function(gwas, net) {
 #'
 #' @template params_gwas
 #' @template params_net
+#' @template params_covars
+#' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
 mincut.cv <- function(gwas, net, covars, opts) {
@@ -80,15 +82,17 @@ mincut.cv <- function(gwas, net, covars, opts) {
   
   grid_scores <- lapply(opts[['etas']], function(eta){
     lapply(opts[['lambdas']], function(lambda){
-      c <- if (opts[['sigmod']]) scores - lambda * diag(L) else scores
-      folds <- lapply(c, mincut_c, eta, lambda, L)
+      folds <- lapply(scores, function(c) {
+        c <- if (opts[['sigmod']]) c - lambda * diag(L) else c
+        mincut_c(c, eta, lambda, L)
+      })
       folds <- do.call(rbind, folds)
       score_fold(folds, opts[['criterion']], K, gwas, covars)
     }) %>% unlist
   })
   grid_scores <- do.call(rbind, grid_scores)
   dimnames(grid_scores) <- list(opts[['etas']], opts[['lambdas']])
-  
+ 
   message('Grid of ', opts[['criterion']], ' scores (etas x lambdas):\n')
   message(paste0(capture.output(grid_scores), collapse = "\n") )
   
@@ -98,7 +102,7 @@ mincut.cv <- function(gwas, net, covars, opts) {
   
   message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
   
-  c <- if (opts[['sigmod']]) cones[['c']] - lambda * diag(L) else cones[['c']]
+  c <- if (opts[['sigmod']]) cones[['c']] - best_lambda * diag(L) else cones[['c']]
   selected <- mincut_c(c, best_eta, best_lambda, L)
   cones[['selected']] <- as.logical(selected)
   
