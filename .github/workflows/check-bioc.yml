@@ -232,6 +232,8 @@ jobs:
 
       - name: Run BiocCheck
         run: |
+          remove.packages('memoise', lib=.Library.site)
+          remotes:::install_github('r-lib/memoise', force=TRUE, lib=.Library.site)
           BiocCheck::BiocCheck(
               dir('check', 'tar.gz$', full.names = TRUE),
               `quit-with-status` = TRUE,
