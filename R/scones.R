@@ -20,14 +20,12 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
                       criterion = "consistency", etas = numeric(), 
                       lambdas = numeric()) {
   
-  L <- get_L(gwas, net)
-
   # set options
   opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
   c <- single_snp_association(gwas, covars, opts[['score']])
   opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
   
-  return(mincut.cv(gwas, net, L, covars, opts))
+  return(mincut.cv(gwas, net, covars, opts))
   
 }
 
@@ -60,7 +58,9 @@ get_L <- function(gwas, net) {
 #' @template params_net
 #' @importFrom utils capture.output
 #' @keywords internal
-mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
+mincut.cv <- function(gwas, net, covars, opts) {
+  
+  L <- get_L(gwas, net)
   
   # prepare data: remove redundant edges and self-edges in network and sort
   gwas <- permute_snpMatrix(gwas)
@@ -80,7 +80,8 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
   grid_scores <- lapply(opts[['etas']], function(eta){
     lapply(opts[['lambdas']], function(lambda){
-      folds <- lapply(scores, mincut_c, eta, lambda, net_matrix)
+      c <- if (opts[['sigmod']]) scores - lambda * diag(L) else scores
+      folds <- lapply(c, mincut_c, eta, lambda, L)
       folds <- do.call(rbind, folds)
       score_fold(folds, opts[['criterion']], K, gwas, covars)
     }) %>% unlist
@@ -97,7 +98,8 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
   
   message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
   
-  selected <- mincut_c(cones[['c']], best_eta, best_lambda, net_matrix)
+  c <- if (opts[['sigmod']]) cones[['c']] - lambda * diag(L) else cones[['c']]
+  selected <- mincut_c(c, best_eta, best_lambda, L)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
@@ -124,8 +126,7 @@ mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
 #' @export
 scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
   
-  L <- get_L(gwas, net)
-  return(mincut(gwas, net, L, covars, eta, lambda, score))
+  return(mincut(gwas, net, covars, eta, lambda, score, FALSE))
   
 }
 
@@ -133,15 +134,18 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2'
 #'
 #' @template return_cones
 #' @keywords internal
-mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
-  
+mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
+ 
+  L <- get_L(gwas, net)
+   
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
   
   cones <- sanitize_map(gwas)
   cones[['c']] <- single_snp_association(gwas, covars, score)
-  
+  c <- if (sigmod) cones[['c']] - lambda * diag(L) else cones[['c']]
+     
   # run scores
-  selected <- mincut_c(cones[['c']], eta, lambda, net_matrix)
+  selected <- mincut_c(c, eta, lambda, L)
   cones[['selected']] <- as.logical(selected)
   
   cones <- get_snp_modules(cones, net)
@@ -296,11 +300,10 @@ get_snp_modules <- function(cones, net) {
 #' @keywords internal
 parse_scones_settings <- function(c = numeric(), score = "chi2", 
                                   criterion = "consistency", etas = numeric(), 
-                                  lambdas = numeric()) {
+                                  lambdas = numeric(), sigmod = FALSE) {
   
   settings <- list()
   
-  # unsigned int
   valid_score <- c('glm', 'chi2')
   if (score %in% valid_score) {
     settings[['score']] <- score
@@ -308,7 +311,6 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     stop(paste("Error: invalid score", score))
   }
   
-  # unsigned int
   valid_criterion <- c('consistency', 'bic', 'aic', 'aicc')
   if (criterion %in% valid_criterion) {
     settings[['criterion']] <- criterion
@@ -316,7 +318,6 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     stop(paste("Error: invalid criterion", criterion))
   }
   
-  # VectorXd
   logc <- log10(c[c != 0])
   if (length(etas) & is.numeric(etas)) {
     settings[['etas']] <- sort(etas)
@@ -329,7 +330,6 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     stop("Error: specify a valid etas or an association vector.")
   }
   
-  # VectorXd
   if (length(lambdas) & is.numeric(lambdas)) {
     settings[['lambdas']] <- sort(lambdas)
   } else if (length(logc)) {
@@ -339,6 +339,12 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     settings[['lambdas']] <- signif(settings[['lambdas']], 3)
   } else {
     stop("Error: specify a valid lambdas or an association vector.")
+  }
+  
+  if (length(sigmod) == 1 & is.logical(sigmod)) {
+    settings[['sigmod']] <- sigmod
+  } else {
+    stop("Error: specify a logical sigmod.")
   }
   
   return(settings);
