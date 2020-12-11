@@ -4,7 +4,7 @@
 \alias{score_fold}
 \title{Score the solutions of a k-fold}
 \usage{
-score_fold(folds, criterion, K, gwas, covars)
+score_fold(folds, criterion, K, gwas, covars, net)
 }
 \arguments{
 \item{folds}{k-times-d matrix, where k is the number of folds, and d the 
@@ -22,6 +22,8 @@ which fold.}
 \item{covars}{A data frame with the covariates. It must contain a column 
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
+
+\item{net}{An igraph network that connects the SNPs.}
 }
 \description{
 Take the k-solutions for a combination of hyperparameters, and 

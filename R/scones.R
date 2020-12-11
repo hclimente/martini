@@ -87,7 +87,7 @@ mincut.cv <- function(gwas, net, covars, opts) {
         mincut_c(c, eta, lambda, L)
       })
       folds <- do.call(rbind, folds)
-      score_fold(folds, opts[['criterion']], K, gwas, covars)
+      score_fold(folds, opts[['criterion']], K, gwas, covars, net)
     }) %>% unlist
   })
   grid_scores <- do.call(rbind, grid_scores)
@@ -210,10 +210,11 @@ single_snp_association <- function(gwas, covars, score,
 #' which fold.
 #' @template params_gwas
 #' @template params_covars
+#' @template params_net
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(folds, criterion, K, gwas, covars) {
+score_fold <- function(folds, criterion, K, gwas, covars, net) {
   
   score <- 0
   
@@ -253,6 +254,20 @@ score_fold <- function(folds, criterion, K, gwas, covars) {
     }
     # invert scores, as best models have the lowest scores
     score <- -score
+  } else if (criterion %in% c('local_clustering', 'global_clustering')) {
+    map <- sanitize_map(gwas)
+    for (k in unique(K)) {
+      cones <- map[folds[k,],]
+      cones <- cones[['snp']]
+      cones_subnet <- induced.subgraph(net, cones)
+      
+      if (criterion == 'local_clustering') {
+        # TODO check if the output has the right dimensions
+        score <- transitivity(cones_subnet, type = 'local')
+      } else if (criterion == 'global_clustering') {
+        score <- transitivity(cones_subnet, type = 'global')
+      } 
+    }
   }
   
   return(score)
