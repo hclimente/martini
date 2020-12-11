@@ -21,6 +21,7 @@ test_that("consistency works", {
 test_that("clustering coefficients works", {
   
   # test edge cases 
+  full_graph <- make_full_graph(10)
   test_graph <- full_graph + graph_from_edgelist(cbind(seq(1, 14), seq(2, 15)), directed = FALSE)
   V(test_graph)$name <- minigwas[['map']][['snp.names']]
   
