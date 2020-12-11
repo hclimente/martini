@@ -211,15 +211,19 @@ single_snp_association <- function(gwas, covars, score,
 #' @template params_gwas
 #' @template params_covars
 #' @template params_net
+#' @param max_soluction Maximum fraction of the SNPs involved in the solution
+#' (between 0 and 1). Larger solutions will be discarded.
+#' @importFrom igraph induced.subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(folds, criterion, K, gwas, covars, net) {
+score_fold <- function(folds, criterion, K, gwas,
+                       covars, net, max_solution = .5) {
   
   score <- 0
   
   # penalize trivial solutions
-  if (!sum(folds) | ( sum(folds)/length(folds) > .5) ){
+  if (!sum(folds) | ( sum(folds)/length(folds) > max_solution) ){
     score <- -Inf
   } else if (criterion == 'consistency') {
     
@@ -262,11 +266,12 @@ score_fold <- function(folds, criterion, K, gwas, covars, net) {
       cones_subnet <- induced.subgraph(net, cones)
       
       if (criterion == 'local_clustering') {
-        # TODO check if the output has the right dimensions
-        score <- transitivity(cones_subnet, type = 'local')
+        clustering <- transitivity(cones_subnet, type = 'local')
+        clustering <- mean(clustering, na.rm = T)
       } else if (criterion == 'global_clustering') {
-        score <- transitivity(cones_subnet, type = 'global')
-      } 
+        clustering <- transitivity(cones_subnet, type = 'global')
+      }
+      score <- score + clustering
     }
   }
   

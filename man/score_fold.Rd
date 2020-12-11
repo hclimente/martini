@@ -4,7 +4,7 @@
 \alias{score_fold}
 \title{Score the solutions of a k-fold}
 \usage{
-score_fold(folds, criterion, K, gwas, covars, net)
+score_fold(folds, criterion, K, gwas, covars, net, max_solution = 0.5)
 }
 \arguments{
 \item{folds}{k-times-d matrix, where k is the number of folds, and d the 
@@ -24,6 +24,9 @@ which fold.}
 covariate.}
 
 \item{net}{An igraph network that connects the SNPs.}
+
+\item{max_soluction}{Maximum fraction of the SNPs involved in the solution
+(between 0 and 1). Larger solutions will be discarded.}
 }
 \description{
 Take the k-solutions for a combination of hyperparameters, and 

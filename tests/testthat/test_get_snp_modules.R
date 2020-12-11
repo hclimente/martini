@@ -2,8 +2,7 @@ library(martini)
 source("big_network.R")
 
 # we make a cluster with A and another with D
-cones <- gwas$map
-colnames(cones) <- c("chr","snp","cm","pos","allele.1", "allele.2")
+cones <- martini:::sanitize_map(gwas)
 cones$c <- 0
 cones$selected <- FALSE
 cones$selected[grepl("A", cones$snp)] <- TRUE

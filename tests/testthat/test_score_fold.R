@@ -1,45 +1,44 @@
-testthat::skip('TODO')
-folds <- lapply(scores, run_scones, eta, lambda, net_matrix)
-folds <- do.call(rbind, folds)
+source("big_network.R")
 
-criterion <- NULL
-K <- NULL
-gwas <- NULL
-covars <- NULL
-net <- NULL
+K <- cut(seq(1, nrow(minigwas[['fam']])), breaks = 2, labels = FALSE)
+covars <- data.frame()
 
-score_fold <- function(folds, criterion, K, gwas, covars, net)
-
-martini:::score_fold(folds, criterion, K, minigwas, covars, net)
-
-
-test_that("output is as expected", {
+test_that("consistency works", {
   
-  cones <- search_cones(gwas, gi)
+  criterion <- 'consistency'
   
-  expect_equal(dim(cones), dim(minigwas$map) + c(0,3))
-  expect_equal(class(cones), "data.frame")
-  expect_equal(class(cones$selected), "logical")
-  expect_equal(class(cones$c), "numeric")
-  expect_equal(class(cones$module), "numeric")
+  folds <- rbind(c(rep(TRUE, 5), rep(FALSE, 5)), c(rep(TRUE, 5), rep(FALSE, 5)))
+  expect_equal(1, martini:::score_fold(folds, criterion, K, minigwas, covars, gi))
+  
+  folds <- rbind(c(rep(TRUE, 5), rep(FALSE, 5)), c(rep(FALSE, 5), rep(TRUE, 5)))
+  expect_equal(0, martini:::score_fold(folds, criterion, K, minigwas, covars, gi))
+  
+  folds <- rbind(c(F,T,F,T,F,T,F,T,F,T), c(T,T,T,T,T,F,F,F,F,F))
+  expect_equal(.25, martini:::score_fold(folds, criterion, K, minigwas, covars, gi))
   
 })
 
-test_that("we recover causal SNPs", {
+test_that("clustering coefficients works", {
   
-  gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-  cones <- search_cones(minigwas, gi, etas = 1, lambdas = 2)
+  # test edge cases 
+  test_graph <- full_graph + graph_from_edgelist(cbind(seq(1, 14), seq(2, 15)), directed = FALSE)
+  V(test_graph)$name <- minigwas[['map']][['snp.names']]
   
-  # wrong eta and lambda return the trivial solution
-  expect_equal(sum(cones$selected), nrow(cones))
+  folds <- rbind(c(rep(TRUE, 10), rep(FALSE, 15)), c(rep(TRUE, 10), rep(FALSE, 15)))
+  expect_equal(2, martini:::score_fold(folds, 'global_clustering', K, minigwas, covars, test_graph, 1))
+  expect_equal(2, martini:::score_fold(folds, 'local_clustering', K, minigwas, covars, test_graph, 1))
   
-  cones <- search_cones(minigwas, gi)
-  scores <- c(95.4, 95.4, 94.1, 96.1, 94.1, 93.3, 0.0, 0.3, 
-              0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 96.1, 96.1, 95.1, 
-              95.4, 95.4, 96.1, 0.2, 0.3, 0.0, 0.3, 0.0)
+  folds <- rbind(c(rep(FALSE, 15), rep(TRUE, 10)), c(rep(FALSE, 15), rep(TRUE, 10)))
+  expect_equal(0, martini:::score_fold(folds, 'global_clustering', K, minigwas, covars, test_graph, 1))
+  expect_equal(0, martini:::score_fold(folds, 'local_clustering', K, minigwas, covars, test_graph, 1))
   
-  skip_on_os("windows")
-  expect_equal(cones$selected, cones$c > 0)
-  expect_equal(cones$c, scores, tolerance = .1)
+  # test empirical cases
+  set.seed(0)
+  selected <- unlist(scones.cv(minigwas, gi)['selected'])
+  selected2 <- sample(selected, length(selected))
+  
+  folds <- rbind(selected, selected2)
+  expect_equal(1.56, martini:::score_fold(folds, 'global_clustering', K, minigwas, covars, gi), tolerance = 0.01)
+  expect_equal(1.68, martini:::score_fold(folds, 'local_clustering', K, minigwas, covars, gi), tolerance = 0.01)
   
 })
