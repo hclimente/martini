@@ -6,11 +6,12 @@
 \usage{
 parse_scones_settings(
   c = numeric(),
-  score = "chi2",
-  criterion = "consistency",
+  score = c("chi2", "glm"),
+  criterion = c("consistency", "bic", "aic", "aicc", "global_clustering",
+    "local_clustering"),
   etas = numeric(),
   lambdas = numeric(),
-  sigmod = FALSE
+  mode = c("scones", "sigmod")
 )
 }
 \arguments{

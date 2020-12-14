@@ -30,11 +30,12 @@ test_that("we recover causal SNPs", {
   skip_on_os("windows")
   expect_equal(sum(cones$selected), sum(grepl("[AC]", cones$snp)))
   
-  scores <- martini:::single_snp_association(minigwas, data.frame(), 'chi2')
+  scores <- martini:::snp_test(minigwas, data.frame(), 'chi2')
   c <- cones$c
   names(c) <- cones$snp
   expect_equal(c, scores)
   
+  set.seed(42)
   cones <- scones.cv(minigwas, gi, 
                      etas = seq(2, 0, length=10), 
                      lambdas = seq(2, 0, length=10),

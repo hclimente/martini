@@ -22,7 +22,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
   
   # set options
   opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- single_snp_association(gwas, covars, opts[['score']])
+  c <- snp_test(gwas, covars, opts[['score']])
   opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
   opts[['gwas']] <- gwas
   opts[['net']] <- net
@@ -32,28 +32,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
   
 }
 
-#' Compute Laplacian matrix
-#' 
-#' @template params_gwas
-#' @template params_net
-#' @return A Laplacian matrix.
-#' @importFrom igraph simplify as_adj
-#' @importFrom Matrix diag rowSums
-#' @keywords internal
-get_L <- function(gwas, net) {
-  
-  map <- sanitize_map(gwas)
-  
-  # remove redundant edges and self-edges in network and sort
-  net <- simplify(net)
-  L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  L <- L[map[['snp']], map[['snp']]]
-  L <- -L
-  diag(L) <- rowSums(abs(L))
-  
-  return(L)
-  
-}
+
 
 #' Run the cross-validated min-cut algorithm
 #'
@@ -68,7 +47,7 @@ mincut.cv <- function(gwas, net, covars, lambdas, etas, criterion, score, sigmod
   # prepare data
   gwas <- permute_snpMatrix(gwas)
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
-  L <- get_L(gwas, net)
+  L <- get_laplacian(gwas, net)
   
   # grid search
   K <- cut(seq(1, nrow(gwas[['fam']])), breaks = 10, labels = FALSE)
@@ -76,7 +55,7 @@ mincut.cv <- function(gwas, net, covars, lambdas, etas, criterion, score, sigmod
     
     gwas_k <- subset_snpMatrix(gwas, (K!=k))
     covars_k <- covars[(K!=k), ]
-    c_k <- single_snp_association(gwas_k, covars_k, score)
+    c_k <- snp_test(gwas_k, covars_k, score)
     
     lapply(lambdas, function(lambda) {
       c_k <- if (sigmod) c_k + lambda * diag(L) else c_k
@@ -102,12 +81,12 @@ mincut.cv <- function(gwas, net, covars, lambdas, etas, criterion, score, sigmod
   best_lambda <- lambdas[best[1, 'row']]
   best_eta <- etas[best[1, 'col']]
   
-  message('Grid of ', criterion, ' scores (lambdas×etas):\n')
+  message('Grid of ', criterion, ' scores (lambdas \u00D7 etas):\n')
   message(paste0(capture.output(grid), collapse = "\n") )
   message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda)
   
   cones <- sanitize_map(gwas)
-  cones[['c']] <- single_snp_association(gwas, covars, score)
+  cones[['c']] <- snp_test(gwas, covars, score)
   c <- if (sigmod) cones[['c']] + best_lambda * diag(L) else cones[['c']]
   cones[['selected']] <- mincut_c(c, best_eta, best_lambda, L)
   
@@ -145,12 +124,12 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2'
 #' @keywords internal
 mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
  
-  L <- get_L(gwas, net)
+  L <- get_laplacian(gwas, net)
    
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
   
   cones <- sanitize_map(gwas)
-  cones[['c']] <- single_snp_association(gwas, covars, score)
+  cones[['c']] <- snp_test(gwas, covars, score)
   c <- if (sigmod) cones[['c']] + lambda * diag(L) else cones[['c']]
   cones[['selected']] <- mincut_c(c, eta, lambda, L)
   
@@ -170,7 +149,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
-single_snp_association <- function(gwas, covars, score, 
+snp_test <- function(gwas, covars, score, 
                                    samples = rep(TRUE, nrow(gwas[['fam']])) ) {
   
   genotypes <- gwas[['genotypes']]
@@ -303,26 +282,19 @@ get_snp_modules <- function(cones, net) {
 #' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
 #' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
 #' @keywords internal
-parse_scones_settings <- function(c = numeric(), score = "chi2", 
-                                  criterion = "consistency", etas = numeric(), 
-                                  lambdas = numeric(), sigmod = FALSE) {
+parse_scones_settings <- function(c = numeric(), score = c("chi2", "glm"), 
+                                  criterion = c("consistency", "bic", "aic", 
+                                                "aicc", "global_clustering",
+                                                "local_clustering"), 
+                                  etas = numeric(), lambdas = numeric(), 
+                                  mode = c("scones","sigmod")) {
   
   settings <- list()
-  
-  valid_score <- c('glm', 'chi2')
-  if (score %in% valid_score) {
-    settings[['score']] <- score
-  } else  {
-    stop(paste("Error: invalid score", score))
-  }
-  
-  valid_criterion <- c('consistency', 'bic', 'aic', 'aicc', 'global_clustering',
-                       'local_clustering')
-  if (criterion %in% valid_criterion) {
-    settings[['criterion']] <- criterion
-  } else {
-    stop(paste("Error: invalid criterion", criterion))
-  }
+  settings[['score']] <- match.arg(score)
+  settings[['criterion']] <- match.arg(criterion)
+  settings[['sigmod']] <- switch(match.arg(mode),
+                                 scones = FALSE,
+                                 sigmod = TRUE)
   
   logc <- log10(c[c != 0])
   if (length(etas) & is.numeric(etas)) {
@@ -345,12 +317,6 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     settings[['lambdas']] <- signif(settings[['lambdas']], 3)
   } else {
     stop("Error: specify a valid lambdas or an association vector.")
-  }
-  
-  if (length(sigmod) == 1 & is.logical(sigmod)) {
-    settings[['sigmod']] <- sigmod
-  } else {
-    stop("Error: specify a logical sigmod.")
   }
   
   return(settings);

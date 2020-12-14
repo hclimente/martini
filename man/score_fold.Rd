@@ -4,19 +4,9 @@
 \alias{score_fold}
 \title{Score the solutions of a k-fold}
 \usage{
-score_fold(folds, criterion, K, gwas, covars, net, max_solution = 0.5)
+score_fold(gwas, covars, net, selected, criterion, max_solution = 0.5)
 }
 \arguments{
-\item{folds}{k-times-d matrix, where k is the number of folds, and d the 
-number of SNPs.}
-
-\item{criterion}{String with the function to measure the quality of a split. 
-Possible values: consistency (default), bic, aic, aicc.}
-
-\item{K}{Numeric vector of length equal to the number of samples. The 
-elements are integers from 1 to # folds. Indicates which samples belong to 
-which fold.}
-
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{covars}{A data frame with the covariates. It must contain a column 
@@ -24,6 +14,9 @@ which fold.}
 covariate.}
 
 \item{net}{An igraph network that connects the SNPs.}
+
+\item{criterion}{String with the function to measure the quality of a split. 
+Possible values: consistency (default), bic, aic, aicc.}
 
 \item{max_soluction}{Maximum fraction of the SNPs involved in the solution
 (between 0 and 1). Larger solutions will be discarded.}

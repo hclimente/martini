@@ -240,3 +240,26 @@ connect_biomart <- function(organism) {
   return(conn)
   
 }
+
+#' Compute Laplacian matrix
+#' 
+#' @template params_gwas
+#' @template params_net
+#' @return A Laplacian matrix.
+#' @importFrom igraph simplify as_adj
+#' @importFrom Matrix diag rowSums
+#' @keywords internal
+get_laplacian <- function(gwas, net) {
+  
+  map <- sanitize_map(gwas)
+  
+  # remove redundant edges and self-edges in network and sort
+  net <- simplify(net)
+  L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  L <- L[map[['snp']], map[['snp']]]
+  L <- -L
+  diag(L) <- rowSums(abs(L))
+  
+  return(L)
+  
+}

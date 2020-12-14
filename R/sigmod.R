@@ -15,8 +15,8 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
                       lambdas = numeric()) {
 
   opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c, score, criterion, etas, lambdas, TRUE)
+  c <- snp_test(gwas, covars, opts[['score']])
+  opts <- parse_scones_settings(c, score, criterion, etas, lambdas, 'sigmod')
   opts[['gwas']] <- gwas
   opts[['net']] <- net
   opts[['covars']] <- covars
@@ -37,6 +37,6 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
 #' @export
 sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
   
-  return(mincut(gwas, net, covars, eta, lambda, score, sigmod = TRUE))
+  return(mincut(gwas, net, covars, eta, lambda, score, TRUE))
   
 }
