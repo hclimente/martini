@@ -9,10 +9,7 @@ PKG_LIBS = $(PKG_LIBS0) $(SHLIB_OPENMP_CXXFLAGS) -pthread
 #################################
 ##           Compile           ##
 #################################
-libs0: libmaxflow.a libcephes.a
+libs0: libmaxflow.a
 
 libmaxflow.a: $(MAXFLOWOBJ)
 	$(AR) -crus libmaxflow.a $(MAXFLOWOBJ)
-
-libcephes.a: $(CEPHESOBJ)
-	$(AR) -crus libcephes.a $(CEPHESOBJ)

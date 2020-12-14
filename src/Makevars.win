@@ -17,8 +17,6 @@ PKG_LIBS = ${PKG_LIBS0} -lws2_32
 %.o: %.cpp
 	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
 
-libs0: libmaxflow.a libcephes.a
+libs0: libmaxflow.a
 
 libmaxflow.a: $(MAXFLOWOBJ)
-
-libcephes.a: $(CEPHESOBJ)
