@@ -21,6 +21,7 @@ test_that("we recover causal SNPs", {
   # wrong eta and lambda return the trivial solution
   expect_equal(sum(cones$selected), sum(cones$c > 0))
   
+  set.seed(42)
   cones <- sigmod.cv(minigwas, gi, 
                      etas = seq(2, 0, length=10), 
                      lambdas = seq(2, 0, length=10))

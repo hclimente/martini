@@ -3,7 +3,13 @@
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network. Select the hyperparameters by
 #' cross-validation.
-#' @template params_scones
+#' @template params_gwas
+#' @template params_net
+#' @template params_covars
+#' @template params_score
+#' @template params_criterion
+#' @template params_etas
+#' @template params_lambdas
 #' @template return_cones
 #' @template reference_azencott
 #' @examples
@@ -27,8 +33,6 @@ scones.cv <- function(gwas, net, covars = data.frame(),
                    criterion, score, FALSE))
   
 }
-
-
 
 #' Run the cross-validated min-cut algorithm
 #'
