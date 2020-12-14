@@ -9,7 +9,7 @@ test_that("output is as expected", {
   selected <- mincut_c(c, 1, 2, W)
   
   expect_equal(length(selected), 3)
-  expect_equal(class(selected), "numeric")
+  expect_equal(class(selected), "logical")
 
 })
 

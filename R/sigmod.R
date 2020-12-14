@@ -17,9 +17,12 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
   opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
   c <- single_snp_association(gwas, covars, opts[['score']])
   opts <- parse_scones_settings(c, score, criterion, etas, lambdas, TRUE)
+  opts[['gwas']] <- gwas
+  opts[['net']] <- net
+  opts[['covars']] <- covars
   
-  return(mincut.cv(gwas, net, covars, opts))
-    
+  return(do.call(mincut.cv, opts))
+  
 }
 
 #' @inherit scones

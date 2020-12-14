@@ -1,9 +1,11 @@
 library(igraph)
 library(martini)
 
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+
 test_that("output is as expected", {
   
-  cones <- scones.cv(gwas, gi)
+  cones <- scones.cv(minigwas, gi)
   
   expect_equal(dim(cones), dim(minigwas$map) + c(0,3))
   expect_equal(class(cones), "data.frame")
@@ -15,14 +17,14 @@ test_that("output is as expected", {
 
 test_that("we recover causal SNPs", {
   
-  gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
   cones <- scones.cv(minigwas, gi, etas = 0, lambdas = 0)
   
   # wrong eta and lambda return the trivial solution
   expect_equal(sum(cones$selected), sum(cones$c > 0))
   
-  cones <- scones.cv(minigwas, gi, 
-                     etas = seq(2, 0, length=10), 
+  set.seed(42)
+  cones <- scones.cv(minigwas, gi,
+                     etas = seq(2, 0, length=10),
                      lambdas = seq(2, 0, length=10))
   
   skip_on_os("windows")
@@ -44,6 +46,5 @@ test_that("we recover causal SNPs", {
   c <- cones$c
   names(c) <- cones$snp
   expect_equal(c[cones$selected], scores[grepl("[AC]", names(scores))])
-  
   
 })

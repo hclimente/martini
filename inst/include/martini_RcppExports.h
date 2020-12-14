@@ -25,11 +25,11 @@ namespace martini {
         }
     }
 
-    inline Eigen::VectorXd maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W) {
+    inline LogicalVector maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W) {
         typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
         static Ptr_maxflow p_maxflow = NULL;
         if (p_maxflow == NULL) {
-            validateSignature("Eigen::VectorXd(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
+            validateSignature("LogicalVector(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
             p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
         }
         RObject rcpp_result_gen;
@@ -43,14 +43,14 @@ namespace martini {
             throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+        return Rcpp::as<LogicalVector >(rcpp_result_gen);
     }
 
-    inline Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+    inline LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
         typedef SEXP(*Ptr_mincut_c)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_mincut_c p_mincut_c = NULL;
         if (p_mincut_c == NULL) {
-            validateSignature("Eigen::VectorXd(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
+            validateSignature("LogicalVector(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
             p_mincut_c = (Ptr_mincut_c)R_GetCCallable("martini", "_martini_mincut_c");
         }
         RObject rcpp_result_gen;
@@ -64,7 +64,7 @@ namespace martini {
             throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+        return Rcpp::as<LogicalVector >(rcpp_result_gen);
     }
 
 }

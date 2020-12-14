@@ -10,17 +10,17 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-Eigen::VectorXd maxflow(Eigen::MatrixXd const &A,
-                        Eigen::SparseMatrix<double,Eigen::ColMajor> const &W) {
+LogicalVector maxflow(Eigen::MatrixXd const &A,
+                      Eigen::SparseMatrix<double,Eigen::ColMajor> const &W) {
   
-  Eigen::VectorXd selected = Eigen::VectorXd::Ones(W.rows());
+  LogicalVector selected(W.rows());
   
   // create graph out of adjacency matrix
   typedef Graph<double, double, double> MaxGraph;
   MaxGraph *g = new MaxGraph(W.rows(), W.nonZeros());
   
   // initialize nodes
-  g->add_node(selected.rows());
+  g->add_node(selected.length());
   
   //traverse the sparse adjacency matrix A
   for(long long k=0; k<W.outerSize(); k++) {
@@ -48,8 +48,8 @@ Eigen::VectorXd maxflow(Eigen::MatrixXd const &A,
   g->maxflow();
   
   // create indicator_vector
-  for(long long i = 0; i < selected.rows(); i++)
-    selected(i) = g->what_segment(i);
+  for(long long i = 0; i < selected.length(); i++)
+    selected[i] = g->what_segment(i);
   
   // delete graph
   delete g;
@@ -67,8 +67,8 @@ Eigen::VectorXd maxflow(Eigen::MatrixXd const &A,
 //' @return A list with vector indicating if the feature was selected and the 
 //' objective score.
 // [[Rcpp::export]]
-Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda, 
-                         Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda, 
+                       Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   W = lambda * W;
   long n_features = c.rows();
@@ -88,7 +88,7 @@ Eigen::VectorXd mincut_c(Eigen::VectorXd c, double eta, double lambda,
   A.col(1) = pos_c;
   
   //compute maxflow
-  Eigen::VectorXd selected = maxflow(A, W);
+  LogicalVector selected = maxflow(A, W);
   return(selected);
   
 }

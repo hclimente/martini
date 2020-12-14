@@ -24,8 +24,11 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
   opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
   c <- single_snp_association(gwas, covars, opts[['score']])
   opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
+  opts[['gwas']] <- gwas
+  opts[['net']] <- net
+  opts[['covars']] <- covars
   
-  return(mincut.cv(gwas, net, covars, opts))
+  return(do.call(mincut.cv, opts))
   
 }
 
@@ -60,51 +63,53 @@ get_L <- function(gwas, net) {
 #' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
-mincut.cv <- function(gwas, net, covars, opts) {
+mincut.cv <- function(gwas, net, covars, lambdas, etas, criterion, score, sigmod) {
   
-  L <- get_L(gwas, net)
-  
-  # prepare data: remove redundant edges and self-edges in network and sort
+  # prepare data
   gwas <- permute_snpMatrix(gwas)
   covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
-  
-  cones <- sanitize_map(gwas)
-  cones[['c']] <- single_snp_association(gwas, covars, opts[['score']])
+  L <- get_L(gwas, net)
   
   # grid search
-  y <- gwas[['fam']][['affected']]
-  
-  K <- cut(seq(1, length(y)), breaks = 10, labels = FALSE)
-  scores <- lapply(unique(K), function(k) {
-    single_snp_association(gwas, covars, opts[['score']], 
-                           samples = (K != k) )
-  })
-  
-  grid_scores <- lapply(opts[['etas']], function(eta){
-    lapply(opts[['lambdas']], function(lambda){
-      folds <- lapply(scores, function(c) {
-        c <- if (opts[['sigmod']]) c + lambda * diag(L) else c
-        mincut_c(c, eta, lambda, L)
+  K <- cut(seq(1, nrow(gwas[['fam']])), breaks = 10, labels = FALSE)
+  folds <- lapply(unique(K), function(k) {
+    
+    gwas_k <- subset_snpMatrix(gwas, (K!=k))
+    covars_k <- covars[(K!=k), ]
+    c_k <- single_snp_association(gwas_k, covars_k, score)
+    
+    lapply(lambdas, function(lambda) {
+      c_k <- if (sigmod) c_k + lambda * diag(L) else c_k
+      lapply(etas, function(eta) {
+        selected_k <- mincut_c(c_k, eta, lambda, L)
+        score_fold(gwas_k, covars_k, net, selected_k, criterion)
       })
-      folds <- do.call(rbind, folds)
-      score_fold(folds, opts[['criterion']], K, gwas, covars, net)
-    }) %>% unlist
+    })
   })
-  grid_scores <- do.call(rbind, grid_scores)
-  dimnames(grid_scores) <- list(opts[['etas']], opts[['lambdas']])
- 
-  message('Grid of ', opts[['criterion']], ' scores (etas x lambdas):\n')
-  message(paste0(capture.output(grid_scores), collapse = "\n") )
   
-  best <- which(grid_scores == max(grid_scores), arr.ind = TRUE)
-  best_eta <- opts[['etas']][best[1, 'row']]
-  best_lambda <- opts[['lambdas']][best[1, 'col']]
+  grid <- matrix(0, nrow = length(lambdas), ncol = length(etas), 
+                 dimnames = list(lambdas, etas))
   
-  message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
+  for (i in seq(length(lambdas))) {
+    for (j in seq(length(etas))){
+      mat <- lapply(folds, function(x) x[[i]][[j]])
+      mat <- do.call(rbind, mat)
+      grid[i,j] <- sum(colSums(mat)) / (10 * sum(colSums(mat) != 0))
+    }
+  }
   
-  c <- if (opts[['sigmod']]) cones[['c']] + best_lambda * diag(L) else cones[['c']]
-  selected <- mincut_c(c, best_eta, best_lambda, L)
-  cones[['selected']] <- as.logical(selected)
+  best <- which(grid == max(grid), arr.ind = TRUE)
+  best_lambda <- lambdas[best[1, 'row']]
+  best_eta <- etas[best[1, 'col']]
+  
+  message('Grid of ', criterion, ' scores (lambdas×etas):\n')
+  message(paste0(capture.output(grid), collapse = "\n") )
+  message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda)
+  
+  cones <- sanitize_map(gwas)
+  cones[['c']] <- single_snp_association(gwas, covars, score)
+  c <- if (sigmod) cones[['c']] + best_lambda * diag(L) else cones[['c']]
+  cones[['selected']] <- mincut_c(c, best_eta, best_lambda, L)
   
   cones <- get_snp_modules(cones, net)
   
@@ -147,10 +152,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
   cones <- sanitize_map(gwas)
   cones[['c']] <- single_snp_association(gwas, covars, score)
   c <- if (sigmod) cones[['c']] + lambda * diag(L) else cones[['c']]
-     
-  # run scores
-  selected <- mincut_c(c, eta, lambda, L)
-  cones[['selected']] <- as.logical(selected)
+  cones[['selected']] <- mincut_c(c, eta, lambda, L)
   
   cones <- get_snp_modules(cones, net)
   
@@ -171,10 +173,9 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
 single_snp_association <- function(gwas, covars, score, 
                                    samples = rep(TRUE, nrow(gwas[['fam']])) ) {
   
-  genotypes <- gwas[['genotypes']][samples, ]
-  phenotypes <- gwas[['fam']][['affected']][samples]
-  covars <- covars[samples, ]
-    
+  genotypes <- gwas[['genotypes']]
+  phenotypes <- gwas[['fam']][['affected']]
+  
   if (score == 'chi2') {
     
     tests <- single.snp.tests(phenotypes, snp.data = genotypes)
@@ -202,76 +203,55 @@ single_snp_association <- function(gwas, covars, score,
 #' 
 #' @description Take the k-solutions for a combination of hyperparameters, and 
 #' assign a score to it (the larger, the better).
-#' @param folds k-times-d matrix, where k is the number of folds, and d the 
-#' number of SNPs.
-#' @template params_criterion
-#' @param K Numeric vector of length equal to the number of samples. The 
-#' elements are integers from 1 to # folds. Indicates which samples belong to 
-#' which fold.
 #' @template params_gwas
-#' @template params_covars
 #' @template params_net
+#' @template params_covars
+#' @template params_criterion
 #' @param max_soluction Maximum fraction of the SNPs involved in the solution
 #' (between 0 and 1). Larger solutions will be discarded.
 #' @importFrom igraph induced.subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(folds, criterion, K, gwas,
-                       covars, net, max_solution = .5) {
+score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5) {
   
-  score <- 0
+  # score for a trivial solution
+  score <- -Inf
   
-  # penalize trivial solutions
-  if (!sum(folds) | ( sum(folds)/length(folds) > max_solution) ){
-    score <- -Inf
-  } else if (criterion == 'consistency') {
-    
-    folds_diff <- unique(K)
-    
-    for (i in folds_diff) {
-      for (j in folds_diff[folds_diff > i]) {
-        C <- sum(folds[i,] & folds[j,])
-        maxC <- sum(folds[i,] | folds[j,])
-        score <- score + ifelse(maxC == 0, 0, C/maxC)
-      }
-    } 
-  } else if (criterion %in% c('bic', 'aic', 'aicc')) {
-    for (k in unique(K)) {
-      
-      phenotypes <- gwas[['fam']][['affected']][K != k]
-      genotypes <- as(gwas[['genotypes']][K != k, ], 'numeric')
-      genotypes <- as.data.frame(genotypes[ , folds[k,]])
-      genotypes <- cbind(genotypes, covars[K != k, ])
+  if (sum(selected) & (sum(selected)/length(selected) <= max_solution) ){
+    if (criterion == 'consistency') {
+      score <- selected
+    } else if (criterion %in% c('bic', 'aic', 'aicc')) {
+        
+      phenotypes <- gwas[['fam']][['affected']]
+      genotypes <- as(gwas[['genotypes']], 'numeric')
+      genotypes <- as.data.frame(genotypes[, selected])
+      if (ncol(covars)) genotypes <- cbind(genotypes, covars)
       
       model <- glm(phenotypes ~ 1, data = genotypes)
       
       if (criterion == 'bic') {
-        score <- score + BIC(model)
+        score <- BIC(model)
       } else if (criterion == 'aic') {
-        score <- score + AIC(model)
+        score <- AIC(model)
       } else if (criterion == 'aicc') {
         k <- ncol(genotypes)
         n <- nrow(genotypes)
-        score <- score + AIC(model) + (2*k^2 + 2*k)/(n - k - 1)
+        score <- AIC(model) + (2*k^2 + 2*k)/(n - k - 1)
       }
-    }
-    # invert scores, as best models have the lowest scores
-    score <- -score
-  } else if (criterion %in% c('local_clustering', 'global_clustering')) {
-    map <- sanitize_map(gwas)
-    for (k in unique(K)) {
-      cones <- map[folds[k,],]
-      cones <- cones[['snp']]
+      # invert scores, as best models have the lowest scores
+      score <- -score
+    } else if (criterion %in% c('local_clustering', 'global_clustering')) {
+      cones <- sanitize_map(gwas)
+      cones <- cones[selected, 'snp']
       cones_subnet <- induced.subgraph(net, cones)
       
       if (criterion == 'local_clustering') {
-        clustering <- transitivity(cones_subnet, type = 'local')
-        clustering <- mean(clustering, na.rm = T)
+        score <- transitivity(cones_subnet, type = 'local')
+        score <- mean(score, na.rm = T)
       } else if (criterion == 'global_clustering') {
-        clustering <- transitivity(cones_subnet, type = 'global')
+        score <- transitivity(cones_subnet, type = 'global')
       }
-      score <- score + clustering
     }
   }
   
@@ -336,7 +316,8 @@ parse_scones_settings <- function(c = numeric(), score = "chi2",
     stop(paste("Error: invalid score", score))
   }
   
-  valid_criterion <- c('consistency', 'bic', 'aic', 'aicc')
+  valid_criterion <- c('consistency', 'bic', 'aic', 'aicc', 'global_clustering',
+                       'local_clustering')
   if (criterion %in% valid_criterion) {
     settings[['criterion']] <- criterion
   } else {

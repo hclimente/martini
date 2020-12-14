@@ -123,8 +123,7 @@ arrange_covars <- function(gwas, covars) {
 #' 
 #' @description Compute a permutation of the samples of a snpMatrix object. 
 #' Useful to make sure that the folds are not stratified by phenotype.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
+#' @template params_gwas
 #' @keywords internal
 permute_snpMatrix <- function(gwas) {
   
@@ -137,6 +136,23 @@ permute_snpMatrix <- function(gwas) {
   return(gwas)
   
 }
+
+#' Subsample snpMatrix
+#' 
+#' @description Compute a permutation of the samples of a snpMatrix object. 
+#' Useful to make sure that the folds are not stratified by phenotype.
+#' @template params_gwas
+#' @param samples Vector (logical or numeric) containing the samples to select.
+#' @keywords internal
+subset_snpMatrix <- function(gwas, samples) {
+  
+  gwas[['genotypes']] <- gwas[['genotypes']][samples,]
+  gwas[['fam']] <- gwas[['fam']][samples,]
+  
+  return(gwas)
+  
+}
+
 
 #' Check snpMapping
 #' 
