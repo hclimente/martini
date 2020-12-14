@@ -4,7 +4,7 @@
 \alias{snp_test}
 \title{Calculate genotype-phhenotype associations}
 \usage{
-snp_test(gwas, covars, score, samples = rep(TRUE, nrow(gwas[["fam"]])))
+snp_test(gwas, covars, score)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

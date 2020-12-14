@@ -10,18 +10,19 @@
 #' sigmod.cv(minigwas, gi)
 #' sigmod.cv(minigwas, gi, score = "glm")
 #' @export
-sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2", 
-                      criterion = "consistency", etas = numeric(), 
-                      lambdas = numeric()) {
+sigmod.cv <- function(gwas, net, covars = data.frame(),
+                      score = c("chi2", "glm"), 
+                      criterion = c("consistency", "bic", "aic", "aicc", 
+                                    "global_clustering", "local_clustering"), 
+                      etas = numeric(), lambdas = numeric()) {
 
-  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- snp_test(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c, score, criterion, etas, lambdas, 'sigmod')
-  opts[['gwas']] <- gwas
-  opts[['net']] <- net
-  opts[['covars']] <- covars
+  score <- match.arg(score)
+  criterion <- match.arg(criterion)
+  c <- snp_test(gwas, covars, score)
+  grid <- get_grid(c = c, etas, lambdas)
   
-  return(do.call(mincut.cv, opts))
+  return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
+                   criterion, score, TRUE))
   
 }
 

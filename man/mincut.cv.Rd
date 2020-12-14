@@ -4,7 +4,7 @@
 \alias{mincut.cv}
 \title{Run the cross-validated min-cut algorithm}
 \usage{
-mincut.cv(gwas, net, covars, lambdas, etas, criterion, score, sigmod)
+mincut.cv(gwas, net, covars, etas, lambdas, criterion, score, sigmod)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}

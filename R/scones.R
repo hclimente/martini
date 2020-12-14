@@ -3,11 +3,6 @@
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network. Select the hyperparameters by
 #' cross-validation.
-#' @template params_gwas
-#' @template params_net
-#' @template params_covars
-#' @template params_score
-#' @template params_criterion
 #' @template params_scones
 #' @template return_cones
 #' @template reference_azencott
@@ -16,19 +11,20 @@
 #' scones.cv(minigwas, gi)
 #' scones.cv(minigwas, gi, score = "glm")
 #' @export
-scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2", 
-                      criterion = "consistency", etas = numeric(), 
-                      lambdas = numeric()) {
+scones.cv <- function(gwas, net, covars = data.frame(), 
+                      score = c("chi2", "glm"), 
+                      criterion = c("consistency", "bic", "aic", "aicc", 
+                                    "global_clustering", "local_clustering"), 
+                      etas = numeric(), lambdas = numeric()) {
   
   # set options
-  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- snp_test(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
-  opts[['gwas']] <- gwas
-  opts[['net']] <- net
-  opts[['covars']] <- covars
+  score <- match.arg(score)
+  criterion <- match.arg(criterion)
+  c <- snp_test(gwas, covars, score)
+  grid <- get_grid(c = c, etas, lambdas)
   
-  return(do.call(mincut.cv, opts))
+  return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
+                   criterion, score, FALSE))
   
 }
 
@@ -42,7 +38,7 @@ scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
 #' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
-mincut.cv <- function(gwas, net, covars, lambdas, etas, criterion, score, sigmod) {
+mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod) {
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
@@ -149,8 +145,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
-snp_test <- function(gwas, covars, score, 
-                                   samples = rep(TRUE, nrow(gwas[['fam']])) ) {
+snp_test <- function(gwas, covars, score) {
   
   genotypes <- gwas[['genotypes']]
   phenotypes <- gwas[['fam']][['affected']]
@@ -273,52 +268,40 @@ get_snp_modules <- function(cones, net) {
 #' @description Creates a list composed by all \code{scones.cv} settings, with 
 #' the values provided by the user, or the default ones if none is provided.
 #' @template params_c
-#' @template params_score
-#' @template params_criterion
-#' @template params_scones
-#' @param sigmod Logical value stating if the settings are for SigMod.
+#' @template params_etas
+#' @template params_lambdas
 #' @return A list of \code{scones.cv} settings.
 #' @examples 
-#' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-#' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
+#' martini:::get_grid(etas = c(1,2,3), lambdas = c(4,5,6))
+#' martini:::get_grid(c = c(1,10,100))
 #' @keywords internal
-parse_scones_settings <- function(c = numeric(), score = c("chi2", "glm"), 
-                                  criterion = c("consistency", "bic", "aic", 
-                                                "aicc", "global_clustering",
-                                                "local_clustering"), 
-                                  etas = numeric(), lambdas = numeric(), 
-                                  mode = c("scones","sigmod")) {
+get_grid <- function(c = numeric(), etas = numeric(), lambdas = numeric()) {
   
-  settings <- list()
-  settings[['score']] <- match.arg(score)
-  settings[['criterion']] <- match.arg(criterion)
-  settings[['sigmod']] <- switch(match.arg(mode),
-                                 scones = FALSE,
-                                 sigmod = TRUE)
+  grid <- list()
   
   logc <- log10(c[c != 0])
   if (length(etas) & is.numeric(etas)) {
-    settings[['etas']] <- sort(etas)
+    grid[['etas']] <- sort(etas)
   } else if (length(logc)) {
     minc <- min(logc)
     maxc <- max(logc)
-    settings[['etas']] <- 10^seq(minc, maxc, length=10)
-    settings[['etas']] <- signif(settings[['etas']], 3)
+    grid[['etas']] <- 10^seq(minc, maxc, length=10)
+    grid[['etas']] <- signif(grid[['etas']], 3)
   } else {
     stop("Error: specify a valid etas or an association vector.")
   }
   
   if (length(lambdas) & is.numeric(lambdas)) {
-    settings[['lambdas']] <- sort(lambdas)
+    grid[['lambdas']] <- sort(lambdas)
   } else if (length(logc)) {
     minc <- min(logc)
     maxc <- max(logc)
-    settings[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
-    settings[['lambdas']] <- signif(settings[['lambdas']], 3)
+    grid[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
+    grid[['lambdas']] <- signif(grid[['lambdas']], 3)
   } else {
     stop("Error: specify a valid lambdas or an association vector.")
   }
   
-  return(settings);
+  return(grid)
   
 }

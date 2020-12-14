@@ -8,33 +8,12 @@ scones.cv(
   gwas,
   net,
   covars = data.frame(),
-  score = "chi2",
-  criterion = "consistency",
+  score = c("chi2", "glm"),
+  criterion = c("consistency", "bic", "aic", "aicc", "global_clustering",
+    "local_clustering"),
   etas = numeric(),
   lambdas = numeric()
 )
-}
-\arguments{
-\item{gwas}{A SnpMatrix object with the GWAS information.}
-
-\item{net}{An igraph network that connects the SNPs.}
-
-\item{covars}{A data frame with the covariates. It must contain a column 
-'sample' containing the sample IDs, and an additional columns for each 
-covariate.}
-
-\item{score}{Association score to measure association between genotype and 
-phenotype. Possible values: chi2 (default), glm.}
-
-\item{criterion}{String with the function to measure the quality of a split. 
-Possible values: consistency (default), bic, aic, aicc.}
-
-\item{etas}{Numeric vector with the etas to explore in the grid search. If 
-ommited, it's automatically created based on the association
-scores.}
-
-\item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
-If ommited, it's automatically created based on the association scores.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
