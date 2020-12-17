@@ -1,14 +1,13 @@
 library(martini)
-source("big_network.R")
 
 # we make a cluster with A and another with D
-cones <- martini:::sanitize_map(gwas)
+cones <- martini:::sanitize_map(test_gwas)
 cones$c <- 0
 cones$selected <- FALSE
 cones$selected[grepl("A", cones$snp)] <- TRUE
 cones$selected[grepl("D", cones$snp)] <- TRUE
 
-modules <- get_snp_modules(cones, gi)
+modules <- get_snp_modules(cones, test_gi)
 
 test_that("output has the right dimensions", {
   expect_equal(dim(modules), dim(cones) + c(0,1))

@@ -1,9 +1,10 @@
 library(igraph)
+library(martini)
 
-# MAKE GWAS OBJECT
+# make snpMatrix
 ## map
-gwas <- list()
-gwas$map <- read.table(text = "
+test_gwas <- list()
+test_gwas$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
                        1 1A1 0 10 A G
                        1 1A2 0 20 A G
@@ -34,31 +35,33 @@ gwas$map <- read.table(text = "
 
 ## genotypes
 N <- 100
-sol <- grepl("[AC]", gwas$map$snp.names)
+sol <- grepl("[AC]", test_gwas$map$snp.names)
 pCausal <- sum(sol)
-pNonCausal <- nrow(gwas$map) - pCausal
+pNonCausal <- nrow(test_gwas$map) - pCausal
 causal <- c(rep(2, N/2), rep(0, N/2))
 rest <- rep(0,N)
 
 X <- do.call(cbind, lapply(sol, function(x) if(x) causal else rest))
-colnames(X) <- gwas$map$snp.names
+colnames(X) <- test_gwas$map$snp.names
 rownames(X) <- 1:nrow(X)
 Xp <- X + 1
+# create some heterogeneity
+# diag(Xp) = 2
 mode(Xp) <- "raw"
-gwas$genotypes <- new("SnpMatrix", Xp)
+test_gwas$genotypes <- new("SnpMatrix", Xp)
 
 ## phenotypes
 Y <- c(rep(2, N/2), rep(1, N/2))
-gwas$fam <- data.frame(pedigree = 1:N,
+test_gwas$fam <- data.frame(pedigree = 1:N,
                        member = 1:N,
                        father = NA,
                        mother = NA,
                        sex = sample(c(1,2), N, replace = TRUE),
                        affected = Y)
 
-## MAKE NETWORKS
-snpMapping <- data.frame(snp = gwas$map$snp.names,
-                         gene = substr(gwas$map$snp.names, 2, 2))
+# make snp networks
+snpMapping <- data.frame(snp = test_gwas$map$snp.names,
+                         gene = substr(test_gwas$map$snp.names, 2, 2))
 snpMapping <- subset(snpMapping, gene != "-")
 ppi <- read.table(text = "
                   gene1 gene2
@@ -67,12 +70,16 @@ ppi <- read.table(text = "
                   B D
                   ", header = TRUE, stringsAsFactors = FALSE)
 
-gs <- get_GS_network(gwas)
-gm <- get_GM_network(gwas, snpMapping = snpMapping)
-gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
-W <- as_adj(gi)
+test_gs <- get_GS_network(test_gwas)
+test_gm <- get_GM_network(test_gwas, snpMapping = snpMapping)
+test_gi <- get_GI_network(test_gwas, snpMapping = snpMapping, ppi = ppi)
 
-solution <- scones.cv(gwas, gi)
+# make covariates
+genotypes <- test_gwas[['genotypes']]
+phenotypes <- test_gwas[['fam']][['affected']]
+covars <- data.frame(sample = sort(test_gwas[['fam']][['member']], decreasing = TRUE), 
+                     confounding = c(rep(1, nrow(genotypes)/2), rep(10, nrow(genotypes)/2)) + rnorm(nrow(genotypes), sd = .01),
+                     unrelated = c(rep(1, nrow(genotypes))) + rnorm(nrow(genotypes), sd = .01))
 
 # CREATE MINI
 # minigwas = gwas

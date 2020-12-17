@@ -110,8 +110,8 @@ is_coherent <- function(gwas) {
 #' @keywords internal
 arrange_covars <- function(gwas, covars) {
   
-  if (ncol(covars)) {
-    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]), ]
+  if (any(dim(covars))) {
+    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]),]
     covars <- subset(covars, select = -sample)
   }
   

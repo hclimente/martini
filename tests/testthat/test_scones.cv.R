@@ -49,3 +49,13 @@ test_that("we recover causal SNPs", {
   expect_equal(c[cones$selected], scores[grepl("[AC]", names(scores))])
   
 })
+
+test_that('covariate adjustment works', {
+  
+  set.seed(42)
+  cones <- scones.cv(minigwas, gi, covars, 
+                     etas = seq(2, 0, length=10), 
+                     lambdas = seq(2, 0, length=10),
+                     score = 'glm')
+  
+})
