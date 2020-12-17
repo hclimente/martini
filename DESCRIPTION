@@ -16,7 +16,7 @@ Description: martini deals with the low power inherent to GWAS studies by using
     protein products). The network is scanned using SConES, which looks for 
     groups of SNPs maximally associated with the phenotype, that form a close 
     subnetwork.
-License: MIT + file LICENSE
+License: GPL-3
 LazyData: TRUE
 Imports:
   igraph (>= 1.0.1),
@@ -46,3 +46,4 @@ Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr
+URL: https://github.com/hclimente/martini/issues
