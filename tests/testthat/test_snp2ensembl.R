@@ -13,7 +13,7 @@ brca$map <- read.table(text = "
                        2 rs13387042 0 217041109 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
 brca$map$gpos <- as.numeric(brca$map$gpos)
-brca_mapped <- martini:::snp2gene(brca)
+brca_mapped <- martini:::snp2ensembl(brca)
 
 # 7 snps from https://easygwas.ethz.ch/gwas/results/manhattan/view/4d00706f-ad0f-4f57-9f4e-ac3099b15b94/
 # the last one was not assigned to any gene
@@ -30,7 +30,7 @@ athal$map <- read.table(text = "
                        ", header = TRUE, stringsAsFactors = FALSE)
 
 athal$map$gpos <- as.numeric(athal$map$gpos)
-athal_mapped <- martini:::snp2gene(athal, organism=3702)
+athal_mapped <- martini:::snp2ensembl(athal, organism=3702)
 
 test_that("output is as expected", {
   # dimensions
@@ -66,7 +66,7 @@ test_that("we map snps to their known genes", {
                        ", header = TRUE, stringsAsFactors = FALSE)
   red$map$gpos <- as.numeric(red$map$gpos)
 
-  expect_equal(nrow(martini:::snp2gene(red, flank = 1)), 1)
-  expect_equal(nrow(martini:::snp2gene(red)), NULL)
+  expect_equal(nrow(martini:::snp2ensembl(red, flank = 1)), 1)
+  expect_equal(nrow(martini:::snp2ensembl(red)), NULL)
 
 })

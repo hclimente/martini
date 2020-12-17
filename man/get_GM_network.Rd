@@ -7,7 +7,7 @@
 get_GM_network(
   gwas,
   organism = 9606,
-  snpMapping = snp2gene(gwas, organism),
+  snpMapping = snp2ensembl(gwas, organism),
   col_genes = c("snp", "gene")
 )
 }

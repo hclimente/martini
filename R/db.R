@@ -1,4 +1,4 @@
-#' Map SNPs to genes.
+#' Map SNPs to Ensembl genes.
 #' 
 #' @description Maps SNPs from a GWAS experiment to genes.
 #' @template params_gwas
@@ -9,9 +9,9 @@
 #' @return A data.frame with two columns: one for the SNP and another for the
 #' gene it has been mapped to.
 #' @keywords internal
-snp2gene <- function(gwas, organism = 9606, flank = 0) {
+snp2ensembl <- function(gwas, organism = 9606, flank = 0) {
   
-  check_installed(c("IRanges"), "snp2gene")
+  check_installed(c("IRanges"), "snp2ensembl")
   
   # get map in appropriate format
   map <- sanitize_map(gwas)

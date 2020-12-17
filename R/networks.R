@@ -59,7 +59,7 @@ get_GS_network <- function(gwas)  {
 #' get_GM_network(minigwas, snpMapping = minisnpMapping)
 #' @export
 get_GM_network <- function(gwas, organism = 9606, 
-                           snpMapping = snp2gene(gwas, organism),
+                           snpMapping = snp2ensembl(gwas, organism),
                            col_genes = c('snp','gene')) {
   
   snpMapping <- sanitize_snpMapping(snpMapping, col_genes) 
@@ -129,7 +129,7 @@ get_GM_network <- function(gwas, organism = 9606,
 #' get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' @export
 get_GI_network <- function(gwas, organism = 9606,
-                           snpMapping = snp2gene(gwas, organism),
+                           snpMapping = snp2ensembl(gwas, organism),
                            ppi = get_gxg('biogrid', organism, flush),
                            col_ppi = c('gene1','gene2'),
                            col_genes = c('snp','gene'),
