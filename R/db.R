@@ -11,7 +11,7 @@
 #' @keywords internal
 snp2gene <- function(gwas, organism = 9606, flank = 0) {
   
-  check_installed("IRanges", "snp2gene")
+  check_installed(c("IRanges"), "snp2gene")
   
   # get map in appropriate format
   map <- sanitize_map(gwas)
@@ -76,7 +76,7 @@ snp2gene <- function(gwas, organism = 9606, flank = 0) {
 #' @keywords internal
 get_gxg_biogrid <- function(organism = 9606) {
   
-  check_installed("httr", "get_gxg_biogrid")
+  check_installed(c("httr"), "get_gxg_biogrid")
   
   # construct query: all interactions in the requested organism
   baseUrl <- "http://webservice.thebiogrid.org/interactions/?"
@@ -128,7 +128,7 @@ get_gxg_biogrid <- function(organism = 9606) {
 #' @keywords internal
 get_gxg_string <- function(organism = 9606) {
   
-  check_installed("STRINGdb", "get_gxg_string")
+  check_installed(c("STRINGdb"), "get_gxg_string")
   
   string_db <- STRINGdb::STRINGdb$new(version = '11', species = organism,
                                       score_threshold = 400)

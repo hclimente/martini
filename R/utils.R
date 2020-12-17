@@ -55,17 +55,18 @@ subvert <- function(net, attr, values, affirmative = TRUE) {
 #' @description Checks if a package is installed, launches an error if it is
 #' not.
 #' 
-#' @param pkg Name of the package.
+#' @param pkgs Character vector with the names of the packages.
 #' @param fn Function calling the check.
 #' @return The package is loaded into the namespace.
 #' @examples 
-#' martini:::check_installed("martini")
+#' martini:::check_installed(c("martini"))
 #' \dontrun{martini:::check_installed("martinid")}
 #' @keywords internal
-check_installed <- function(pkg, fn = "this function") {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    stop(paste(pkg, "needed for", fn, "to work. Please install it."),
-         call. = FALSE)
+check_installed <- function(pkgs, fn = "This function") {
+  installed <- unlist(lapply(pkgs, requireNamespace, quietly = TRUE))
+  if (!all(installed)) {
+    stop(paste0(fn, " requires the following packages to be installed:\n", 
+                paste(pkgs[!installed], collapse = '\n')), call. = FALSE)
   }
 }
 
@@ -199,7 +200,7 @@ sanitize_map <- function(gwas) {
 #' @keywords internal
 organism_id2name <- function(id) {
   
-  check_installed("httr", "organism_id2name")
+  check_installed(c("httr"), "organism_id2name")
   
   urlTaxonomy <- "http://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy,"/id/",id,"?content-type=application/json")
@@ -220,7 +221,7 @@ organism_id2name <- function(id) {
 #' @keywords internal
 connect_biomart <- function(organism) {
   
-  check_installed("biomaRt", "connect_biomart")
+  check_installed(c("biomaRt"), "connect_biomart")
   
   # create mart from ENSEMBL
   # consider vertebrates and plants
