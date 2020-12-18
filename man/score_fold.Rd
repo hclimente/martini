@@ -15,8 +15,7 @@ covariate.}
 
 \item{net}{An igraph network that connects the SNPs.}
 
-\item{criterion}{String with the function to measure the quality of a split. 
-Possible values: consistency (default), bic, aic, aicc.}
+\item{criterion}{String with the function to measure the quality of a split.}
 
 \item{max_soluction}{Maximum fraction of the SNPs involved in the solution
 (between 0 and 1). Larger solutions will be discarded.}

@@ -11,7 +11,7 @@
 #' @export
 sigmod.cv <- function(gwas, net, covars = data.frame(),
                       score = c("chi2", "glm"), 
-                      criterion = c("consistency", "bic", "aic", "aicc", 
+                      criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric()) {
 

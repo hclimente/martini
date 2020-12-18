@@ -27,7 +27,7 @@ Imports:
   snpStats (>= 1.20.0),
   S4Vectors (>= 0.12.2),
   stats,
-  utils
+  utils,
 Suggests:
   biomaRt (>= 2.34.1),
   STRINGdb,

@@ -19,7 +19,7 @@
 #' @export
 scones.cv <- function(gwas, net, covars = data.frame(), 
                       score = c("chi2", "glm"), 
-                      criterion = c("consistency", "bic", "aic", "aicc", 
+                      criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric()) {
   
@@ -197,7 +197,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
   score <- -Inf
   
   if (sum(selected) & (sum(selected)/length(selected) <= max_solution) ){
-    if (criterion == 'consistency') {
+    if (criterion == 'stability') {
       score <- selected
     } else if (criterion %in% c('bic', 'aic', 'aicc')) {
         

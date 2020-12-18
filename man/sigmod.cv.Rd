@@ -9,7 +9,7 @@ sigmod.cv(
   net,
   covars = data.frame(),
   score = c("chi2", "glm"),
-  criterion = c("consistency", "bic", "aic", "aicc", "global_clustering",
+  criterion = c("stability", "bic", "aic", "aicc", "global_clustering",
     "local_clustering"),
   etas = numeric(),
   lambdas = numeric()
@@ -27,8 +27,7 @@ covariate.}
 \item{score}{Association score to measure association between genotype and 
 phenotype. Possible values: chi2 (default), glm.}
 
-\item{criterion}{String with the function to measure the quality of a split. 
-Possible values: consistency (default), bic, aic, aicc.}
+\item{criterion}{String with the function to measure the quality of a split.}
 
 \item{etas}{Numeric vector with the etas to explore in the grid search. If 
 ommited, it's automatically created based on the association

@@ -1,8 +1,8 @@
 K <- cut(seq(1, nrow(minigwas[['fam']])), breaks = 2, labels = FALSE)
 
-test_that("consistency works", {
+test_that("stability works", {
   
-  criterion <- 'consistency'
+  criterion <- 'stability'
   
   selected <- c(T,T,T,T,T,F,F,F,F,F)
   expect_equal(selected, martini:::score_fold(minigwas, data.frame(), gi, selected, criterion))
