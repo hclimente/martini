@@ -46,7 +46,7 @@ colnames(X) <- test_gwas$map$snp.names
 rownames(X) <- 1:nrow(X)
 Xp <- X + 1
 # create some heterogeneity
-# diag(Xp) = 2
+diag(Xp) = 2
 mode(Xp) <- "raw"
 test_gwas$genotypes <- new("SnpMatrix", Xp)
 

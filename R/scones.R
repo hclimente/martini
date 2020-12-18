@@ -46,7 +46,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
-  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
+  covars <- arrange_covars(gwas, covars)
   L <- get_laplacian(gwas, net)
   
   # grid search
@@ -126,7 +126,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
  
   L <- get_laplacian(gwas, net)
    
-  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
+  covars <- arrange_covars(gwas, covars)
   
   cones <- sanitize_map(gwas)
   cones[['c']] <- snp_test(gwas, covars, score)
@@ -204,9 +204,12 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
       phenotypes <- gwas[['fam']][['affected']]
       genotypes <- as(gwas[['genotypes']], 'numeric')
       genotypes <- as.data.frame(genotypes[, selected])
-      if (ncol(covars)) genotypes <- cbind(genotypes, covars)
+      if (ncol(covars)) {
+        covars <- arrange_covars(gwas, covars)
+        genotypes <- cbind(genotypes, covars)
+      }
       
-      model <- glm(phenotypes ~ 1, data = genotypes)
+      model <- glm(phenotypes ~ ., data = genotypes)
       
       if (criterion == 'bic') {
         score <- BIC(model)

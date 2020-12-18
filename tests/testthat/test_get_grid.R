@@ -12,6 +12,9 @@ test_that("default we can change values", {
   expect_equal(get_grid(c = 1, etas = c(3,4,5))$etas, c(3,4,5))
   expect_error(get_grid(etas = c("a","b"))$etas)
   expect_equal(get_grid(c = 1, lambdas = c(3,4,5))$lambdas, c(3,4,5))
-  expect_error(get_grid(lambdas = c("a","b"))$lambdas)
+  expect_error(get_grid(etas = c(1,2,3), lambdas = c("a","b")),
+               'specify a valid lambdas or an association vector.')
+  expect_error(get_grid(etas = c("a","b"), lambdas = c(1,2,3)),
+               'specify a valid etas or an association vector.')
   expect_error(get_grid(c = 1, debug = 3))
 })
