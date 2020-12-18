@@ -22,10 +22,8 @@ Imports:
   igraph (>= 1.0.1),
   Matrix,
   methods (>= 3.3.2),
-  memoise (>= 1.1.0.9000),
   Rcpp (>= 0.12.8),
   snpStats (>= 1.20.0),
-  S4Vectors (>= 0.12.2),
   stats,
   utils,
 Suggests:
@@ -33,6 +31,8 @@ Suggests:
   STRINGdb,
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
+  S4Vectors (>= 0.12.2),
+  memoise (>= 1.1.0.9000),
   knitr,
   testthat,
   readr,
@@ -46,4 +46,5 @@ Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr
-URL: https://github.com/hclimente/martini/issues
+URL: https://github.com/hclimente/martini
+BugReports: https://github.com/hclimente/martini/issues

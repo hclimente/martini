@@ -10,7 +10,7 @@
 #' name "X").
 #' @return A subgraph containing only the vertices with attribute equal to any
 #' of the values in \code{values}.
-#' @importFrom igraph induced_subgraph
+#' @importFrom igraph subgraph
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subnet(gi, "gene", "A")
@@ -18,7 +18,7 @@
 #' @keywords internal
 subnet <- function(net, attr, values, affirmative = TRUE) {
   vertices <- subvert(net, attr, values, affirmative)
-  induced_subgraph(net, vertices)
+  subgraph(net, vertices)
 }
 
 #' Vertices with an attribute

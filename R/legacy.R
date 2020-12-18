@@ -7,7 +7,8 @@
 #' @param encoding SNP encoding (unused argument).
 #' @param sigmod Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
 #' prioritize tightly connected clusters of SNPs.
-#' #' @param associationScore Association score to measure association between 
+#' @template params_covars
+#' @param associationScore Association score to measure association between 
 #' genotype and phenotype.
 #' @param modelScore String with the function to measure the quality of a split.
 #' @template params_etas

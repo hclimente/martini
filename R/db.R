@@ -11,7 +11,7 @@
 #' @keywords internal
 snp2ensembl <- function(gwas, organism = 9606, flank = 0) {
   
-  check_installed(c("IRanges"), "snp2ensembl")
+  check_installed(c("IRanges", "httr", "biomaRt"), "snp2ensembl")
   
   # get map in appropriate format
   map <- sanitize_map(gwas)
@@ -128,7 +128,7 @@ get_gxg_biogrid <- function(organism = 9606) {
 #' @keywords internal
 get_gxg_string <- function(organism = 9606) {
   
-  check_installed(c("STRINGdb"), "get_gxg_string")
+  check_installed(c("STRINGdb", "httr", "biomaRt"), "get_gxg_string")
   
   string_db <- STRINGdb::STRINGdb$new(version = '11', species = organism,
                                       score_threshold = 400)
@@ -161,16 +161,12 @@ get_gxg_string <- function(organism = 9606) {
 }
 
 #' Memoised version of get_gxg_biogrid
-#' 
-#' @importFrom memoise memoise
 #' @keywords internal
-mget_gxg_biogrid <- memoise(get_gxg_biogrid)
+mget_gxg_biogrid <- memoise::memoise(get_gxg_biogrid)
 
 #' Memoised version of get_gxg_stringdb
-#' 
-#' @importFrom memoise memoise
 #' @keywords internal
-mget_gxg_string <- memoise(get_gxg_string)
+mget_gxg_string <- memoise::memoise(get_gxg_string)
 
 #' Get gene interactions
 #' 
@@ -180,9 +176,10 @@ mget_gxg_string <- memoise(get_gxg_string)
 #' from. Possible values: 'biogrid', 'string'.
 #' @template params_organism
 #' @template params_flush
-#' @importFrom memoise memoise has_cache drop_cache
 #' @keywords internal
 get_gxg <- function(db, organism, flush) {
+  
+  check_installed(c("biomaRt", "httr", "memoise", "STRINGdb"), "get_gxg")
   
   if (db == 'biogrid') {
     f <- mget_gxg_biogrid
@@ -192,10 +189,10 @@ get_gxg <- function(db, organism, flush) {
     stop(paste('unknown gene interaction database', db))
   }
   
-  if (has_cache(f)(organism)) {
+  if (memoise::has_cache(f)(organism)) {
     if (flush) {
       message('cache flushed!')
-      drop_cache(f)(organism)
+      memoise::drop_cache(f)(organism)
     } else {
       warning('using cache. Use flush = TRUE to get new gene interactions.')
     }

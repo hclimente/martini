@@ -187,7 +187,7 @@ snp_test <- function(gwas, covars, score) {
 #' @template params_criterion
 #' @param max_solution Maximum fraction of the SNPs involved in the solution
 #' (between 0 and 1). Larger solutions will be discarded.
-#' @importFrom igraph induced.subgraph transitivity
+#' @importFrom igraph subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
@@ -225,7 +225,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
     } else if (criterion %in% c('local_clustering', 'global_clustering')) {
       cones <- sanitize_map(gwas)
       cones <- cones[selected, 'snp']
-      cones_subnet <- induced.subgraph(net, cones)
+      cones_subnet <- subgraph(net, cones)
       
       if (criterion == 'local_clustering') {
         score <- transitivity(cones_subnet, type = 'local')
@@ -247,7 +247,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
 #' @param cones Results from \code{scones.cv}.
 #' @template params_net
 #' @return A list with the modules of selected SNPs.
-#' @importFrom igraph induced_subgraph components
+#' @importFrom igraph subgraph components
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' cones <- scones.cv(minigwas, gi)
@@ -256,7 +256,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
 get_snp_modules <- function(cones, net) {
   
   selected <- subset(cones, selected)
-  subnet <- induced_subgraph(net, as.character(selected[,'snp']))
+  subnet <- subgraph(net, as.character(selected[,'snp']))
   
   modules <- components(subnet)
   modules <- as.data.frame(modules['membership'])

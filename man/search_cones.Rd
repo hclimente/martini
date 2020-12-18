@@ -25,8 +25,13 @@ search_cones(
 \item{encoding}{SNP encoding (unused argument).}
 
 \item{sigmod}{Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
-prioritize tightly connected clusters of SNPs.
-#' @param associationScore Association score to measure association between 
+prioritize tightly connected clusters of SNPs.}
+
+\item{covars}{A data frame with the covariates. It must contain a column 
+'sample' containing the sample IDs, and an additional columns for each 
+covariate.}
+
+\item{associationScore}{Association score to measure association between 
 genotype and phenotype.}
 
 \item{modelScore}{String with the function to measure the quality of a split.}
