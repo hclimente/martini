@@ -17,7 +17,7 @@ covariate.}
 
 \item{criterion}{String with the function to measure the quality of a split.}
 
-\item{max_soluction}{Maximum fraction of the SNPs involved in the solution
+\item{max_solution}{Maximum fraction of the SNPs involved in the solution
 (between 0 and 1). Larger solutions will be discarded.}
 }
 \description{

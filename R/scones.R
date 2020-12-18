@@ -185,7 +185,7 @@ snp_test <- function(gwas, covars, score) {
 #' @template params_net
 #' @template params_covars
 #' @template params_criterion
-#' @param max_soluction Maximum fraction of the SNPs involved in the solution
+#' @param max_solution Maximum fraction of the SNPs involved in the solution
 #' (between 0 and 1). Larger solutions will be discarded.
 #' @importFrom igraph induced.subgraph transitivity
 #' @importFrom methods as
