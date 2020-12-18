@@ -2,7 +2,7 @@ test_that("output is as expected", {
   
   suppressWarnings(cones <- search_cones(test_gwas, test_gi))
   
-  expect_equal(dim(cones), dim(minigwas$map) + c(0,3))
+  expect_equal(dim(cones), dim(test_gwas$map) + c(0,3))
   expect_equal(class(cones), "data.frame")
   expect_equal(class(cones$selected), "logical")
   expect_equal(class(cones$c), "numeric")

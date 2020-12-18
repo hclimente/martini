@@ -1,5 +1,5 @@
-gwas <- list()
-gwas$map <- read.table(text = "
+minimum_gwas <- list()
+minimum_gwas$map <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2
                        1 rs1 0 10 A G
                        1 rs2 0 20 A G
@@ -33,9 +33,9 @@ ppi <- read.table(text = "
                   B D
                   ", header = TRUE, stringsAsFactors = FALSE)
 
-gs <- get_GS_network(gwas)
-gm <- get_GM_network(gwas, snpMapping = snpMapping)
-gi <- get_GI_network(gwas, snpMapping = snpMapping, ppi = ppi)
+mini_gs <- get_GS_network(minimum_gwas)
+mini_gm <- get_GM_network(minimum_gwas, snpMapping = snpMapping)
+mini_gi <- get_GI_network(minimum_gwas, snpMapping = snpMapping, ppi = ppi)
 
 result <- read.table(text = "
                        chr snp.names cm gpos allele.1 allele.2 selected C module
