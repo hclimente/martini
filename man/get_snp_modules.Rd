@@ -18,8 +18,10 @@ A list with the modules of selected SNPs.
 Find modules composed by interconnected SNPs.
 }
 \examples{
+\dontrun{
 gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-cones <- scones.cv(minigwas, gi)
+cones <- search_cones(minigwas, gi)
 martini:::get_snp_modules(cones, gi)
+}
 }
 \keyword{internal}

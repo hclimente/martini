@@ -64,9 +64,11 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE,
 #' @return A list with the modules of selected SNPs.
 #' @importFrom igraph induced_subgraph components
 #' @examples
+#' \dontrun{
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' cones <- scones.cv(minigwas, gi)
+#' cones <- search_cones(minigwas, gi)
 #' martini:::get_snp_modules(cones, gi)
+#' }
 #' @keywords internal
 get_snp_modules <- function(cones, net) {
   
