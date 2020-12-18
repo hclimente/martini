@@ -18,9 +18,7 @@
 #' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
 #' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
 #' \url{https://doi.org/10.1093/bioinformatics/btt238}
-#' @importFrom igraph simplify as_adj
-#' @importFrom Matrix diag rowSums
-#' @importFrom methods as
+#' @importFrom igraph V
 #' @examples
 #' \dontrun{gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' search_cones(minigwas, gi)
@@ -45,8 +43,43 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE,
   
   args <- list(gwas=gwas, net=net, covars=covars, score=associationScore, 
                criterion=modelScore, etas=etas, lambdas=lambdas)
-  if(sigmod) cones <- do.call(sigmod.cv, args)
-  else cones <- do.call(scones.cv, args)
+  if(sigmod) subnet <- do.call(sigmod.cv, args)
+  else subnet <- do.call(scones.cv, args)
+  
+  cones <- sanitize_map(gwas)
+  cones[['c']] <- snp_test(gwas, covars, associationScore)
+  cones[['selected']] <- cones[['snp']] %in% names(V(subnet))
+  cones <- get_snp_modules(cones, net)
+  
+  return(cones)
+  
+}
+
+#' Return groups of interconnected SNPs.
+#' 
+#' @description Find modules composed by interconnected SNPs.
+#' 
+#' @param cones Results from \code{scones.cv}.
+#' @template params_net
+#' @return A list with the modules of selected SNPs.
+#' @importFrom igraph induced_subgraph components
+#' @examples
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' cones <- scones.cv(minigwas, gi)
+#' martini:::get_snp_modules(cones, gi)
+#' @keywords internal
+get_snp_modules <- function(cones, net) {
+  
+  selected <- subset(cones, selected)
+  subnet <- induced_subgraph(net, as.character(selected[,'snp']))
+  
+  modules <- components(subnet)
+  modules <- as.data.frame(modules['membership'])
+  colnames(modules) <- "module"
+  modules['snp'] <- rownames(modules)
+  
+  modules <- merge(cones, modules, all.x = TRUE)
+  cones <- modules[match(cones[,'snp'], modules[,'snp']),]
   
   return(cones)
   

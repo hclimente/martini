@@ -46,7 +46,6 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
-  covars <- arrange_covars(gwas, covars)
   L <- get_laplacian(gwas, net)
   
   # grid search
@@ -54,7 +53,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
   folds <- lapply(unique(K), function(k) {
     
     gwas_k <- subset_snpMatrix(gwas, (K!=k))
-    covars_k <- covars[(K!=k), ]
+    covars_k <- arrange_covars(gwas_k, covars)
     c_k <- snp_test(gwas_k, covars_k, score)
     
     lapply(lambdas, function(lambda) {
@@ -85,12 +84,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
   message(paste0(capture.output(grid), collapse = "\n") )
   message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda)
   
-  cones <- sanitize_map(gwas)
-  cones[['c']] <- snp_test(gwas, covars, score)
-  c <- if (sigmod) cones[['c']] + best_lambda * diag(L) else cones[['c']]
-  cones[['selected']] <- mincut_c(c, best_eta, best_lambda, L)
-  
-  cones <- get_snp_modules(cones, net)
+  cones <- mincut(gwas, net, covars, best_eta, best_lambda, score, sigmod)
   
   return(cones)
   
@@ -128,12 +122,12 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
    
   covars <- arrange_covars(gwas, covars)
   
-  cones <- sanitize_map(gwas)
-  cones[['c']] <- snp_test(gwas, covars, score)
-  c <- if (sigmod) cones[['c']] + lambda * diag(L) else cones[['c']]
-  cones[['selected']] <- mincut_c(c, eta, lambda, L)
+  map <- sanitize_map(gwas)
+  c <- snp_test(gwas, covars, score)
+  c <- if (sigmod) c + lambda * diag(L) else c
+  selected <- mincut_c(c, eta, lambda, L)
+  cones <- induced_subgraph(net, map[['snp']][selected])
   
-  cones <- get_snp_modules(cones, net)
   
   return(cones)
   
@@ -187,7 +181,7 @@ snp_test <- function(gwas, covars, score) {
 #' @template params_criterion
 #' @param max_solution Maximum fraction of the SNPs involved in the solution
 #' (between 0 and 1). Larger solutions will be discarded.
-#' @importFrom igraph subgraph transitivity
+#' @importFrom igraph induced_subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
@@ -225,7 +219,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
     } else if (criterion %in% c('local_clustering', 'global_clustering')) {
       cones <- sanitize_map(gwas)
       cones <- cones[selected, 'snp']
-      cones_subnet <- subgraph(net, cones)
+      cones_subnet <- induced_subgraph(net, cones)
       
       if (criterion == 'local_clustering') {
         score <- transitivity(cones_subnet, type = 'local')
@@ -237,36 +231,6 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
   }
   
   return(score)
-  
-}
-
-#' Return groups of interconnected SNPs.
-#' 
-#' @description Find modules composed by interconnected SNPs.
-#' 
-#' @param cones Results from \code{scones.cv}.
-#' @template params_net
-#' @return A list with the modules of selected SNPs.
-#' @importFrom igraph subgraph components
-#' @examples
-#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' cones <- scones.cv(minigwas, gi)
-#' martini:::get_snp_modules(cones, gi)
-#' @keywords internal
-get_snp_modules <- function(cones, net) {
-  
-  selected <- subset(cones, selected)
-  subnet <- subgraph(net, as.character(selected[,'snp']))
-  
-  modules <- components(subnet)
-  modules <- as.data.frame(modules['membership'])
-  colnames(modules) <- "module"
-  modules['snp'] <- rownames(modules)
-  
-  modules <- merge(cones, modules, all.x = TRUE)
-  cones <- modules[match(cones[,'snp'], modules[,'snp']),]
-
-  return(cones)
   
 }
 

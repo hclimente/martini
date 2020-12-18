@@ -1,7 +1,6 @@
 #' Subgraph of vertices with an attribute
 #' 
 #' @description Returns a subgraph matching some condition.
-#' 
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}.
@@ -10,7 +9,7 @@
 #' name "X").
 #' @return A subgraph containing only the vertices with attribute equal to any
 #' of the values in \code{values}.
-#' @importFrom igraph subgraph
+#' @importFrom igraph induced_subgraph
 #' @examples 
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' martini:::subnet(gi, "gene", "A")
@@ -18,13 +17,12 @@
 #' @keywords internal
 subnet <- function(net, attr, values, affirmative = TRUE) {
   vertices <- subvert(net, attr, values, affirmative)
-  subgraph(net, vertices)
+  induced_subgraph(net, vertices)
 }
 
 #' Vertices with an attribute
 #' 
 #' @description Returns the nodes matching some condition.
-#' 
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}
@@ -74,7 +72,7 @@ check_installed <- function(pkgs, fn = "This function") {
 #' 
 #' @description Checks that the different data structures have the SNPs in the 
 #' same order.
-#' @param gwas A GWAS experiment.
+#' @template params_gwas
 #' @return TRUE if the GWAS dataset is coherent. Else, raises an error.
 #' @examples 
 #' martini:::is_coherent(minigwas)
@@ -104,7 +102,6 @@ is_coherent <- function(gwas) {
 #' @description Prepares de covariates data.frame for the functions used in
 #' \code{scones}, like \code{single_snp_association} or \code{score_folds}
 #' .
-#' 
 #' @template params_gwas
 #' @template params_covars
 #' @return The covars data.frame, with the rows in the same order as gwas. 
@@ -181,8 +178,7 @@ sanitize_snpMapping <- function(snpMapping, col_genes) {
 #' Check map
 #' 
 #' @description Check that map is a proper data.frame.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
+#' @template params_gwas
 #' @keywords internal
 sanitize_map <- function(gwas) {
   
@@ -196,7 +192,7 @@ sanitize_map <- function(gwas) {
 #' Tax id to ensembl species name
 #' @description Converts taxid to ensembl species name e.g. human databases are 
 #' hsapiens_*
-#' @param id Integer containing the tax id (e.g. 9606 for human)
+#' @template params_organism
 #' @keywords internal
 organism_id2name <- function(id) {
   

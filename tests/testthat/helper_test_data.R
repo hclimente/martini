@@ -73,6 +73,7 @@ ppi <- read.table(text = "
 test_gs <- get_GS_network(test_gwas)
 test_gm <- get_GM_network(test_gwas, snpMapping = snpMapping)
 test_gi <- get_GI_network(test_gwas, snpMapping = snpMapping, ppi = ppi)
+test_map <- martini:::sanitize_map(test_gwas)
 
 # make covariates
 genotypes <- test_gwas[['genotypes']]

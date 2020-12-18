@@ -15,10 +15,10 @@ test_that("genes with less than 6 single-gene SNPs are discarded", {
 })
 
 test_that("SNPs are interconnected", {
-  expect_equal((igraph::components(igraph::subgraph(test_gi, names(causal2))) %>% 
+  expect_equal((igraph::components(igraph::induced_subgraph(test_gi, names(causal2))) %>% 
                 .$membership %>% 
                 unique), 1 )
-  expect_equal((igraph::components(igraph::subgraph(test_gi, names(causal3))) %>% 
+  expect_equal((igraph::components(igraph::induced_subgraph(test_gi, names(causal3))) %>% 
                   .$membership %>% 
                   unique), 1 )
 })
