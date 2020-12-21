@@ -9,7 +9,7 @@ get_snp_modules(gwas, net)
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{cones}{Results from \code{scones.cv}.}
+\item{net}{An igraph network that connects the SNPs.}
 }
 \value{
 A list with the modules of selected SNPs.
