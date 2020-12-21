@@ -19,10 +19,12 @@ plot_ideogram <- function(gwas, net, covars = data.frame(), genome = "hg19") {
   
   circlize::circos.initializeWithIdeogram(species = genome)
   
-  map <- sanitize_map(gwas)
+  modules <- get_snp_modules(gwas, net)
+  modules[['selected']] <- modules[['snp']] %in% names(V(net))
+
   bed <- gwas2bed(gwas)
-  bed$c <- snp_test(gwas, covars, 'chi2')
-  bed$selected <- map[['snp']] %in% names(V(net))
+  bed[['c']] <- snp_test(gwas, covars, 'chi2')
+  bed[['selected']] <- modules[['snp']] %in% names(V(net))
   # bring the selected snps to the front
   bed <- bed[with(bed, order(selected)),]
   
@@ -31,14 +33,14 @@ plot_ideogram <- function(gwas, net, covars = data.frame(), genome = "hg19") {
     ylim = c(0, 1.1 * max(bed$c, na.rm = T)),
     panel.fun = function(region, value, ...) {
       # color according to selection/non-selection
-      col = ifelse(value[[2]], "orange", "gray70")
+      col = ifelse(value[[2]], "#e84545", "#bad7df")
       circlize::circos.genomicPoints(region, value, col = col,
                                      cex = 0.5, pch = 16)
     }, 
     track.height = 0.3)
   
   # create links
-  selected <- subset(net, selected)
+  selected <- subset(modules, selected)
   
   regions <- by(selected, selected[,c("chr","module")], function(k) {
     data.frame(chr = paste0("chr", unique(k$chr)),
