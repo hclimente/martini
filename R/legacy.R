@@ -46,10 +46,9 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE,
   if(sigmod) subnet <- do.call(sigmod.cv, args)
   else subnet <- do.call(scones.cv, args)
   
-  cones <- sanitize_map(gwas)
+  cones <- get_snp_modules(gwas, subnet)
   cones[['c']] <- snp_test(gwas, covars, associationScore)
   cones[['selected']] <- cones[['snp']] %in% names(V(subnet))
-  cones <- get_snp_modules(cones, net)
   
   return(cones)
   
@@ -59,7 +58,7 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE,
 #' 
 #' @description Find modules composed by interconnected SNPs.
 #' 
-#' @param cones Results from \code{scones.cv}.
+#' @template params_gwas
 #' @template params_net
 #' @return A list with the modules of selected SNPs.
 #' @importFrom igraph induced_subgraph components
@@ -70,19 +69,19 @@ search_cones <- function(gwas, net, encoding = "additive", sigmod = FALSE,
 #' martini:::get_snp_modules(cones, gi)
 #' }
 #' @keywords internal
-get_snp_modules <- function(cones, net) {
+get_snp_modules <- function(gwas, net) {
   
-  selected <- subset(cones, selected)
-  subnet <- induced_subgraph(net, as.character(selected[,'snp']))
-  
-  modules <- components(subnet)
+  # compute components
+  modules <- components(net)
   modules <- as.data.frame(modules['membership'])
   colnames(modules) <- "module"
   modules['snp'] <- rownames(modules)
   
-  modules <- merge(cones, modules, all.x = TRUE)
-  cones <- modules[match(cones[,'snp'], modules[,'snp']),]
+  # annotate on the map file
+  map <- sanitize_map(gwas) 
+  modules <- merge(map, modules, all.x = TRUE)
+  map <- modules[match(map[,'snp'], modules[,'snp']),]
   
-  return(cones)
+  return(map)
   
 }

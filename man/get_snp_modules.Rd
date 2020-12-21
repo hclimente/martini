@@ -4,12 +4,12 @@
 \alias{get_snp_modules}
 \title{Return groups of interconnected SNPs.}
 \usage{
-get_snp_modules(cones, net)
+get_snp_modules(gwas, net)
 }
 \arguments{
-\item{cones}{Results from \code{scones.cv}.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{net}{An igraph network that connects the SNPs.}
+\item{cones}{Results from \code{scones.cv}.}
 }
 \value{
 A list with the modules of selected SNPs.

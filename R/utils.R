@@ -260,3 +260,26 @@ get_laplacian <- function(gwas, net) {
   return(L)
   
 }
+
+#' Converts a MAP data.frame to a BED data.frame
+#'
+#' @description Takes a map file and:
+#' \itemize{
+#' \item{column 1: Used as the chromosome column in the BED file.}
+#' \item{column 4: Used as start and end in the BED data.frame (as we work with
+#' SNPs).}
+#' }
+#' @template params_gwas
+#' @return A BED data.frame.
+gwas2bed <- function(gwas) {
+  
+  map <- sanitize_map(gwas)
+  bed <- subset(map, select = c("chr", "pos"))
+  colnames(bed) <- c("chr", "start")
+  bed$chr <- paste0("chr", bed$chr)
+  bed$chr <- ifelse(bed$chr == "chr23", "chrX", bed$chr)
+  bed$end <- bed$start
+  
+  return(bed)
+  
+}
