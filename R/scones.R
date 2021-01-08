@@ -223,7 +223,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
       
       if (criterion == 'local_clustering') {
         score <- transitivity(cones_subnet, type = 'local')
-        score <- mean(score, na.rm = T)
+        score <- mean(score, na.rm = TRUE)
       } else if (criterion == 'global_clustering') {
         score <- transitivity(cones_subnet, type = 'global')
       }
