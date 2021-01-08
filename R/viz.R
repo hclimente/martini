@@ -12,6 +12,7 @@
 #' circlize Implements and enhances circular visualization in R. Bioinformatics
 #' (Oxford, England), 30(19), 2811-2. 
 #' \url{https://doi.org/10.1093/bioinformatics/btu393}
+#' @importFrom igraph as_ids
 #' @export
 plot_ideogram <- function(gwas, net, covars = data.frame(), genome = "hg19") {
   
@@ -31,7 +32,7 @@ plot_ideogram <- function(gwas, net, covars = data.frame(), genome = "hg19") {
     ylim = c(0, 1.1 * max(bed$c, na.rm = TRUE)),
     panel.fun = function(region, value, ...) {
       # color according to selection/non-selection
-      col = ifelse(value[[2]], "#e84545", "#bad7df")
+      col = ifelse(value[[3]], "#e84545", "#bad7df")
       circlize::circos.genomicPoints(region, value, col = col,
                                      cex = 0.5, pch = 16)
     }, 
@@ -63,6 +64,7 @@ plot_ideogram <- function(gwas, net, covars = data.frame(), genome = "hg19") {
 #' @param threshold Maximum distance to group two SNPs group.
 #' @return A data.frame in bed format, with the same dimensions as the original,
 #' but with the groups.
+#' @keywords internal
 group_snps <- function(bed, chr_col, pos_col, threshold) {
   
   check_installed("IRanges", "group_snps")

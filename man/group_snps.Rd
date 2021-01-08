@@ -23,3 +23,4 @@ but with the groups.
 \description{
 Groups SNPs closer than a specifiec threshold of distance.
 }
+\keyword{internal}

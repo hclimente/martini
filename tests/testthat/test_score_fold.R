@@ -4,7 +4,7 @@ test_that("stability works", {
   
   criterion <- 'stability'
   
-  selected <- c(T,T,T,T,T,F,F,F,F,F)
+  selected <- c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE)
   expect_equal(selected, martini:::score_fold(test_gwas, data.frame(), gi, selected, criterion))
   
 })
@@ -28,7 +28,7 @@ test_that("clustering coefficients works", {
 
 test_that('log-penalized functions work', {
   
-  selected <- c(T,T,T,T,T,F,F,F,F,F)
+  selected <- c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE)
   phenotypes <- test_gwas[['fam']][['affected']]
   genotypes <- as(test_gwas[['genotypes']], 'numeric')
   genotypes <- as.data.frame(genotypes[, selected])
