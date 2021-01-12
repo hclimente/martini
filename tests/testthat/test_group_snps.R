@@ -1,4 +1,5 @@
 bed <- gwas2bed(test_gwas)
+bed <- bed[sample(nrow(bed)),]
 
 test_that("output is as expected", {
   
@@ -9,6 +10,7 @@ test_that("output is as expected", {
   expect_type(groups[,2], 'integer')
   expect_type(groups[,3], 'integer')
   expect_equal(ncol(groups), 3)
+  expect_equal(colnames(groups), c('chr_range','start_range','end_range'))
   
 })
 
