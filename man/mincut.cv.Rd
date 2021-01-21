@@ -4,7 +4,18 @@
 \alias{mincut.cv}
 \title{Run the cross-validated min-cut algorithm}
 \usage{
-mincut.cv(gwas, net, covars, etas, lambdas, criterion, score, sigmod)
+mincut.cv(
+  gwas,
+  net,
+  covars,
+  etas,
+  lambdas,
+  criterion,
+  score,
+  sigmod,
+  family,
+  link
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -14,6 +25,14 @@ mincut.cv(gwas, net, covars, etas, lambdas, criterion, score, sigmod)
 \item{covars}{A data frame with the covariates. It must contain a column 
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
+
+\item{family}{A string defining the generalized linear model family. This 
+should match one of "binomial", "Poisson", "Gaussian" or "gamma". See
+\link[snpStats]{snp.rhs.tests} for details.}
+
+\item{link}{A string defining the link function for the GLM. This should
+match one of "logit", "log", "identity" or "inverse". See 
+\link[snpStats]{snp.rhs.tests} for details.}
 }
 \description{
 Run the cross-validated min-cut algorithm

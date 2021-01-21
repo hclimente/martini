@@ -11,6 +11,8 @@
 #' @template params_etas
 #' @template params_lambdas
 #' @template return_cones
+#' @template params_family
+#' @template params_link
 #' @template reference_azencott
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
@@ -21,16 +23,20 @@ scones.cv <- function(gwas, net, covars = data.frame(),
                       score = c("chi2", "glm"), 
                       criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
-                      etas = numeric(), lambdas = numeric()) {
+                      etas = numeric(), lambdas = numeric(),
+                      family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                      link = c("logit", "log", "identity", "inverse")) {
   
   # set options
   score <- match.arg(score)
   criterion <- match.arg(criterion)
-  c <- snp_test(gwas, covars, score)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  c <- snp_test(gwas, covars, score, family, link)
   grid <- get_grid(c = c, etas, lambdas)
   
   return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
-                   criterion, score, FALSE))
+                   criterion, score, FALSE, family, link))
   
 }
 
@@ -39,10 +45,13 @@ scones.cv <- function(gwas, net, covars = data.frame(),
 #' @template params_gwas
 #' @template params_net
 #' @template params_covars
+#' @template params_family
+#' @template params_link
 #' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
-mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod) {
+mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, 
+                      sigmod, family, link) {
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
@@ -54,7 +63,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
     
     gwas_k <- subset_snpMatrix(gwas, (K!=k))
     covars_k <- arrange_covars(gwas_k, covars)
-    c_k <- snp_test(gwas_k, covars_k, score)
+    c_k <- snp_test(gwas_k, covars_k, score, family, link)
     
     lapply(lambdas, function(lambda) {
       c_k <- if (sigmod) c_k + lambda * diag(L) else c_k
@@ -84,7 +93,8 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
   message(paste0(capture.output(grid), collapse = "\n") )
   message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda)
   
-  cones <- mincut(gwas, net, covars, best_eta, best_lambda, score, sigmod)
+  cones <- mincut(gwas, net, covars, best_eta, best_lambda, score, sigmod, 
+                  family, link)
   
   return(cones)
   
@@ -100,15 +110,24 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, sigmod
 #' @param lambda Value of the lambda parameter.
 #' @template params_covars
 #' @template params_score
+#' @template params_family
+#' @template params_link
 #' @template return_cones
 #' @inherit scones.cv return references
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones(minigwas, gi, 10, 1)
 #' @export
-scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
+scones <- function(gwas, net, eta, lambda, covars = data.frame(), 
+                   score = c("chi2", "glm"), 
+                   family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                   link = c("logit", "log", "identity", "inverse")) {
   
-  return(mincut(gwas, net, covars, eta, lambda, score, FALSE))
+  score <- match.arg(score)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  
+  return(mincut(gwas, net, covars, eta, lambda, score, FALSE, family, link))
   
 }
 
@@ -116,14 +135,14 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2'
 #'
 #' @template return_cones
 #' @keywords internal
-mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
+mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
  
   L <- get_laplacian(gwas, net)
    
   covars <- arrange_covars(gwas, covars)
   
   map <- sanitize_map(gwas)
-  c <- snp_test(gwas, covars, score)
+  c <- snp_test(gwas, covars, score, family, link)
   c <- if (sigmod) c + lambda * diag(L) else c
   selected <- mincut_c(c, eta, lambda, L)
   cones <- induced_subgraph(net, map[['snp']][selected])
@@ -140,10 +159,12 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod) {
 #' @template params_gwas
 #' @template params_covars
 #' @template params_score
+#' @template params_family
+#' @template params_link
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
-snp_test <- function(gwas, covars, score) {
+snp_test <- function(gwas, covars, score, family, link) {
   
   genotypes <- gwas[['genotypes']]
   phenotypes <- gwas[['fam']][['affected']]
@@ -157,9 +178,11 @@ snp_test <- function(gwas, covars, score) {
     
     if (ncol(covars) && nrow(covars) == nrow(genotypes)) {
       covars <- as.matrix(covars)
-      tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
+      tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes,
+                             family = family, link = link)
     } else {
-      tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes)
+      tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes,
+                             family = family, link = link)
     }
     
     c <- chi.squared(tests)

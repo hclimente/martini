@@ -13,15 +13,19 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
                       score = c("chi2", "glm"), 
                       criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
-                      etas = numeric(), lambdas = numeric()) {
+                      etas = numeric(), lambdas = numeric(),
+                      family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                      link = c("logit", "log", "identity", "inverse")) {
 
   score <- match.arg(score)
   criterion <- match.arg(criterion)
-  c <- snp_test(gwas, covars, score)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  c <- snp_test(gwas, covars, score, family, link)
   grid <- get_grid(c = c, etas, lambdas)
   
   return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
-                   criterion, score, TRUE))
+                   criterion, score, TRUE, family, link))
   
 }
 
@@ -35,8 +39,15 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' sigmod(minigwas, gi, 10, 1)
 #' @export
-sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
+sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), 
+                   score = c("chi2", "glm"), 
+                   family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                   link = c("logit", "log", "identity", "inverse")) {
   
-  return(mincut(gwas, net, covars, eta, lambda, score, TRUE))
+  score <- match.arg(score)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  
+  return(mincut(gwas, net, covars, eta, lambda, score, TRUE, family, link))
   
 }

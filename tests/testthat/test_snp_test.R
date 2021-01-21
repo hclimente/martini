@@ -20,14 +20,14 @@ test_that("glm's chi2 are correctly calculated", {
                  0, 100, 100, 98, 99, 99, 100, 0.3, 1, 0, 1, 0)
   names(true_vals) <- test_gwas[['map']][['snp.names']]
   
-  c <- snp_test(test_gwas, data.frame(), 'glm')
+  c <- snp_test(test_gwas, data.frame(), 'glm', "binomial", "logit")
   
   expect_equal(c, true_vals, tolerance = .1)
   
   # with explanatory covariates
   true_vals <- rep(0, nrow(test_gwas[['map']]))
   names(true_vals) <- test_gwas[['map']][['snp.names']]
-  c <- snp_test(test_gwas, covars, 'glm')
+  c <- snp_test(test_gwas, covars, 'glm', "binomial", "logit")
   
   expect_equal(c, true_vals, tolerance = .1)
   

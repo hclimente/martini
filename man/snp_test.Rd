@@ -4,7 +4,7 @@
 \alias{snp_test}
 \title{Calculate genotype-phhenotype associations}
 \usage{
-snp_test(gwas, covars, score)
+snp_test(gwas, covars, score, family, link)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -15,6 +15,14 @@ covariate.}
 
 \item{score}{Association score to measure association between genotype and 
 phenotype. Possible values: chi2 (default), glm.}
+
+\item{family}{A string defining the generalized linear model family. This 
+should match one of "binomial", "Poisson", "Gaussian" or "gamma". See
+\link[snpStats]{snp.rhs.tests} for details.}
+
+\item{link}{A string defining the link function for the GLM. This should
+match one of "logit", "log", "identity" or "inverse". See 
+\link[snpStats]{snp.rhs.tests} for details.}
 }
 \value{
 A named vector with the association scores.

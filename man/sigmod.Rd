@@ -4,7 +4,16 @@
 \alias{sigmod}
 \title{Find connected explanatory SNPs}
 \usage{
-sigmod(gwas, net, eta, lambda, covars = data.frame(), score = "chi2")
+sigmod(
+  gwas,
+  net,
+  eta,
+  lambda,
+  covars = data.frame(),
+  score = c("chi2", "glm"),
+  family = c("binomial", "Poisson", "Gaussian", "gamma"),
+  link = c("logit", "log", "identity", "inverse")
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -21,6 +30,14 @@ covariate.}
 
 \item{score}{Association score to measure association between genotype and 
 phenotype. Possible values: chi2 (default), glm.}
+
+\item{family}{A string defining the generalized linear model family. This 
+should match one of "binomial", "Poisson", "Gaussian" or "gamma". See
+\link[snpStats]{snp.rhs.tests} for details.}
+
+\item{link}{A string defining the link function for the GLM. This should
+match one of "logit", "log", "identity" or "inverse". See 
+\link[snpStats]{snp.rhs.tests} for details.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 

@@ -4,7 +4,7 @@
 \alias{mincut}
 \title{Run min-cut algorithm}
 \usage{
-mincut(gwas, net, covars, eta, lambda, score, sigmod)
+mincut(gwas, net, covars, eta, lambda, score, sigmod, family, link)
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
