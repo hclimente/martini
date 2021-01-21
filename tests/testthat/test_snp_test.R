@@ -32,3 +32,16 @@ test_that("glm's chi2 are correctly calculated", {
   expect_equal(c, true_vals, tolerance = .1)
   
 })
+
+test_that("linear model is correctly calculated", {
+  
+  # without covariates
+  true_vals <- c(99, 99, 98, 100, 98, 97, 0, 1, 1, 1, 1, 0, 0, 
+                 0, 100, 100, 98, 99, 99, 100, 0.3, 1, 0, 1, 0)
+  names(true_vals) <- test_gwas[['map']][['snp.names']]
+  
+  c <- snp_test(test_gwas, data.frame(), 'glm', "Gaussian", "identity")
+  
+  expect_equal(c, true_vals, tolerance = .1)
+  
+})

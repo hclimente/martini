@@ -41,8 +41,7 @@ test_that('covariate adjustment works', {
   cones <- scones.cv(test_gwas, test_gi, covars, 
                      etas = seq(2, 0, length=10), 
                      lambdas = seq(2, 0, length=10),
-                     score = 'glm', family = 'binomial',
-                     link = 'logit')
+                     score = 'glm')
   
   # overcorrecting with covars produces trivial solution
   expect_equal(gorder(cones), gorder(test_gi))
