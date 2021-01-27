@@ -33,7 +33,7 @@ Suggests:
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
   S4Vectors (>= 0.12.2),
-  memoise (>= 1.1.0.9000),
+  memoise (>= 2.0.0),
   knitr,
   testthat,
   readr,

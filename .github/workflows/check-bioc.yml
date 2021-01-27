@@ -168,7 +168,6 @@ jobs:
           remotes::install_github("cboettig/knitcitations")
 
           # TODO remove eventually
-          remotes::install_github("r-lib/memoise")
           install.packages("circlize")
 
           ## Pass #1 at installing dependencies
@@ -235,20 +234,6 @@ jobs:
         shell: Rscript {0}
 
       - name: Run BiocCheck
-        if: runner.os == 'Linux'
-        run: |
-          remove.packages('memoise', lib=.Library.site)
-          remotes:::install_github('r-lib/memoise', force=TRUE, lib=.Library.site)
-          BiocCheck::BiocCheck(
-              dir('check', 'tar.gz$', full.names = TRUE),
-              `quit-with-status` = TRUE,
-              `no-check-R-ver` = TRUE,
-              `no-check-bioc-help` = TRUE
-          )
-        shell: Rscript {0}
-
-      - name: Run BiocCheck
-        if: runner.os != 'Linux'
         run: |
           BiocCheck::BiocCheck(
               dir('check', 'tar.gz$', full.names = TRUE),
