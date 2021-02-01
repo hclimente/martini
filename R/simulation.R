@@ -157,12 +157,12 @@ calculateG <- function(effectSize, X, model) {
   X <- t(X)
   
   # calculate weights w
-  p <- (2 * rowSums(X == 0) + rowSums(X == 1)) / (2 * ncol(X))
+  p <- (2 * rowSums(X == 0, na.rm=TRUE) + rowSums(X == 1, na.rm=TRUE)) / (2 * ncol(X))
   x <- 2 * (X == 0) + (X == 1)
   w <- (x - 2 * p) / sqrt(2 * p * (1 - p))
   
   if (model == "additive") {
-    G <- colSums(w * effectSize)
+    G <- colSums(w * effectSize, na.rm = TRUE)
   } else {
     stop(paste0("Genetic model ", model, " not recognised."))
   }
