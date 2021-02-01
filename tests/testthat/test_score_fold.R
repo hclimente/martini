@@ -14,7 +14,7 @@ test_that("clustering coefficients works", {
   # test edge cases 
   full_graph <- make_full_graph(10)
   test_graph <- full_graph + graph_from_edgelist(cbind(seq(1, 14), seq(2, 15)), directed = FALSE)
-  V(test_graph)$name <- test_gwas[['map']][['snp.names']]
+  V(test_graph)$name <- test_gwas[['map']][['snp.name']]
   
   selected <- c(rep(TRUE, 10), rep(FALSE, 15))
   expect_equal(1, martini:::score_fold(test_gwas, data.frame(), test_graph, selected, 'global_clustering'))

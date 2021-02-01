@@ -5,7 +5,7 @@ library(martini)
 ## map
 test_gwas <- list()
 test_gwas$map <- read.table(text = "
-                       chr snp.names cm gpos allele.1 allele.2
+                       chr snp.name cm gpos allele.1 allele.2
                        1 1A1 0 10 A G
                        1 1A2 0 20 A G
                        1 1A3 0 30 A G
@@ -35,14 +35,14 @@ test_gwas$map <- read.table(text = "
 
 ## genotypes
 N <- 100
-sol <- grepl("[AC]", test_gwas$map$snp.names)
+sol <- grepl("[AC]", test_gwas$map$snp.name)
 pCausal <- sum(sol)
 pNonCausal <- nrow(test_gwas$map) - pCausal
 causal <- c(rep(2, N/2), rep(0, N/2))
 rest <- rep(0,N)
 
 X <- do.call(cbind, lapply(sol, function(x) if(x) causal else rest))
-colnames(X) <- test_gwas$map$snp.names
+colnames(X) <- test_gwas$map$snp.name
 rownames(X) <- 1:nrow(X)
 Xp <- X + 1
 # create some heterogeneity
@@ -60,8 +60,8 @@ test_gwas$fam <- data.frame(pedigree = 1:N,
                        affected = Y)
 
 # make snp networks
-snpMapping <- data.frame(snp = test_gwas$map$snp.names,
-                         gene = substr(test_gwas$map$snp.names, 2, 2))
+snpMapping <- data.frame(snp = test_gwas$map$snp.name,
+                         gene = substr(test_gwas$map$snp.name, 2, 2))
 snpMapping <- subset(snpMapping, gene != "-")
 ppi <- read.table(text = "
                   gene1 gene2

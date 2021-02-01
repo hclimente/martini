@@ -7,7 +7,7 @@ set.seed(0)
 causal <- sample(igraph::V(examplegwas$net), 50)
 eff <- rnorm(length(causal))
 X <- as(examplegwas$gwas$genotypes, "numeric")
-X_causal <- X[, examplegwas$gwas$map$snp.names %in% names(causal)]
+X_causal <- X[, examplegwas$gwas$map$snp.name %in% names(causal)]
 
 # case-control phenotype
 sim_cc <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 

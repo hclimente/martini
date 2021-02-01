@@ -5,7 +5,7 @@ skip_if(skip_long)
 # mapped to fgfr2, tox3, fgfr2, none and none, respectively
 brca <- list()
 brca$map <- read.table(text = "
-                       chr snp.names cm gpos allele.1 allele.2
+                       chr snp.name cm gpos allele.1 allele.2
                        10 rs2981579 0 121577821 A G
                        16 rs3803662 0 52552429 A G
                        10 rs2981582 0 121592803 A G
@@ -19,7 +19,7 @@ brca_mapped <- martini:::snp2ensembl(brca)
 # the last one was not assigned to any gene
 athal <- list()
 athal$map <- read.table(text = "
-                       chr snp.names cm gpos allele.1 allele.2
+                       chr snp.name cm gpos allele.1 allele.2
                        4 Chr4_8297892 0 8297892 A G
                        4 Chr4_8297535 0 8297535 A G
                        4 Chr4_8301059 0 8301059 A G
@@ -37,7 +37,7 @@ test_that("output is as expected", {
   expect_equal(ncol(brca_mapped), 2)
 
   # column order
-  expect_equal(length(intersect(brca$map$snp.names, brca_mapped[,1])), 2)
+  expect_equal(length(intersect(brca$map$snp.name, brca_mapped[,1])), 2)
   expect_equal(length(unique(brca_mapped[,2])), 1)
 })
 
@@ -61,7 +61,7 @@ test_that("we map snps to their known genes", {
   # off by one base to FGFR2 10: 121,478,332-121,598,458 
   red <- list()
   red$map <- read.table(text = "
-                       chr snp.names cm gpos allele.1 allele.2
+                       chr snp.name cm gpos allele.1 allele.2
                        10 outbound 0 121478331 A G
                        ", header = TRUE, stringsAsFactors = FALSE)
   red$map$gpos <- as.numeric(red$map$gpos)

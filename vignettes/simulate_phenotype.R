@@ -15,7 +15,7 @@ plot(gi, mark.groups = names(causal))
 X <- lapply(seq_len(100), function(i) { sample(c(0,1,2), 25, replace = TRUE) })
 X <- do.call(rbind, X)
 
-colnames(X) <- minigwas$map$snp.names
+colnames(X) <- minigwas$map$snp.name
 rownames(X) <- 1:nrow(X)
 
 X <- X + 1
