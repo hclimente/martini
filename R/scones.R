@@ -265,6 +265,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5
 #' @template params_etas
 #' @template params_lambdas
 #' @return A list of \code{scones.cv} settings.
+#' @importFrom stats quantile
 #' @examples 
 #' martini:::get_grid(etas = c(1,2,3), lambdas = c(4,5,6))
 #' martini:::get_grid(c = c(1,10,100))
@@ -273,7 +274,10 @@ get_grid <- function(c = numeric(), etas = numeric(), lambdas = numeric()) {
   
   grid <- list()
   
-  logc <- log10(c[c != 0])
+  # remove lowest c, which pull the grid towards irrelevant values
+  ## add noise to avoid issues with repeated cs
+  c <- c + abs(rnorm(length(c), sd = 1e-10))
+  logc <- log10(c[c > quantile(c, 0.01)])
   if (length(etas) & is.numeric(etas)) {
     grid[['etas']] <- sort(etas)
   } else if (length(logc)) {
