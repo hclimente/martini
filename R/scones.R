@@ -274,15 +274,18 @@ get_grid <- function(c = numeric(), etas = numeric(), lambdas = numeric()) {
   
   grid <- list()
   
-  # remove lowest c, which pull the grid towards irrelevant values
-  ## add noise to avoid issues with repeated cs
-  c <- c + abs(rnorm(length(c), sd = 1e-10))
-  logc <- log10(c[c > quantile(c, 0.01)])
+  if (length(c)) {
+    # remove lowest c, which pull the grid towards irrelevant values
+    maxc <- log10(max(c))
+    ## add noise to avoid issues with repeated cs
+    c <- c + abs(rnorm(length(c), sd = 1e-10))
+    c <- c[c > quantile(c, 0.01)]
+    minc <- log10(min(c))
+  }
+  
   if (length(etas) & is.numeric(etas)) {
     grid[['etas']] <- sort(etas)
-  } else if (length(logc)) {
-    minc <- min(logc)
-    maxc <- max(logc)
+  } else if (length(c)) {
     grid[['etas']] <- 10^seq(minc, maxc, length=10)
     grid[['etas']] <- signif(grid[['etas']], 3)
   } else {
@@ -291,9 +294,7 @@ get_grid <- function(c = numeric(), etas = numeric(), lambdas = numeric()) {
   
   if (length(lambdas) & is.numeric(lambdas)) {
     grid[['lambdas']] <- sort(lambdas)
-  } else if (length(logc)) {
-    minc <- min(logc)
-    maxc <- max(logc)
+  } else if (length(c)) {
     grid[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
     grid[['lambdas']] <- signif(grid[['lambdas']], 3)
   } else {
