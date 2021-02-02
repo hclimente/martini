@@ -13,7 +13,7 @@ sigmod.cv(
     "local_clustering"),
   etas = numeric(),
   lambdas = numeric(),
-  family = c("binomial", "Poisson", "Gaussian", "gamma"),
+  family = c("binomial", "poisson", "gaussian", "gamma"),
   link = c("logit", "log", "identity", "inverse")
 )
 }
@@ -39,7 +39,7 @@ scores.}
 If ommited, it's automatically created based on the association scores.}
 
 \item{family}{A string defining the generalized linear model family. This 
-should match one of "binomial", "Poisson", "Gaussian" or "gamma". See
+should match one of "binomial", "poisson", "gaussian" or "gamma". See
 \link[snpStats]{snp.rhs.tests} for details.}
 
 \item{link}{A string defining the link function for the GLM. This should

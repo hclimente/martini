@@ -14,7 +14,7 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
                       criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric(),
-                      family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                      family = c("binomial", "poisson", "gaussian", "gamma"), 
                       link = c("logit", "log", "identity", "inverse")) {
 
   score <- match.arg(score)
@@ -41,7 +41,7 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
 #' @export
 sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), 
                    score = c("chi2", "glm"), 
-                   family = c("binomial", "Poisson", "Gaussian", "gamma"), 
+                   family = c("binomial", "poisson", "gaussian", "gamma"), 
                    link = c("logit", "log", "identity", "inverse")) {
   
   score <- match.arg(score)

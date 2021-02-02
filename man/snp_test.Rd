@@ -17,7 +17,7 @@ covariate.}
 phenotype. Possible values: chi2 (default), glm.}
 
 \item{family}{A string defining the generalized linear model family. This 
-should match one of "binomial", "Poisson", "Gaussian" or "gamma". See
+should match one of "binomial", "poisson", "gaussian" or "gamma". See
 \link[snpStats]{snp.rhs.tests} for details.}
 
 \item{link}{A string defining the link function for the GLM. This should
