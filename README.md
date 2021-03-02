@@ -4,11 +4,11 @@
 [![codecov](https://codecov.io/gh/hclimente/martini/branch/master/graph/badge.svg)](https://codecov.io/gh/hclimente/martini)
 [![BioC](https://bioconductor.org/shields/years-in-bioc/martini.svg)](https://bioconductor.org/packages/devel/bioc/html/martini.html)
 
-`martini` is an R package to perform GWAS experiment that considers prior biological knowledge. This knowledge is modeled as a network of SNPs, were edges represent functional relationships between them (e.g. belonging to the same gene). Then, it looks for regions of the network associated with the phenotype using [SConES](https://academic.oup.com/bioinformatics/article/29/13/i171/198210).
+`martini` is an R package to perform GWAS experiment that considers prior biological knowledge. This knowledge is modeled as a network of SNPs, were edges represent functional relationships between them (e.g. belonging to the same gene). Then, it looks for regions of the network associated with the phenotype using [SConES](https://academic.oup.com/bioinformatics/article/29/13/i171/198210) or [SigMod](https://academic.oup.com/bioinformatics/article/33/10/1536/2874362).
 
 # Installation
 
-Install `martini` like any Bioconductor package:
+Install `martini` like any other Bioconductor package:
 
 ``` r
 install.packages("BiocManager")
@@ -29,18 +29,31 @@ data(minigwas)
 # annotation information) or GI (GM + protein-protein interaction information)
 gs <- get_GS_network(minigwas)
 
-# 3. Find connected, explanatory SNPs (cones)
-cones <- search_cones(minigwas, gs)
+# 3. Run SConES, finding the best parameters by cross-validation
+res <- scones.cv(minigwas, gs)
 
-# cones$selected informs about whether the SNP is selected as cones or not
-head(cones)
-#   snp chr cm pos allele.1 allele.2        c selected module
-# 3 1A1   1  0  10        A        G 96.15385     TRUE      1
-# 4 1A2   1  0  20        A        G 96.15385     TRUE      1
-# 5 1A3   1  0  30        A        G 96.15385     TRUE      1
-# 6 1A4   1  0  40        A        G 96.15385     TRUE      1
-# 7 1A5   1  0  50        A        G 96.15385     TRUE      1
-# 8 1A6   1  0  60        A        G 96.15385     TRUE      1
+# the output is an igraph subnetwork containing the selected SNPs
+res
+# IGRAPH d9128a0 UNW- 12 10 -- 
+# + attr: name (v/c), chr (v/n), pos (v/n), weight (e/n)
+# + edges from d9128a0 (vertex names):
+# [1] 1A1--1A2 1A2--1A3 1A3--1A4 1A4--1A5 1A5--1A6 2C1--2C2 2C2--2C3 2C3--2C4 2C4--2C5 2C5--2C6
 ```
 
 Please, refer to the vignettes for more detailed usage examples. `martini` results can be further examined using the [blur](https://github.com/hclimente/blur) package.
+
+# Citation
+
+A more detailed description can be found in [the pre-print](https://www.biorxiv.org/content/10.1101/2021.01.25.428047v1). If you use `martini` in your work, please cite us:
+
+```
+@article{martini2021,
+	title = {martini: an {R} package for genome-wide association studies using {SNP} networks},
+  author = {Climente-González, Héctor and Azencott, Chloé-Agathe},
+	url = {http://biorxiv.org/lookup/doi/10.1101/2021.01.25.428047},
+	journal = {bioRxiv},
+	month = jan,
+	year = {2021},
+	doi = {10.1101/2021.01.25.428047}
+}
+```
