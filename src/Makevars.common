@@ -1,0 +1,34 @@
+#################################
+##         .o to compile       ##
+#################################
+MAXFLOWOBJ = lib/maxflow/maxflow.o
+
+#################################
+##            Flags            ##
+#################################
+PKG_LIBS0 = -pthread \
+  $(SHLIB_OPENMP_CFLAGS) \
+  "${R_PACKAGE_DIR}/usrlib${R_ARCH}/libmaxflow.a"
+PKG_CXXFLAGS0 = -std=c++11 $(SHLIB_OPENMP_CFLAGS) \
+  $(DFLAGS) -I./lib \
+  `${R_HOME}/bin/Rscript -e "Rcpp:::CxxFlags()"` \
+  -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+DFLAGS = -D_USE_KNETFILE -D_FILE_OFFSET_BITS=64 \
+  -U_FORTIFY_SOURCE -DBGZF_CACHE
+
+#################################
+##           Compile           ##
+#################################
+.PHONY: all libs clean
+
+all: $(SHLIB)
+
+$(SHLIB): libs
+
+libs: libs0
+	cp -r lib/maxflow "${R_PACKAGE_DIR}/include"
+	mkdir -p "${R_PACKAGE_DIR}/usrlib${R_ARCH}"
+	cp libmaxflow.a "${R_PACKAGE_DIR}/usrlib${R_ARCH}"
+
+clean:
+	rm -r $(MAXFLOWOBJ) *.a *.o *.so *.dll

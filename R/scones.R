@@ -3,150 +3,150 @@
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network. Select the hyperparameters by
 #' cross-validation.
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
-#' @template params_scones
-#' @return A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
-#' following additions:
-#' \itemize{
-#' \item{c: contains the univariate association score for every single SNP.}
-#' \item{selected: logical vector indicating if the SNP was selected by SConES 
-#' or not.}
-#' \item{module: integer with the number of the module the SNP belongs to.}
-#' }
-#' @references Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-#' Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-#' association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
-#' \url{https://doi.org/10.1093/bioinformatics/btt238}
+#' @template params_gwas
+#' @template params_net
+#' @template params_covars
+#' @template params_score
+#' @template params_criterion
+#' @template params_etas
+#' @template params_lambdas
+#' @template return_cones
+#' @template params_family
+#' @template params_link
+#' @template reference_azencott
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
 #' scones.cv(minigwas, gi, score = "glm")
 #' @export
-scones.cv <- function(gwas, net, covars = data.frame(), score = "chi2", 
-                      criterion = "consistency", etas = numeric(), 
-                      lambdas = numeric()) {
+scones.cv <- function(gwas, net, covars = data.frame(), 
+                      score = c("chi2", "glm"), 
+                      criterion = c("stability", "bic", "aic", "aicc", 
+                                    "global_clustering", "local_clustering"), 
+                      etas = numeric(), lambdas = numeric(),
+                      family = c("binomial", "poisson", "gaussian", "gamma"), 
+                      link = c("logit", "log", "identity", "inverse")) {
   
-  L <- get_L(gwas, net)
-
   # set options
-  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
+  score <- match.arg(score)
+  criterion <- match.arg(criterion)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  c <- snp_test(gwas, covars, score, family, link)
+  grid <- get_grid(c = c, etas, lambdas)
   
-  return(mincut.cv(gwas, net, L, covars, opts))
-  
-}
-
-#' Compute Laplacian matrix
-#' @importFrom igraph simplify as_adj
-#' @importFrom Matrix diag rowSums
-#' @keywords internal
-get_L <- function(gwas, net) {
-  
-  map <- sanitize_map(gwas)
-  
-  # remove redundant edges and self-edges in network and sort
-  net <- simplify(net)
-  L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  L <- L[map[['snp']], map[['snp']]]
-  L <- -L
-  diag(L) <- rowSums(abs(L))
-  
-  return(L)
+  return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
+                   criterion, score, FALSE, family, link))
   
 }
 
+#' Run the cross-validated min-cut algorithm
+#'
+#' @template params_gwas
+#' @template params_net
+#' @template params_covars
+#' @template params_family
+#' @template params_link
+#' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
-mincut.cv <- function(gwas, net, net_matrix, covars, opts) {
+mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, 
+                      sigmod, family, link) {
   
-  # prepare data: remove redundant edges and self-edges in network and sort
+  # prepare data
   gwas <- permute_snpMatrix(gwas)
-  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
-  
-  cones <- sanitize_map(gwas)
-  cones[['c']] <- single_snp_association(gwas, covars, opts[['score']])
+  L <- get_laplacian(gwas, net)
   
   # grid search
-  y <- gwas[['fam']][['affected']]
-  
-  K <- cut(seq(1, length(y)), breaks = 10, labels = FALSE)
-  scores <- lapply(unique(K), function(k) {
-    single_snp_association(gwas, covars, opts[['score']], 
-                           samples = (K != k) )
+  K <- cut(seq(1, nrow(gwas[['fam']])), breaks = 10, labels = FALSE)
+  folds <- lapply(unique(K), function(k) {
+    
+    gwas_k <- subset_snpMatrix(gwas, (K!=k))
+    covars_k <- arrange_covars(gwas_k, covars)
+    c_k <- snp_test(gwas_k, covars_k, score, family, link)
+    
+    lapply(lambdas, function(lambda) {
+      c_k <- if (sigmod) c_k + lambda * diag(L) else c_k
+      lapply(etas, function(eta) {
+        selected_k <- mincut_c(c_k, eta, lambda, L)
+        score_fold(gwas_k, covars_k, net, selected_k, criterion)
+      })
+    })
   })
   
-  grid_scores <- lapply(opts[['etas']], function(eta){
-    lapply(opts[['lambdas']], function(lambda){
-      folds <- lapply(scores, run_scones, eta, lambda, net_matrix)
-      folds <- do.call(rbind, folds)
-      score_fold(folds, opts[['criterion']], K, gwas, covars)
-    }) %>% unlist
-  })
-  grid_scores <- do.call(rbind, grid_scores)
-  dimnames(grid_scores) <- list(opts[['etas']], opts[['lambdas']])
+  grid <- matrix(0, nrow = length(lambdas), ncol = length(etas), 
+                 dimnames = list(lambdas, etas))
   
-  message('Grid of ', opts[['criterion']], ' scores (etas x lambdas):\n')
-  message(paste0(capture.output(grid_scores), collapse = "\n") )
+  for (i in seq(length(lambdas))) {
+    for (j in seq(length(etas))){
+      mat <- lapply(folds, function(x) x[[i]][[j]])
+      mat <- do.call(rbind, mat)
+      grid[i,j] <- sum(colSums(mat)) / (10 * sum(colSums(mat) != 0))
+    }
+  }
   
-  best <- which(grid_scores == max(grid_scores), arr.ind = TRUE)
-  best_eta <- opts[['etas']][best[1, 'row']]
-  best_lambda <- opts[['lambdas']][best[1, 'col']]
+  best <- which(grid == max(grid), arr.ind = TRUE)
+  best_lambda <- lambdas[best[1, 'row']]
+  best_eta <- etas[best[1, 'col']]
   
-  message("Selected parameters:\neta =",best_eta,"\nlambda =",best_lambda,"\n")
+  message('Grid of ', criterion, ' scores (lambdas \u00D7 etas):\n')
+  message(paste0(capture.output(grid), collapse = "\n") )
+  message("Selected parameters:\neta =", best_eta, "\nlambda =", best_lambda)
   
-  selected <- run_scones(cones[['c']], best_eta, best_lambda, net_matrix)
-  cones[['selected']] <- as.logical(selected)
-  
-  cones <- get_snp_modules(cones, net)
+  cones <- mincut(gwas, net, covars, best_eta, best_lambda, score, sigmod, 
+                  family, link)
   
   return(cones)
   
 }
 
-#' Find connected explanatory SNPs.
+#' Find connected explanatory SNPs
 #' 
 #' @description Finds the SNPs maximally associated with a phenotype while being
 #' connected in an underlying network.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
-#' @param score Association score to measure association between genotype and 
-#' phenotype. Possible values: chi2 (default), glm.
+#' @template params_gwas
+#' @template params_net
 #' @param eta Value of the eta parameter.
 #' @param lambda Value of the lambda parameter.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
+#' @template params_covars
+#' @template params_score
+#' @template params_family
+#' @template params_link
+#' @template return_cones
 #' @inherit scones.cv return references
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones(minigwas, gi, 10, 1)
 #' @export
-scones <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
+scones <- function(gwas, net, eta, lambda, covars = data.frame(), 
+                   score = c("chi2", "glm"), 
+                   family = c("binomial", "poisson", "gaussian", "gamma"), 
+                   link = c("logit", "log", "identity", "inverse")) {
   
-  L <- get_L(gwas, net)
-  return(mincut(gwas, net, L, covars, eta, lambda, score))
+  score <- match.arg(score)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  
+  return(mincut(gwas, net, covars, eta, lambda, score, FALSE, family, link))
   
 }
 
+#' Run min-cut algorithm
+#'
+#' @template return_cones
 #' @keywords internal
-mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
+mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
+ 
+  L <- get_laplacian(gwas, net)
+   
+  covars <- arrange_covars(gwas, covars)
   
-  covars <- arrange_covars(gwas, covars) # TODO use PC as covariates
+  map <- sanitize_map(gwas)
+  c <- snp_test(gwas, covars, score, family, link)
+  c <- if (sigmod) c + lambda * diag(L) else c
+  selected <- mincut_c(c, eta, lambda, L)
+  cones <- induced_subgraph(net, map[['snp']][selected])
   
-  cones <- sanitize_map(gwas)
-  cones[['c']] <- single_snp_association(gwas, covars, score)
-  
-  # run scores
-  selected <- run_scones(cones[['c']], eta, lambda, net_matrix)
-  cones[['selected']] <- as.logical(selected)
-  
-  cones <- get_snp_modules(cones, net)
   
   return(cones)
   
@@ -156,24 +156,19 @@ mincut <- function(gwas, net, net_matrix, covars, eta, lambda, score) {
 #' 
 #' @description Calculate the association between genotypes and a phenotype,
 #' adjusting by covariates.
-#' 
-#' @param genotypes A SnpMatrix object with the genotype information.
-#' @param phenotypes A numeric vector with the phenotypes.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
-#' @param score String with the association test to perform. Possible
-#' values: chi2, glm.
+#' @template params_gwas
+#' @template params_covars
+#' @template params_score
+#' @template params_family
+#' @template params_link
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
 #' @keywords internal
-single_snp_association <- function(gwas, covars, score, 
-                                   samples = rep(TRUE, nrow(gwas[['fam']])) ) {
+snp_test <- function(gwas, covars, score, family, link) {
   
-  genotypes <- gwas[['genotypes']][samples, ]
-  phenotypes <- gwas[['fam']][['affected']][samples]
-  covars <- covars[samples, ]
-    
+  genotypes <- gwas[['genotypes']]
+  phenotypes <- gwas[['fam']][['affected']]
+  
   if (score == 'chi2') {
     
     tests <- single.snp.tests(phenotypes, snp.data = genotypes)
@@ -183,9 +178,11 @@ single_snp_association <- function(gwas, covars, score,
     
     if (ncol(covars) && nrow(covars) == nrow(genotypes)) {
       covars <- as.matrix(covars)
-      tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes)
+      tests <- snp.rhs.tests(phenotypes ~ covars, snp.data = genotypes,
+                             family = family, link = link)
     } else {
-      tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes)
+      tests <- snp.rhs.tests(phenotypes ~ 1, snp.data = genotypes,
+                             family = family, link = link)
     }
     
     c <- chi.squared(tests)
@@ -201,153 +198,109 @@ single_snp_association <- function(gwas, covars, score,
 #' 
 #' @description Take the k-solutions for a combination of hyperparameters, and 
 #' assign a score to it (the larger, the better).
-#' @param folds k-times-d matrix, where k is the number of folds, and d the 
-#' number of SNPs.
-#' @param criterion String with the method to use to score the folds.
-#' @param K Numeric vector of length equal to the number of samples. The 
-#' elements are integers from 1 to # folds. Indicates which samples belong to 
-#' which fold.
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param covars A data frame with the covariates. It must contain a column 
-#' 'sample' containing the sample IDs, and an additional columns for each 
-#' covariate.
+#' @template params_gwas
+#' @template params_net
+#' @template params_covars
+#' @template params_criterion
+#' @param max_solution Maximum fraction of the SNPs involved in the solution
+#' (between 0 and 1). Larger solutions will be discarded.
+#' @importFrom igraph induced_subgraph transitivity
+#' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(folds, criterion, K, gwas, covars) {
+score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5) {
   
-  score <- 0
+  # score for a trivial solution
+  score <- -Inf
   
-  # penalize trivial solutions
-  if (!sum(folds) | ( sum(folds)/length(folds) > .5) ){
-    score <- -Inf
-  } else if (criterion == 'consistency') {
-    
-    folds_diff <- unique(K)
-    
-    for (i in folds_diff) {
-      for (j in folds_diff[folds_diff > i]) {
-        C <- sum(folds[i,] & folds[j,])
-        maxC <- sum(folds[i,] | folds[j,])
-        score <- score + ifelse(maxC == 0, 0, C/maxC)
+  if (sum(selected) & (sum(selected)/length(selected) <= max_solution) ){
+    if (criterion == 'stability') {
+      score <- selected
+    } else if (criterion %in% c('bic', 'aic', 'aicc')) {
+        
+      phenotypes <- gwas[['fam']][['affected']]
+      genotypes <- as(gwas[['genotypes']], 'numeric')
+      genotypes <- as.data.frame(genotypes[, selected])
+      if (ncol(covars)) {
+        covars <- arrange_covars(gwas, covars)
+        genotypes <- cbind(genotypes, covars)
       }
-    } 
-  } else if (criterion %in% c('bic', 'aic', 'aicc')) {
-    for (k in unique(K)) {
       
-      phenotypes <- gwas[['fam']][['affected']][K != k]
-      genotypes <- as(gwas[['genotypes']][K != k, ], 'numeric')
-      genotypes <- as.data.frame(genotypes[ , folds[k,]])
-      genotypes <- cbind(genotypes, covars[K != k, ])
-      
-      model <- glm(phenotypes ~ 1, data = genotypes)
+      model <- glm(phenotypes ~ ., data = genotypes)
       
       if (criterion == 'bic') {
-        score <- score + BIC(model)
+        score <- BIC(model)
       } else if (criterion == 'aic') {
-        score <- score + AIC(model)
+        score <- AIC(model)
       } else if (criterion == 'aicc') {
         k <- ncol(genotypes)
         n <- nrow(genotypes)
-        score <- score + AIC(model) + (2*k^2 + 2*k)/(n - k - 1)
+        score <- AIC(model) + (2*k^2 + 2*k)/(n - k - 1)
+      }
+      # invert scores, as best models have the lowest scores
+      score <- -score
+    } else if (criterion %in% c('local_clustering', 'global_clustering')) {
+      cones <- sanitize_map(gwas)
+      cones <- cones[selected, 'snp']
+      cones_subnet <- induced_subgraph(net, cones)
+      
+      if (criterion == 'local_clustering') {
+        score <- transitivity(cones_subnet, type = 'local')
+        score <- mean(score, na.rm = TRUE)
+      } else if (criterion == 'global_clustering') {
+        score <- transitivity(cones_subnet, type = 'global')
       }
     }
-    # invert scores, as best models have the lowest scores
-    score <- -score
   }
   
   return(score)
   
 }
 
-#' Return groups of interconnected SNPs.
-#' 
-#' @description Find modules composed by interconnected SNPs.
-#' 
-#' @param cones Results from \code{evo}.
-#' @param net The same SNP network provided to \code{evo}.
-#' @return A list with the modules of selected SNPs.
-#' @importFrom igraph induced_subgraph components
-#' @examples
-#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-#' cones <- scones.cv(minigwas, gi)
-#' martini:::get_snp_modules(cones, gi)
-#' @keywords internal
-get_snp_modules <- function(cones, net) {
-  
-  selected <- subset(cones, selected)
-  subnet <- induced_subgraph(net, as.character(selected[,'snp']))
-  
-  modules <- components(subnet)
-  modules <- as.data.frame(modules['membership'])
-  colnames(modules) <- "module"
-  modules['snp'] <- rownames(modules)
-  
-  modules <- merge(cones, modules, all.x = TRUE)
-  cones <- modules[match(cones[,'snp'], modules[,'snp']),]
-
-  return(cones)
-  
-}
-
-#' Parse \code{scones.cv} settings.
+#' Parse \code{scones.cv} settings
 #' 
 #' @description Creates a list composed by all \code{scones.cv} settings, with 
 #' the values provided by the user, or the default ones if none is provided.
-#' @param c Numeric vector with the association scores of the SNPs. Specify it 
-#' to automatically an appropriate range of etas and lambas.
-#' @template params_scones
-#' @return A list of \code{evo} settings.
+#' @template params_c
+#' @template params_etas
+#' @template params_lambdas
+#' @return A list of \code{scones.cv} settings.
+#' @importFrom stats quantile
 #' @examples 
-#' martini:::parse_scones_settings(etas = c(1,2,3), lambdas = c(4,5,6))
-#' martini:::parse_scones_settings(c = c(1,10,100), score = "glm")
+#' martini:::get_grid(etas = c(1,2,3), lambdas = c(4,5,6))
+#' martini:::get_grid(c = c(1,10,100))
 #' @keywords internal
-parse_scones_settings <- function(c = numeric(), score = "chi2", 
-                                  criterion = "consistency", etas = numeric(), 
-                                  lambdas = numeric()) {
+get_grid <- function(c = numeric(), etas = numeric(), lambdas = numeric()) {
   
-  settings <- list()
+  grid <- list()
   
-  # unsigned int
-  valid_score <- c('glm', 'chi2')
-  if (score %in% valid_score) {
-    settings[['score']] <- score
-  } else  {
-    stop(paste("Error: invalid score", score))
+  if (length(c)) {
+    # remove lowest c, which pull the grid towards irrelevant values
+    maxc <- log10(max(c))
+    ## add noise to avoid issues with repeated cs
+    c <- c + abs(rnorm(length(c), sd = 1e-10))
+    c <- c[c > quantile(c, 0.01)]
+    minc <- log10(min(c))
   }
   
-  # unsigned int
-  valid_criterion <- c('consistency', 'bic', 'aic', 'aicc')
-  if (criterion %in% valid_criterion) {
-    settings[['criterion']] <- criterion
-  } else {
-    stop(paste("Error: invalid criterion", criterion))
-  }
-  
-  # VectorXd
-  logc <- log10(c[c != 0])
   if (length(etas) & is.numeric(etas)) {
-    settings[['etas']] <- sort(etas)
-  } else if (length(logc)) {
-    minc <- min(logc)
-    maxc <- max(logc)
-    settings[['etas']] <- 10^seq(minc, maxc, length=10)
-    settings[['etas']] <- signif(settings[['etas']], 3)
+    grid[['etas']] <- sort(etas)
+  } else if (length(c)) {
+    grid[['etas']] <- 10^seq(minc, maxc, length=10)
+    grid[['etas']] <- signif(grid[['etas']], 3)
   } else {
     stop("Error: specify a valid etas or an association vector.")
   }
   
-  # VectorXd
   if (length(lambdas) & is.numeric(lambdas)) {
-    settings[['lambdas']] <- sort(lambdas)
-  } else if (length(logc)) {
-    minc <- min(logc)
-    maxc <- max(logc)
-    settings[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
-    settings[['lambdas']] <- signif(settings[['lambdas']], 3)
+    grid[['lambdas']] <- sort(lambdas)
+  } else if (length(c)) {
+    grid[['lambdas']] <- 10^seq(minc - 1, maxc + 1, length=10)
+    grid[['lambdas']] <- signif(grid[['lambdas']], 3)
   } else {
     stop("Error: specify a valid lambdas or an association vector.")
   }
   
-  return(settings);
+  return(grid)
   
 }

@@ -7,7 +7,7 @@
 is_coherent(gwas)
 }
 \arguments{
-\item{gwas}{A GWAS experiment.}
+\item{gwas}{A SnpMatrix object with the GWAS information.}
 }
 \value{
 TRUE if the GWAS dataset is coherent. Else, raises an error.

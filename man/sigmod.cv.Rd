@@ -8,10 +8,13 @@ sigmod.cv(
   gwas,
   net,
   covars = data.frame(),
-  score = "chi2",
-  criterion = "consistency",
+  score = c("chi2", "glm"),
+  criterion = c("stability", "bic", "aic", "aicc", "global_clustering",
+    "local_clustering"),
   etas = numeric(),
-  lambdas = numeric()
+  lambdas = numeric(),
+  family = c("binomial", "poisson", "gaussian", "gamma"),
+  link = c("logit", "log", "identity", "inverse")
 )
 }
 \arguments{
@@ -23,11 +26,10 @@ sigmod.cv(
 'sample' containing the sample IDs, and an additional columns for each 
 covariate.}
 
-\item{score}{Association score to measure association between 
-genotype and phenotype. Possible values: chi2 (default), glm.}
+\item{score}{Association score to measure association between genotype and 
+phenotype. Possible values: chi2 (default), glm.}
 
-\item{criterion}{String with the function to measure the quality of a split. 
-Possible values: consistency (default), bic, aic, aicc.}
+\item{criterion}{String with the function to measure the quality of a split.}
 
 \item{etas}{Numeric vector with the etas to explore in the grid search. If 
 ommited, it's automatically created based on the association
@@ -35,6 +37,14 @@ scores.}
 
 \item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
 If ommited, it's automatically created based on the association scores.}
+
+\item{family}{A string defining the generalized linear model family. This 
+should match one of "binomial", "poisson", "gaussian" or "gamma". See
+\link[snpStats]{snp.rhs.tests} for details.}
+
+\item{link}{A string defining the link function for the GLM. This should
+match one of "logit", "log", "identity" or "inverse". See 
+\link[snpStats]{snp.rhs.tests} for details.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 

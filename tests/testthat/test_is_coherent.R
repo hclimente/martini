@@ -1,7 +1,7 @@
 library(martini)
 
 suffledMap <- minigwas$map[sample(1:nrow(minigwas$map)), ]
-shuffledGenotypes <- minigwas$genotypes[, suffledMap$snp.names]
+shuffledGenotypes <- minigwas$genotypes[, suffledMap$snp.name]
 
 test_that("we get errors when we should", {
   

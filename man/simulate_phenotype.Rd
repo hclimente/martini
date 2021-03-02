@@ -20,7 +20,7 @@ simulate_phenotype(
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{snps}{Character vector with the SNP ids of the causal SNPs. Must match
-SNPs in gwas[["map"]][["snp.names"]].}
+SNPs in gwas[["map"]][["snp.name"]].}
 
 \item{h2}{Heritability of the phenotype (between 0 and 1).}
 

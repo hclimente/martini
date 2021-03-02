@@ -9,7 +9,12 @@ arrange_covars(gwas, covars)
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{net}{An igraph network that connects the SNPs.}
+\item{covars}{A data frame with the covariates. It must contain a column 
+'sample' containing the sample IDs, and an additional columns for each 
+covariate.}
+}
+\value{
+The covars data.frame, with the rows in the same order as gwas.
 }
 \description{
 Prepares de covariates data.frame for the functions used in

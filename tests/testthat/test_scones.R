@@ -1,9 +1,9 @@
-library(martini)
-
-gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
-
 test_that("output is as expected", {
   
-  expect_equal(scones(minigwas, gi, 10, 1), scones.cv(minigwas, gi))
+  cones <- scones(test_gwas, test_gi, 10, 1)
+  cones.cv <- scones.cv(test_gwas, test_gi)
+  
+  expect_true(all(V(cones) == V(cones.cv)))
+  expect_true(all(E(cones) == E(cones.cv)))
   
 })

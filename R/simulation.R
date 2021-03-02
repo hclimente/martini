@@ -61,7 +61,7 @@ simulate_causal_snps <- function(net, ngenes = 20, pcausal = 1) {
 #' 
 #' @param gwas A SnpMatrix object with the GWAS information.
 #' @param snps Character vector with the SNP ids of the causal SNPs. Must match
-#' SNPs in gwas[["map"]][["snp.names"]].
+#' SNPs in gwas[["map"]][["snp.name"]].
 #' @param h2 Heritability of the phenotype (between 0 and 1).
 #' @param model String specifying the genetic model under the phenotype.
 #' Accepted values: "additive".
@@ -82,6 +82,7 @@ simulate_causal_snps <- function(net, ngenes = 20, pcausal = 1) {
 #' @references Inspired from GCTA simulation tool:
 #' \url{http://cnsgenomics.com/software/gcta/Simu.html}.
 #' @importClassesFrom snpStats SnpMatrix
+#' @importFrom methods as
 #' @importFrom stats rnorm var
 #' @importFrom utils head tail
 #' @examples 
@@ -103,9 +104,9 @@ simulate_phenotype <- function(gwas, snps, h2, model = "additive",
   
   X <- as(gwas[["genotypes"]], "numeric")
   
-  if (any(! names(snps) %in% gwas[["map"]][["snp.names"]])) {
+  if (any(! names(snps) %in% gwas[["map"]][["snp.name"]])) {
     stop(paste("The following causal SNPs are not in the SNP list:", 
-         paste(setdiff(names(snps), gwas[["map"]][["snp.names"]]), 
+         paste(setdiff(names(snps), gwas[["map"]][["snp.name"]]), 
                collapse = ",")))
   }
   
@@ -156,12 +157,12 @@ calculateG <- function(effectSize, X, model) {
   X <- t(X)
   
   # calculate weights w
-  p <- (2 * rowSums(X == 0) + rowSums(X == 1)) / (2 * ncol(X))
+  p <- (2 * rowSums(X == 0, na.rm=TRUE) + rowSums(X == 1, na.rm=TRUE)) / (2 * ncol(X))
   x <- 2 * (X == 0) + (X == 1)
   w <- (x - 2 * p) / sqrt(2 * p * (1 - p))
   
   if (model == "additive") {
-    G <- colSums(w * effectSize)
+    G <- colSums(w * effectSize, na.rm = TRUE)
   } else {
     stop(paste0("Genetic model ", model, " not recognised."))
   }

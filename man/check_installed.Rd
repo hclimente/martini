@@ -4,10 +4,10 @@
 \alias{check_installed}
 \title{Check package is installed}
 \usage{
-check_installed(pkg, fn = "this function")
+check_installed(pkgs, fn = "This function")
 }
 \arguments{
-\item{pkg}{Name of the package.}
+\item{pkgs}{Character vector with the names of the packages.}
 
 \item{fn}{Function calling the check.}
 }
@@ -19,7 +19,7 @@ Checks if a package is installed, launches an error if it is
 not.
 }
 \examples{
-martini:::check_installed("martini")
+martini:::check_installed(c("martini"))
 \dontrun{martini:::check_installed("martinid")}
 }
 \keyword{internal}

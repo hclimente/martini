@@ -1,7 +1,7 @@
 load("examplegwas.rda")
 
 gwas <- examplegwas[['gwas']]
-ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 1, 0.5), symmetric = T)
+ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, 1, 0.5), symmetric = TRUE)
 colnames(ld) <- c("rs1101", "rs1102", "rs1103")
 rownames(ld) <- colnames(ld)
 
@@ -55,13 +55,13 @@ test_that("edges have the apropriate values", {
 
 test_that("negative and NAs are not possible", {
   
-  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, -10, 0.5), symmetric = T)
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(0, -10, 0.5), symmetric = TRUE)
   colnames(ld) <- c("rs1101", "rs1102", "rs1103")
   rownames(ld) <- colnames(ld)
   expect_error(ldweight_edges(net, ld, method = "inverse"),
                "Edge weights cannot be negative.")
   
-  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = T)
+  ld <- Matrix::sparseMatrix(i = c(1,1,2), j = c(1,3,3), x = c(NA, NA, NA), symmetric = TRUE)
   colnames(ld) <- c("rs1101", "rs1102", "rs1103")
   rownames(ld) <- colnames(ld)
   expect_error(ldweight_edges(net, ld, method = "inverse"),

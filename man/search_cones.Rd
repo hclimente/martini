@@ -4,26 +4,50 @@
 \alias{search_cones}
 \title{Find connected explanatory SNPs.}
 \usage{
-search_cones(gwas, net, encoding = "additive", sigmod = FALSE, ...)
+search_cones(
+  gwas,
+  net,
+  encoding = "additive",
+  sigmod = FALSE,
+  covars = data.frame(),
+  associationScore = c("chi2", "glm"),
+  modelScore = c("stability", "bic", "aic", "aicc", "global_clustering",
+    "local_clustering"),
+  etas = numeric(),
+  lambdas = numeric()
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
 \item{net}{An igraph network that connects the SNPs.}
 
-\item{encoding}{SNP encoding. Possible values: additive (default), resessive,
-dominant, codominant.}
+\item{encoding}{SNP encoding (unused argument).}
 
 \item{sigmod}{Boolean. If TRUE, use the Sigmod variant of SConES, meant to 
 prioritize tightly connected clusters of SNPs.}
 
-\item{...}{Extra arguments for \code{\link{get_evo_settings}}.}
+\item{covars}{A data frame with the covariates. It must contain a column 
+'sample' containing the sample IDs, and an additional columns for each 
+covariate.}
+
+\item{associationScore}{Association score to measure association between 
+genotype and phenotype.}
+
+\item{modelScore}{String with the function to measure the quality of a split.}
+
+\item{etas}{Numeric vector with the etas to explore in the grid search. If 
+ommited, it's automatically created based on the association
+scores.}
+
+\item{lambdas}{Numeric vector with the lambdas to explore in the grid search.
+If ommited, it's automatically created based on the association scores.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
 following additions:
 \itemize{
-\item{C: contains the univariate association score for every single SNP.}
+\item{c: contains the univariate association score for every single SNP.}
 \item{selected: logical vector indicating if the SNP was selected by SConES 
 or not.}
 \item{module: integer with the number of the module the SNP belongs to.}

@@ -7,15 +7,14 @@
 get_GM_network(
   gwas,
   organism = 9606,
-  snpMapping = snp2gene(gwas, organism),
+  snpMapping = snp2ensembl(gwas, organism),
   col_genes = c("snp", "gene")
 )
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
 
-\item{organism}{Tax ID of the studied organism. Required if snpMapping is not
-provided. The default is 9606 (human).}
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
 
 \item{snpMapping}{A data.frame informing how SNPs map to genes. It contains 
 minimum two columns: SNP id and a gene it maps to. Each row corresponds to 

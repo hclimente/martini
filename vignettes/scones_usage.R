@@ -26,7 +26,7 @@ par(mar=c(0,0,0,0)+.1)
 plot(gi)
 
 ## ----find cones gridsearch----------------------------------------------------
-cones <- search_cones(minigwas, gi)
+cones <- scones.cv(minigwas, gi)
 
 ## -----------------------------------------------------------------------------
 head(cones)

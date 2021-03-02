@@ -7,7 +7,7 @@ set.seed(0)
 causal <- sample(igraph::V(examplegwas$net), 50)
 eff <- rnorm(length(causal))
 X <- as(examplegwas$gwas$genotypes, "numeric")
-X_causal <- X[, examplegwas$gwas$map$snp.names %in% names(causal)]
+X_causal <- X[, examplegwas$gwas$map$snp.name %in% names(causal)]
 
 # case-control phenotype
 sim_cc <- simulate_phenotype(examplegwas$gwas, causal, h2 = 1, 
@@ -65,8 +65,7 @@ test_that("there is an association between phenotype and genotype", {
 
 test_that("errors when it should", {
   
-  source("big_network.R")
-  badCausal <- sample(igraph::V(gi), 10)
+  badCausal <- sample(igraph::V(test_gi), 10)
   
   # general errors
   expect_error(simulate_phenotype(examplegwas$gwas, badCausal, h2 = 1, effectSize = eff),

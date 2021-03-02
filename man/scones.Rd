@@ -2,9 +2,18 @@
 % Please edit documentation in R/scones.R
 \name{scones}
 \alias{scones}
-\title{Find connected explanatory SNPs.}
+\title{Find connected explanatory SNPs}
 \usage{
-scones(gwas, net, eta, lambda, covars = data.frame(), score = "chi2")
+scones(
+  gwas,
+  net,
+  eta,
+  lambda,
+  covars = data.frame(),
+  score = c("chi2", "glm"),
+  family = c("binomial", "poisson", "gaussian", "gamma"),
+  link = c("logit", "log", "identity", "inverse")
+)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -21,6 +30,14 @@ covariate.}
 
 \item{score}{Association score to measure association between genotype and 
 phenotype. Possible values: chi2 (default), glm.}
+
+\item{family}{A string defining the generalized linear model family. This 
+should match one of "binomial", "poisson", "gaussian" or "gamma". See
+\link[snpStats]{snp.rhs.tests} for details.}
+
+\item{link}{A string defining the link function for the GLM. This should
+match one of "logit", "log", "identity" or "inverse". See 
+\link[snpStats]{snp.rhs.tests} for details.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
@@ -41,8 +58,8 @@ gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 scones(minigwas, gi, 10, 1)
 }
 \references{
-Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., & 
-Borgwardt, K. M. (2013). Efficient network-guided multi-locus 
-association mapping with graph cuts. Bioinformatics, 29(13), 171-179. 
+Azencott, C. A., Grimm, D., Sugiyama, M., Kawahara, Y., &
+Borgwardt, K. M. (2013). Efficient network-guided multi-locus association
+mapping with graph cuts. Bioinformatics, 29(13), 171-179.
 \url{https://doi.org/10.1093/bioinformatics/btt238}
 }

@@ -1,7 +1,6 @@
 #' Subgraph of vertices with an attribute
 #' 
 #' @description Returns a subgraph matching some condition.
-#' 
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}.
@@ -24,7 +23,6 @@ subnet <- function(net, attr, values, affirmative = TRUE) {
 #' Vertices with an attribute
 #' 
 #' @description Returns the nodes matching some condition.
-#' 
 #' @param net An igraph network.
 #' @param attr An attribute of the vertices.
 #' @param values Possible values of \code{attr}
@@ -55,17 +53,18 @@ subvert <- function(net, attr, values, affirmative = TRUE) {
 #' @description Checks if a package is installed, launches an error if it is
 #' not.
 #' 
-#' @param pkg Name of the package.
+#' @param pkgs Character vector with the names of the packages.
 #' @param fn Function calling the check.
 #' @return The package is loaded into the namespace.
 #' @examples 
-#' martini:::check_installed("martini")
+#' martini:::check_installed(c("martini"))
 #' \dontrun{martini:::check_installed("martinid")}
 #' @keywords internal
-check_installed <- function(pkg, fn = "this function") {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    stop(paste(pkg, "needed for", fn, "to work. Please install it."),
-         call. = FALSE)
+check_installed <- function(pkgs, fn = "This function") {
+  installed <- unlist(lapply(pkgs, requireNamespace, quietly = TRUE))
+  if (!all(installed)) {
+    stop(paste0(fn, " requires the following packages to be installed:\n", 
+                paste(pkgs[!installed], collapse = '\n')), call. = FALSE)
   }
 }
 
@@ -73,7 +72,7 @@ check_installed <- function(pkg, fn = "this function") {
 #' 
 #' @description Checks that the different data structures have the SNPs in the 
 #' same order.
-#' @param gwas A GWAS experiment.
+#' @template params_gwas
 #' @return TRUE if the GWAS dataset is coherent. Else, raises an error.
 #' @examples 
 #' martini:::is_coherent(minigwas)
@@ -103,14 +102,14 @@ is_coherent <- function(gwas) {
 #' @description Prepares de covariates data.frame for the functions used in
 #' \code{scones}, like \code{single_snp_association} or \code{score_folds}
 #' .
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
-#' @param net An igraph network that connects the SNPs.
+#' @template params_gwas
+#' @template params_covars
+#' @return The covars data.frame, with the rows in the same order as gwas. 
 #' @keywords internal
 arrange_covars <- function(gwas, covars) {
   
-  if (ncol(covars)) {
-    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]), ]
+  if (any(dim(covars))) {
+    covars <- covars[match(row.names(gwas[['genotypes']]), covars[['sample']]),]
     covars <- subset(covars, select = -sample)
   }
   
@@ -122,8 +121,7 @@ arrange_covars <- function(gwas, covars) {
 #' 
 #' @description Compute a permutation of the samples of a snpMatrix object. 
 #' Useful to make sure that the folds are not stratified by phenotype.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
+#' @template params_gwas
 #' @keywords internal
 permute_snpMatrix <- function(gwas) {
   
@@ -136,6 +134,23 @@ permute_snpMatrix <- function(gwas) {
   return(gwas)
   
 }
+
+#' Subsample snpMatrix
+#' 
+#' @description Compute a permutation of the samples of a snpMatrix object. 
+#' Useful to make sure that the folds are not stratified by phenotype.
+#' @template params_gwas
+#' @param samples Vector (logical or numeric) containing the samples to select.
+#' @keywords internal
+subset_snpMatrix <- function(gwas, samples) {
+  
+  gwas[['genotypes']] <- gwas[['genotypes']][samples,]
+  gwas[['fam']] <- gwas[['fam']][samples,]
+  
+  return(gwas)
+  
+}
+
 
 #' Check snpMapping
 #' 
@@ -163,8 +178,7 @@ sanitize_snpMapping <- function(snpMapping, col_genes) {
 #' Check map
 #' 
 #' @description Check that map is a proper data.frame.
-#' 
-#' @param gwas A SnpMatrix object with the GWAS information.
+#' @template params_gwas
 #' @keywords internal
 sanitize_map <- function(gwas) {
   
@@ -178,11 +192,11 @@ sanitize_map <- function(gwas) {
 #' Tax id to ensembl species name
 #' @description Converts taxid to ensembl species name e.g. human databases are 
 #' hsapiens_*
-#' @param id Integer containing the tax id (e.g. 9606 for human)
+#' @template params_organism
 #' @keywords internal
 organism_id2name <- function(id) {
   
-  check_installed("httr", "organism_id2name")
+  check_installed(c("httr"), "organism_id2name")
   
   urlTaxonomy <- "http://rest.ensembl.org/taxonomy"
   query <- paste0(urlTaxonomy,"/id/",id,"?content-type=application/json")
@@ -203,7 +217,7 @@ organism_id2name <- function(id) {
 #' @keywords internal
 connect_biomart <- function(organism) {
   
-  check_installed("biomaRt", "connect_biomart")
+  check_installed(c("biomaRt"), "connect_biomart")
   
   # create mart from ENSEMBL
   # consider vertebrates and plants
@@ -221,5 +235,51 @@ connect_biomart <- function(organism) {
   })
   
   return(conn)
+  
+}
+
+#' Compute Laplacian matrix
+#' 
+#' @template params_gwas
+#' @template params_net
+#' @return A Laplacian matrix.
+#' @importFrom igraph simplify as_adj
+#' @importFrom Matrix diag rowSums
+#' @keywords internal
+get_laplacian <- function(gwas, net) {
+  
+  map <- sanitize_map(gwas)
+  
+  # remove redundant edges and self-edges in network and sort
+  net <- simplify(net)
+  L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
+  L <- L[map[['snp']], map[['snp']]]
+  L <- -L
+  diag(L) <- rowSums(abs(L))
+  
+  return(L)
+  
+}
+
+#' Converts a MAP data.frame to a BED data.frame
+#'
+#' @description Takes a map file and:
+#' \itemize{
+#' \item{column 1: Used as the chromosome column in the BED file.}
+#' \item{column 4: Used as start and end in the BED data.frame (as we work with
+#' SNPs).}
+#' }
+#' @template params_gwas
+#' @return A BED data.frame.
+gwas2bed <- function(gwas) {
+  
+  map <- sanitize_map(gwas)
+  bed <- subset(map, select = c("chr", "pos"))
+  colnames(bed) <- c("chr", "start")
+  bed$chr <- paste0("chr", bed$chr)
+  bed$chr <- ifelse(bed$chr == "chr23", "chrX", bed$chr)
+  bed$end <- bed$start
+  
+  return(bed)
   
 }

@@ -23,8 +23,6 @@ test_that("output is as expected", {
 
 test_that("cache works", {
   
-  skip_if(skip_future)
-
   start <- proc.time()
   suppressWarnings(dog_cached <- martini:::get_gxg('biogrid', 9615, flush = FALSE))
   t_dog_cached <- proc.time() - start
@@ -46,5 +44,9 @@ test_that("cache works", {
                  "using cache. Use flush = TRUE to get new gene interactions.")
   expect_message(martini:::get_gxg('biogrid', 9615, flush = TRUE),
                  "cache flushed!")
-
+  
+  # appropriate errors
+  expect_error(martini:::get_gxg('foo', 9615, flush = FALSE),
+               "unknown gene interaction database foo")
+  
 })

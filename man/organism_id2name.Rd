@@ -7,7 +7,7 @@
 organism_id2name(id)
 }
 \arguments{
-\item{id}{Integer containing the tax id (e.g. 9606 for human)}
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
 }
 \description{
 Converts taxid to ensembl species name e.g. human databases are 

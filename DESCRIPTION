@@ -7,8 +7,8 @@ Authors@R: c(person("Hector", "Climente-Gonzalez",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-3030-7471")),
              person("Chloe-Agathe", "Azencott", 
-	     	     role = "aut",
-                     comment = c(ORCID = "0000-0003-1003-301X")))
+                    role = "aut",
+                    comment = c(ORCID = "0000-0003-1003-301X")))
 Description: martini deals with the low power inherent to GWAS studies by using 
     prior knowledge represented as a network. SNPs are the vertices of the 
     network, and the edges represent biological relationships between them 
@@ -16,30 +16,30 @@ Description: martini deals with the low power inherent to GWAS studies by using
     protein products). The network is scanned using SConES, which looks for 
     groups of SNPs maximally associated with the phenotype, that form a close 
     subnetwork.
-License: MIT + file LICENSE
+License: GPL-3
 LazyData: TRUE
 Imports:
   igraph (>= 1.0.1),
   Matrix,
   methods (>= 3.3.2),
-  memoise (>= 1.1.0),
   Rcpp (>= 0.12.8),
   snpStats (>= 1.20.0),
-  S4Vectors (>= 0.12.2),
   stats,
-  utils
+  utils,
 Suggests:
   biomaRt (>= 2.34.1),
-  STRINGdb,
+  circlize (>= 0.4.11),
+  STRINGdb (>= 2.2.0),
   httr (>= 1.2.1),
   IRanges (>= 2.8.2),
+  S4Vectors (>= 0.12.2),
+  memoise (>= 2.0.0),
   knitr,
   testthat,
   readr,
   rmarkdown
-Depends: R (>= 3.6)
+Depends: R (>= 4.0)
 LinkingTo:
-  Rgin,
   Rcpp,
   RcppEigen (>= 0.3.3.5.0)
 RoxygenNote: 7.1.1
@@ -47,3 +47,5 @@ Encoding: UTF-8
 biocViews: Software, GenomeWideAssociation, SNP, GeneticVariability, Genetics, 
   FeatureExtraction, GraphAndNetwork, Network
 VignetteBuilder: knitr
+URL: https://github.com/hclimente/martini
+BugReports: https://github.com/hclimente/martini/issues

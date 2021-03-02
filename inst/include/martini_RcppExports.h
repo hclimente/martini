@@ -25,17 +25,17 @@ namespace martini {
         }
     }
 
-    inline Eigen::VectorXd run_scones(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
-        typedef SEXP(*Ptr_run_scones)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr_run_scones p_run_scones = NULL;
-        if (p_run_scones == NULL) {
-            validateSignature("Eigen::VectorXd(*run_scones)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
-            p_run_scones = (Ptr_run_scones)R_GetCCallable("martini", "_martini_run_scones");
+    inline LogicalVector maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W) {
+        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
+        static Ptr_maxflow p_maxflow = NULL;
+        if (p_maxflow == NULL) {
+            validateSignature("LogicalVector(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
+            p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_run_scones(Shield<SEXP>(Rcpp::wrap(c)), Shield<SEXP>(Rcpp::wrap(eta)), Shield<SEXP>(Rcpp::wrap(lambda)), Shield<SEXP>(Rcpp::wrap(W)));
+            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(W)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -43,7 +43,28 @@ namespace martini {
             throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Eigen::VectorXd >(rcpp_result_gen);
+        return Rcpp::as<LogicalVector >(rcpp_result_gen);
+    }
+
+    inline LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda, Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
+        typedef SEXP(*Ptr_mincut_c)(SEXP,SEXP,SEXP,SEXP);
+        static Ptr_mincut_c p_mincut_c = NULL;
+        if (p_mincut_c == NULL) {
+            validateSignature("LogicalVector(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
+            p_mincut_c = (Ptr_mincut_c)R_GetCCallable("martini", "_martini_mincut_c");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_mincut_c(Shield<SEXP>(Rcpp::wrap(c)), Shield<SEXP>(Rcpp::wrap(eta)), Shield<SEXP>(Rcpp::wrap(lambda)), Shield<SEXP>(Rcpp::wrap(W)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<LogicalVector >(rcpp_result_gen);
     }
 
 }

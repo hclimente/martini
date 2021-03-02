@@ -1,5 +1,4 @@
 #' @inherit scones.cv
-#' @template params_scones
 #' @references Liu, Y., Brossard, M., Roqueiro, D., Margaritte-Jeannin, P., 
 #' Sarnowski, C., Bouzigon, E., Demenais, F. (2017). SigMod: an exact and
 #' efficient method to identify a strongly interconnected disease-associated
@@ -10,21 +9,24 @@
 #' sigmod.cv(minigwas, gi)
 #' sigmod.cv(minigwas, gi, score = "glm")
 #' @export
-sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2", 
-                      criterion = "consistency", etas = numeric(), 
-                      lambdas = numeric()) {
+sigmod.cv <- function(gwas, net, covars = data.frame(),
+                      score = c("chi2", "glm"), 
+                      criterion = c("stability", "bic", "aic", "aicc", 
+                                    "global_clustering", "local_clustering"), 
+                      etas = numeric(), lambdas = numeric(),
+                      family = c("binomial", "poisson", "gaussian", "gamma"), 
+                      link = c("logit", "log", "identity", "inverse")) {
 
-  # get adjacency
-  A <- get_A(gwas, net)
+  score <- match.arg(score)
+  criterion <- match.arg(criterion)
+  family <- match.arg(family)
+  link <- match.arg(link)
+  c <- snp_test(gwas, covars, score, family, link)
+  grid <- get_grid(c = c, etas, lambdas)
   
-  # flip sign of lambdas
-  opts <- parse_scones_settings(c = 1, score, criterion, etas, lambdas)
-  c <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = c, score, criterion, etas, lambdas)
-  opts[['lambdas']] <- -opts[['lambdas']]
+  return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
+                   criterion, score, TRUE, family, link))
   
-  return(mincut.cv(gwas, net, A, covars, opts))
-    
 }
 
 #' @inherit scones
@@ -37,39 +39,15 @@ sigmod.cv <- function(gwas, net, covars = data.frame(), score = "chi2",
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' sigmod(minigwas, gi, 10, 1)
 #' @export
-sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), score = 'chi2') {
+sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), 
+                   score = c("chi2", "glm"), 
+                   family = c("binomial", "poisson", "gaussian", "gamma"), 
+                   link = c("logit", "log", "identity", "inverse")) {
   
-  A <- get_A(gwas, net)
-  return(mincut(gwas, net, A, covars, eta, lambda, score))
+  score <- match.arg(score)
+  family <- match.arg(family)
+  link <- match.arg(link)
   
-}
-
-#' Compute adjacency matrix
-#' @importFrom igraph simplify as_adj
-#' @importFrom Matrix diag rowSums
-#' @keywords internal
-get_A <- function(gwas, net) {
+  return(mincut(gwas, net, covars, eta, lambda, score, TRUE, family, link))
   
-  map <- sanitize_map(gwas)
-  
-  # remove redundant edges and self-edges in network and sort
-  net <- simplify(net)
-  A <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
-  A <- A[map[['snp']], map[['snp']]]
-  diag(A) <- -rowSums(A)
-  
-  return(A)
-  
-}
-
-#' @keywords internal
-parse_sigmod_settings <- function(gwas, covars, ...) {
-  
-  opts <- parse_scones_settings(c = 1, ...)
-  c <- single_snp_association(gwas, covars, opts[['score']])
-  opts <- parse_scones_settings(c = c, ...)
-  # flip sign of lambdas
-  opts[['lambdas']] <- -opts[['lambdas']]
-  
-  return(opts)
 }
