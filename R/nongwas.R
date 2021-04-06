@@ -52,6 +52,8 @@ scones.cv_ <- function(X, y, featnames, net) {
 #' @template params_y
 #' @template params_featnames
 #' @template params_net
+#' @template params_eta
+#' @template params_lambda
 #' @export
 scones_ <- function(X, y, featnames, net, eta, lambda) {
   

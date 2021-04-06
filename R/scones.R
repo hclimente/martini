@@ -106,8 +106,9 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
 #' connected in an underlying network.
 #' @template params_gwas
 #' @template params_net
-#' @param eta Value of the eta parameter.
-#' @param lambda Value of the lambda parameter.
+#' @template params_net
+#' @template params_eta
+#' @template params_lambda
 #' @template params_covars
 #' @template params_score
 #' @template params_family
@@ -163,6 +164,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
 #' @template params_link
 #' @return A named vector with the association scores.
 #' @importFrom snpStats single.snp.tests chi.squared snp.rhs.tests
+#' @importFrom stats t.test
 #' @keywords internal
 snp_test <- function(gwas, covars, score, family, link) {
   

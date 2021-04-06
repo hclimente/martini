@@ -14,6 +14,10 @@ sigmod_(X, y, featnames, net, eta, lambda)
 \item{featnames}{Vector of length d with the feature names}
 
 \item{net}{An igraph network that connects the SNPs.}
+
+\item{eta}{Value of the eta parameter.}
+
+\item{lambda}{Value of the lambda parameter.}
 }
 \description{
 Finds the features maximally associated with a phenotype while 
