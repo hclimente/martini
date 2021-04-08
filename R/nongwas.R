@@ -40,7 +40,7 @@ wrap_Xy <- function(X, y, featnames, net) {
 scones.cv_ <- function(X, y, featnames, net) {
   
     i <- wrap_Xy(X, y, featnames, net)
-    scones.cv(i[['gwas']], i[['net']], score = 'ttest')
+    scones.cv(i[['gwas']], i[['net']], score = 'r2')
   
 }
 
@@ -58,7 +58,7 @@ scones.cv_ <- function(X, y, featnames, net) {
 scones_ <- function(X, y, featnames, net, eta, lambda) {
   
     i <- wrap_Xy(X, y, featnames, net)
-    scones(i[['gwas']], i[['net']], eta, lambda, score = 'ttest')
+    scones(i[['gwas']], i[['net']], eta, lambda, score = 'r2')
   
 }
 
@@ -67,7 +67,7 @@ scones_ <- function(X, y, featnames, net, eta, lambda) {
 sigmod.cv_ <- function(X, y, featnames, net) {
   
   i <- wrap_Xy(X, y, featnames, net)
-  sigmod.cv(i[['gwas']], i[['net']], score = 'ttest')
+  sigmod.cv(i[['gwas']], i[['net']], score = 'r2')
   
 }
 
@@ -76,6 +76,6 @@ sigmod.cv_ <- function(X, y, featnames, net) {
 sigmod_ <- function(X, y, featnames, net, eta, lambda) {
   
   i <- wrap_Xy(X, y, featnames, net)
-  sigmod(i[['gwas']], i[['net']], eta, lambda, score = 'ttest')
+  sigmod(i[['gwas']], i[['net']], eta, lambda, score = 'r2')
   
 }

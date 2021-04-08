@@ -8,7 +8,7 @@ scones.cv(
   gwas,
   net,
   covars = data.frame(),
-  score = c("chi2", "glm", "ttest"),
+  score = c("chi2", "glm", "r2"),
   criterion = c("stability", "bic", "aic", "aicc", "global_clustering",
     "local_clustering"),
   etas = numeric(),

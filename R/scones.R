@@ -20,7 +20,7 @@
 #' scones.cv(minigwas, gi, score = "glm")
 #' @export
 scones.cv <- function(gwas, net, covars = data.frame(), 
-                      score = c("chi2", "glm", "ttest"), 
+                      score = c("chi2", "glm", "r2"), 
                       criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric(),
@@ -120,7 +120,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
 #' scones(minigwas, gi, 10, 1)
 #' @export
 scones <- function(gwas, net, eta, lambda, covars = data.frame(), 
-                   score = c("chi2", "glm"), 
+                   score = c("chi2", "glm", "r2"), 
                    family = c("binomial", "poisson", "gaussian", "gamma"), 
                    link = c("logit", "log", "identity", "inverse")) {
   
@@ -189,11 +189,11 @@ snp_test <- function(gwas, covars, score, family, link) {
     
     c <- chi.squared(tests)
     names(c) <- names(tests)
-  } else if (score == 'ttest') {
+  } else if (score == 'r2') {
     
-    c <- apply(gwas[['genotypes']], 2, 
-               function(x) t.test(x,gwas[['fam']][['affected']])$p.value)
-    c <- -log10(c + 1e-323)
+    c <- apply(genotypes, 2, cor, phenotypes, use="pairwise.complete.obs")
+    c[is.na(c)] <- 0.01
+    c <- c^2
     
   }
   

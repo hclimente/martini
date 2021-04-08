@@ -10,7 +10,7 @@
 #' sigmod.cv(minigwas, gi, score = "glm")
 #' @export
 sigmod.cv <- function(gwas, net, covars = data.frame(),
-                      score = c("chi2", "glm"), 
+                      score = c("chi2", "glm", "r2"), 
                       criterion = c("stability", "bic", "aic", "aicc", 
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric(),
@@ -40,7 +40,7 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
 #' sigmod(minigwas, gi, 10, 1)
 #' @export
 sigmod <- function(gwas, net, eta, lambda, covars = data.frame(), 
-                   score = c("chi2", "glm"), 
+                   score = c("chi2", "glm", "r2"), 
                    family = c("binomial", "poisson", "gaussian", "gamma"), 
                    link = c("logit", "log", "identity", "inverse")) {
   

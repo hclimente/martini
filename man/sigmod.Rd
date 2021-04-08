@@ -10,7 +10,7 @@ sigmod(
   eta,
   lambda,
   covars = data.frame(),
-  score = c("chi2", "glm"),
+  score = c("chi2", "glm", "r2"),
   family = c("binomial", "poisson", "gaussian", "gamma"),
   link = c("logit", "log", "identity", "inverse")
 )
