@@ -1,6 +1,6 @@
 test_that("output is as expected", {
   
-  i <- martini::wrap_Xy(X, Y, test_gwas$map$snp.name, test_gi)
+  i <- martini:::wrap_Xy(X, Y, test_gwas$map$snp.name, test_gi)
   
   expect_equal(i[['gwas']][['genotypes']], X)
   expect_equal(i[['gwas']][['fam']]$affected, Y)

@@ -6,7 +6,18 @@
 \usage{
 mget_gxg_biogrid(organism = 9606)
 }
+\arguments{
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
+}
+\value{
+A data.frame with two columns with pairs of interacting proteins.
+}
 \description{
-Memoised version of get_gxg_biogrid
+Get all protein-protein interactions for an organism from
+BioGRID.
+}
+\examples{
+# download dog interactions
+\dontrun{martini:::get_gxg_biogrid(9615)}
 }
 \keyword{internal}

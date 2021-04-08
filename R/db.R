@@ -161,10 +161,12 @@ get_gxg_string <- function(organism = 9606) {
 }
 
 #' Memoised version of get_gxg_biogrid
+#' @inherit get_gxg_biogrid
 #' @keywords internal
 mget_gxg_biogrid <- memoise::memoise(get_gxg_biogrid)
 
 #' Memoised version of get_gxg_stringdb
+#' @inherit get_gxg_string
 #' @keywords internal
 mget_gxg_string <- memoise::memoise(get_gxg_string)
 
@@ -176,6 +178,7 @@ mget_gxg_string <- memoise::memoise(get_gxg_string)
 #' from. Possible values: 'biogrid', 'string'.
 #' @template params_organism
 #' @template params_flush
+#' @return A data.frame with two columns with pairs of interacting proteins.
 #' @keywords internal
 get_gxg <- function(db, organism, flush) {
   

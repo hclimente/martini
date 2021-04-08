@@ -6,7 +6,18 @@
 \usage{
 mget_gxg_string(organism = 9606)
 }
+\arguments{
+\item{organism}{Tax ID of the studied organism. The default is 9606 (human).}
+}
+\value{
+A data.frame with two columns with pairs of interacting proteins.
+}
 \description{
-Memoised version of get_gxg_stringdb
+Get all protein-protein interactions for an organism from
+STRING. It uses a score cut-off of 400.
+}
+\examples{
+# download frog interactions
+\dontrun{martini:::get_gxg_string(8364)}
 }
 \keyword{internal}

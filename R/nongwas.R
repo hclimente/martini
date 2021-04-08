@@ -36,6 +36,12 @@ wrap_Xy <- function(X, y, featnames, net) {
 #' @template params_y
 #' @template params_featnames
 #' @template params_net
+#' @template return_cones
+#' @examples 
+#' X <- as(minigwas[['genotypes']], 'numeric')
+#' X <- X + matrix(rnorm(2500, sd = 0.1), nrow(X), ncol(X))
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' scones.cv_(X, minigwas[['fam']]$affected, minigwas[['map']]$snp, gi)
 #' @export
 scones.cv_ <- function(X, y, featnames, net) {
   
@@ -54,6 +60,12 @@ scones.cv_ <- function(X, y, featnames, net) {
 #' @template params_net
 #' @template params_eta
 #' @template params_lambda
+#' @template return_cones
+#' @examples 
+#' X <- as(minigwas[['genotypes']], 'numeric')
+#' X <- X + matrix(rnorm(2500, sd = 0.1), nrow(X), ncol(X))
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' scones_(X, minigwas[['fam']]$affected, minigwas[['map']]$snp, gi, 10, 1)
 #' @export
 scones_ <- function(X, y, featnames, net, eta, lambda) {
   
@@ -63,6 +75,11 @@ scones_ <- function(X, y, featnames, net, eta, lambda) {
 }
 
 #' @inherit scones.cv_
+#' @examples 
+#' X <- as(minigwas[['genotypes']], 'numeric')
+#' X <- X + matrix(rnorm(2500, sd = 0.1), nrow(X), ncol(X))
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' sigmod.cv_(X, minigwas[['fam']]$affected, minigwas[['map']]$snp, gi)
 #' @export
 sigmod.cv_ <- function(X, y, featnames, net) {
   
@@ -72,6 +89,11 @@ sigmod.cv_ <- function(X, y, featnames, net) {
 }
 
 #' @inherit scones_
+#' @examples 
+#' X <- as(minigwas[['genotypes']], 'numeric')
+#' X <- X + matrix(rnorm(2500, sd = 0.1), nrow(X), ncol(X))
+#' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+#' sigmod_(X, minigwas[['fam']]$affected, minigwas[['map']]$snp, gi, 10, 1)
 #' @export
 sigmod_ <- function(X, y, featnames, net, eta, lambda) {
   

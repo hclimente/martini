@@ -19,7 +19,23 @@ sigmod_(X, y, featnames, net, eta, lambda)
 
 \item{lambda}{Value of the lambda parameter.}
 }
+\value{
+A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
+following additions:
+\itemize{
+\item{c: contains the univariate association score for every single SNP.}
+\item{selected: logical vector indicating if the SNP was selected by SConES 
+or not.}
+\item{module: integer with the number of the module the SNP belongs to.}
+}
+}
 \description{
 Finds the features maximally associated with a phenotype while 
 being connected in an underlying network.
+}
+\examples{
+X <- as(minigwas[['genotypes']], 'numeric')
+X <- X + matrix(rnorm(2500, sd = 0.1), nrow(X), ncol(X))
+gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
+sigmod_(X, minigwas[['fam']]$affected, minigwas[['map']]$snp, gi, 10, 1)
 }

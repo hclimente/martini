@@ -14,6 +14,9 @@ from. Possible values: 'biogrid', 'string'.}
 
 \item{flush}{Remove cached results? Boolean value.}
 }
+\value{
+A data.frame with two columns with pairs of interacting proteins.
+}
 \description{
 Wrapper for the different functions to get gene-gene 
 interactions. Supports cached results.
