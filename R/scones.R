@@ -81,8 +81,12 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
     for (j in seq(length(etas))){
       mat <- lapply(folds, function(x) x[[i]][[j]])
       mat <- do.call(rbind, mat)
-      pearson_cor = cor(t(mat))
-      grid[i,j] <- mean(pearson_cor[lower.tri(pearson_cor)], na.rm = TRUE)
+      if (all(is.finite(mat))) {
+        pearson_cor = cor(t(mat))
+        grid[i,j] <- mean(pearson_cor[lower.tri(pearson_cor)], na.rm = TRUE)
+      } else {
+        grid[i, j] <- -Inf
+      }
     }
   }
   
