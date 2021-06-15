@@ -14,6 +14,7 @@
 #' @template params_family
 #' @template params_link
 #' @template reference_azencott
+#' @template params_max_prop_snp
 #' @examples
 #' gi <- get_GI_network(minigwas, snpMapping = minisnpMapping, ppi = minippi)
 #' scones.cv(minigwas, gi)
@@ -25,7 +26,8 @@ scones.cv <- function(gwas, net, covars = data.frame(),
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric(),
                       family = c("binomial", "poisson", "gaussian", "gamma"), 
-                      link = c("logit", "log", "identity", "inverse")) {
+                      link = c("logit", "log", "identity", "inverse"),
+                      max_prop_snp = 0.5) {
   
   # set options
   score <- match.arg(score)
@@ -36,7 +38,7 @@ scones.cv <- function(gwas, net, covars = data.frame(),
   grid <- get_grid(c = c, etas, lambdas)
   
   return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
-                   criterion, score, FALSE, family, link))
+                   criterion, score, FALSE, family, link, max_prop_snp))
   
 }
 
@@ -50,7 +52,7 @@ scones.cv <- function(gwas, net, covars = data.frame(),
 #' @importFrom utils capture.output
 #' @keywords internal
 mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, 
-                      sigmod, family, link) {
+                      sigmod, family, link, max_prop_snp) {
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
@@ -68,7 +70,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
       c_k <- if (sigmod) c_k + lambda * rowSums(A) else c_k
       lapply(etas, function(eta) {
         selected_k <- mincut_c(c_k, eta, lambda, A)
-        score_fold(gwas_k, covars_k, net, selected_k, criterion)
+        score_fold(gwas_k, covars_k, net, selected_k, criterion, max_prop_snp)
       })
     })
   })
@@ -214,18 +216,18 @@ snp_test <- function(gwas, covars, score, family, link) {
 #' @template params_net
 #' @template params_covars
 #' @template params_criterion
-#' @param max_solution Maximum fraction of the SNPs involved in the solution
+#' @template params_max_prop_snp
 #' (between 0 and 1). Larger solutions will be discarded.
 #' @importFrom igraph induced_subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(gwas, covars, net, selected, criterion, max_solution = .5) {
+score_fold <- function(gwas, covars, net, selected, criterion, max_prop_snp = 0.5) {
   
   # score for a trivial solution
   score <- -Inf
   
-  if (sum(selected) & (sum(selected)/length(selected) <= max_solution) ){
+  if (sum(selected) & (sum(selected)/length(selected) <= max_prop_snp) ){
     if (criterion == 'stability') {
       score <- selected
     } else if (criterion %in% c('bic', 'aic', 'aicc')) {

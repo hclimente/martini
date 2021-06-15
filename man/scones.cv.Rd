@@ -14,7 +14,8 @@ scones.cv(
   etas = numeric(),
   lambdas = numeric(),
   family = c("binomial", "poisson", "gaussian", "gamma"),
-  link = c("logit", "log", "identity", "inverse")
+  link = c("logit", "log", "identity", "inverse"),
+  max_prop_snp = 0.5
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ should match one of "binomial", "poisson", "gaussian" or "gamma". See
 \item{link}{A string defining the link function for the GLM. This should
 match one of "logit", "log", "identity" or "inverse". See 
 \link[snpStats]{snp.rhs.tests} for details.}
+
+\item{max_prop_snp}{Maximum proportion of SNPs accepted in the model.}
 }
 \value{
 A copy of the \code{SnpMatrix$map} \code{data.frame}, with the 
