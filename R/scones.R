@@ -227,7 +227,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_prop_snp = 0.
   # score for a trivial solution
   score <- -Inf
   
-  if (sum(selected) & (sum(selected)/length(selected) <= max_prop_snp) ){
+  if (sum(selected) & (sum(selected) / length(selected) <= max_prop_snp) ){
     if (criterion == 'stability') {
       score <- selected
     } else if (criterion %in% c('bic', 'aic', 'aicc')) {
