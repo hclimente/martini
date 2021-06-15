@@ -70,7 +70,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
     lapply(lambdas, function(lambda) {
       c_k <- if (sigmod) c_k + lambda * diag(L) else c_k
       lapply(etas, function(eta) {
-        selected_k <- mincut_c(c_k, eta, lambda, L)
+        selected_k <- mincut_c(c_k, eta, lambda, A)
         score_fold(gwas_k, covars_k, net, selected_k, criterion, max_prop_snp)
       })
     })
