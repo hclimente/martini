@@ -25,17 +25,17 @@ namespace martini {
         }
     }
 
-    inline LogicalVector maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W) {
-        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP);
+    inline LogicalVector maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> const& A, Eigen::VectorXd const& As, Eigen::VectorXd const& At) {
+        typedef SEXP(*Ptr_maxflow)(SEXP,SEXP,SEXP);
         static Ptr_maxflow p_maxflow = NULL;
         if (p_maxflow == NULL) {
-            validateSignature("LogicalVector(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
+            validateSignature("LogicalVector(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor> const&,Eigen::VectorXd const&,Eigen::VectorXd const&)");
             p_maxflow = (Ptr_maxflow)R_GetCCallable("martini", "_martini_maxflow");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(W)));
+            rcpp_result_gen = p_maxflow(Shield<SEXP>(Rcpp::wrap(A)), Shield<SEXP>(Rcpp::wrap(As)), Shield<SEXP>(Rcpp::wrap(At)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

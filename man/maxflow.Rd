@@ -4,13 +4,14 @@
 \alias{maxflow}
 \title{Maxflow algorithm}
 \usage{
-maxflow(A, W)
+maxflow(A, As, At)
 }
 \arguments{
-\item{A}{A matrix with two columns. The first column contains the edges to
-the source; the second, the edges to the sink.}
+\item{A}{A sparse matrix with the connectivity.}
 
-\item{W}{A sparse matrix with the connectivity.}
+\item{As}{A vector containing the edges to the source.}
+
+\item{At}{A vector containing the edges to the sink.}
 }
 \value{
 A list with vector indicating if the feature was selected and the 

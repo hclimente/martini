@@ -4,13 +4,13 @@
 #' Maxflow algorithm
 #' 
 #' @description Run the maxflow algorithm.
-#' @param A A matrix with two columns. The first column contains the edges to
-#' the source; the second, the edges to the sink.
-#' @param W A sparse matrix with the connectivity.
+#' @param A A sparse matrix with the connectivity.
+#' @param As A vector containing the edges to the source.
+#' @param At A vector containing the edges to the sink.
 #' @return A list with vector indicating if the feature was selected and the 
 #' objective score.
-maxflow <- function(A, W) {
-    .Call('_martini_maxflow', PACKAGE = 'martini', A, W)
+maxflow <- function(A, As, At) {
+    .Call('_martini_maxflow', PACKAGE = 'martini', A, As, At)
 }
 
 #' Min-cut algorithm
