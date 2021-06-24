@@ -6,3 +6,6 @@
 ^configure\.ac$
 ^man-roxygen
 ^\.github$
+^env$
+^Makefile$
+^environment\.yml$
