@@ -78,16 +78,14 @@ LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda,
   Eigen::VectorXd c_t = c.array() - eta;
   
   // add source and sink
-  // matrix A containing As (edges to source) and At (edges to sink)
-  Eigen::MatrixXd A(n_features, 2);
-  // connect positive c values to sink
-  Eigen::VectorXd pos_c = (c_t.array() <= 0).select(0, c_t);
   // connect negative c values to source
-  Eigen::VectorXd neg_c = -c_t;
-  neg_c = (c_t.array() > 0).select(0, neg_c);
+  Eigen::VectorXd As = (c_t.array() > 0).select(0, -c_t);
+  // connect positive c values to sink
+  Eigen::VectorXd At = (c_t.array() <= 0).select(0, c_t);
   // store data
-  A.col(0) = neg_c;
-  A.col(1) = pos_c;
+  Eigen::MatrixXd A(n_features, 2);
+  A.col(0) = As;
+  A.col(1) = At;
   
   // compute maxflow
   LogicalVector selected = maxflow(A, W);
