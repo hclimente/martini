@@ -9,52 +9,55 @@
 
 using namespace Rcpp;
 
+//' Maxflow algorithm
+//' 
+//' @description Run the maxflow algorithm.
+//' @param A A sparse matrix with the connectivity.
+//' @param As A vector containing the edges to the source.
+//' @param At A vector containing the edges to the sink.
+//' @return A list with vector indicating if the feature was selected and the 
+//' objective score.
 // [[Rcpp::export]]
-LogicalVector maxflow(Eigen::MatrixXd const &A,
-                      Eigen::SparseMatrix<double,Eigen::ColMajor> const &W) {
+LogicalVector maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> const &A,
+                      Eigen::VectorXd const &As,
+                      Eigen::VectorXd const &At) {
   
-  LogicalVector selected(W.rows());
+  LogicalVector selected(A.rows());
   
   // create graph out of adjacency matrix
   typedef Graph<double, double, double> MaxGraph;
-  MaxGraph *g = new MaxGraph(W.rows(), W.nonZeros());
+  MaxGraph *g = new MaxGraph(A.rows(), A.nonZeros());
   
   // initialize nodes
   g->add_node(selected.length());
   
-  //traverse the sparse adjacency matrix A
-  for(long long k=0; k<W.outerSize(); k++) {
-    for(Eigen::SparseMatrix<double>::InnerIterator it(W,k); it; ++it) {
+  // add edge weights from the original graph A
+  for(int k = 0; k < A.outerSize(); k++)
+    for(Eigen::SparseMatrix<double>::InnerIterator it(A,k); it; ++it)
       g->add_edge(it.row(), it.col(), it.value(), 0.0);
-    }
-  }
   
-  // traverse the T matrix
-  for(long long i = 0; i < 2; i++) {
-    for(long long k = 0; k < A.rows(); k++) {
-      if(i==0) {
-        if(A(k,i) != 0) {
-          g->add_tweights(k, A(k,i), 0.0);
-        }
-      } else {
-        if(A(k,i) != 0) {
-          g->add_tweights(k, 0.0, A(k,i));
-        }
-      }
-    }
-  }
+  // add edges to the source
+  for(int k = 0; k < A.rows(); k++)
+    if(As(k) != 0)
+      g->add_tweights(k, As(k), 0.0);
+    
+  // add edges to the sink
+  for(int k = 0; k < A.rows(); k++)
+    if(At(k) != 0)
+      g->add_tweights(k, 0.0, At(k));
   
   // run maxflow algorithm
   g->maxflow();
   
   // create indicator_vector
-  for(long long i = 0; i < selected.length(); i++)
+  for(int i = 0; i < selected.length(); i++)
     selected[i] = g->what_segment(i);
   
   // delete graph
   delete g;
   
   return(selected);
+  
 }
 
 //' Min-cut algorithm
@@ -70,25 +73,17 @@ LogicalVector maxflow(Eigen::MatrixXd const &A,
 LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda, 
                        Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
-  W = lambda * W;
-  long n_features = c.rows();
-  
+  Eigen::SparseMatrix<double,Eigen::ColMajor> A = lambda * W;
   Eigen::VectorXd c_t = c.array() - eta;
   
-  // Add source and sink
-  // Matrix A containing As and At
-  Eigen::MatrixXd A(n_features, 2);
-  // connect positive c values to sink
-  Eigen::VectorXd pos_c = (c_t.array() <= 0).select(0, c_t);
+  // add source and sink
   // connect negative c values to source
-  Eigen::VectorXd neg_c = - c_t;
-  neg_c = (c_t.array() > 0).select(0, neg_c);
-  //Store data
-  A.col(0) = neg_c;
-  A.col(1) = pos_c;
+  Eigen::VectorXd As = (c_t.array() > 0).select(0, -c_t);
+  // connect positive c values to sink
+  Eigen::VectorXd At = (c_t.array() <= 0).select(0, c_t);
   
-  //compute maxflow
-  LogicalVector selected = maxflow(A, W);
+  // compute maxflow
+  LogicalVector selected = maxflow(A, As, At);
   return(selected);
   
 }
