@@ -47,7 +47,6 @@ scones.cv <- function(gwas, net, covars = data.frame(),
 #' @template params_covars
 #' @template params_family
 #' @template params_link
-#' @importFrom Matrix diag
 #' @importFrom utils capture.output
 #' @keywords internal
 mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score, 
@@ -66,7 +65,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
     c_k <- snp_test(gwas_k, covars_k, score, family, link)
     
     lapply(lambdas, function(lambda) {
-      c_k <- if (sigmod) c_k + lambda * diag(A) else c_k
+      c_k <- if (sigmod) c_k + lambda * rowSums(A) else c_k
       lapply(etas, function(eta) {
         selected_k <- mincut_c(c_k, eta, lambda, A)
         score_fold(gwas_k, covars_k, net, selected_k, criterion)
@@ -144,7 +143,7 @@ mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
   
   map <- sanitize_map(gwas)
   c <- snp_test(gwas, covars, score, family, link)
-  c <- if (sigmod) c + lambda * diag(A) else c
+  c <- if (sigmod) c + lambda * rowSums(A) else c
   selected <- mincut_c(c, eta, lambda, A)
   cones <- induced_subgraph(net, map[['snp']][selected])
   
