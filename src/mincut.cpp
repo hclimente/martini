@@ -74,8 +74,6 @@ LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda,
                        Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   Eigen::SparseMatrix<double,Eigen::ColMajor> A = lambda * W;
-  int n_features = c.rows();
-  
   Eigen::VectorXd c_t = c.array() - eta;
   
   // add source and sink
