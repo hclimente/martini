@@ -31,32 +31,25 @@ LogicalVector maxflow(Eigen::MatrixXd const &A,
   g->add_node(selected.length());
   
   // add edge weights from the original graph W
-  for(long long k=0; k<W.outerSize(); k++) {
-    for(Eigen::SparseMatrix<double>::InnerIterator it(W,k); it; ++it) {
+  for(int k=0; k<W.outerSize(); k++)
+    for(Eigen::SparseMatrix<double>::InnerIterator it(W,k); it; ++it)
       g->add_edge(it.row(), it.col(), it.value(), 0.0);
-    }
-  }
   
-  // add edges to the source and the sink from A
-  for(long long i = 0; i < 2; i++) {
-    for(long long k = 0; k < A.rows(); k++) {
-      if(i==0) { // source
-        if(A(k,i) != 0) {
-          g->add_tweights(k, A(k,i), 0.0);
-        }
-      } else { // sink
-        if(A(k,i) != 0) {
-          g->add_tweights(k, 0.0, A(k,i));
-        }
-      }
-    }
-  }
+  // add edges to the source
+  for(int k = 0; k < A.rows(); k++)
+    if(A(k,0) != 0)
+      g->add_tweights(k, A(k,0), 0.0);
+    
+  // add edges to the sink
+  for(int k = 0; k < A.rows(); k++)
+    if(A(k,1) != 0)
+      g->add_tweights(k, 0.0, A(k,1));
   
   // run maxflow algorithm
   g->maxflow();
   
   // create indicator_vector
-  for(long long i = 0; i < selected.length(); i++)
+  for(int i = 0; i < selected.length(); i++)
     selected[i] = g->what_segment(i);
   
   // delete graph
@@ -80,7 +73,7 @@ LogicalVector mincut_c(Eigen::VectorXd c, double eta, double lambda,
                        Eigen::SparseMatrix<double,Eigen::ColMajor> W) {
   
   W = lambda * W;
-  long n_features = c.rows();
+  int n_features = c.rows();
   
   Eigen::VectorXd c_t = c.array() - eta;
   
