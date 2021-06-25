@@ -281,17 +281,3 @@ gwas2bed <- function(gwas) {
   return(bed)
   
 }
-pairwise_kuncheva_index <- function(i, j, mat, sum_vector) {
-  (sum(mat[i, ] * mat[j, ]) - sum_vector[i] * sum_vector[j] / ncol(mat)) /
-    (min(sum_vector[i], sum_vector[j]) - sum_vector[i] * sum_vector[j] / ncol(mat))
-}
-kuncheva_index <- function(mat) {
-  sum_vector = rowSums(mat)
-  index <- 0
-  for (i in 1:(nrow(mat) - 1)) {
-    for (j in seq(i + 1, nrow(mat))) {
-      index <- index + pairwise_consistency_index(i, j, mat, sum_vector)
-    }
-  }
-  index * 2 / (nrow(mat) * (nrow(mat) - 1))
-}
