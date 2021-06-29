@@ -1,0 +1,19 @@
+name: martini
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconductor-bioccheck
+  - bioconductor-biomart
+  - bioconductor-iranges
+  - bioconductor-martini
+  - bioconductor-stringdb
+  - r
+  - r-biocmanager
+  - r-circlize
+  - r-devtools
+  - r-pak
+  - r-tidyverse
+  - rstudio
+

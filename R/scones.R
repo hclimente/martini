@@ -54,7 +54,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
   
   # prepare data
   gwas <- permute_snpMatrix(gwas)
-  L <- get_laplacian(gwas, net)
+  A <- get_adjacency(gwas, net)
   
   # grid search
   K <- cut(seq(1, nrow(gwas[['fam']])), breaks = 10, labels = FALSE)
@@ -67,7 +67,7 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
     lapply(lambdas, function(lambda) {
       c_k <- if (sigmod) c_k + lambda * rowSums(A) else c_k
       lapply(etas, function(eta) {
-        selected_k <- mincut_c(c_k, eta, lambda, L)
+        selected_k <- mincut_c(c_k, eta, lambda, A)
         score_fold(gwas_k, covars_k, net, selected_k, criterion)
       })
     })
@@ -137,7 +137,7 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(),
 #' @keywords internal
 mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
  
-  L <- get_laplacian(gwas, net)
+  A <- get_adjacency(gwas, net)
    
   covars <- arrange_covars(gwas, covars)
   

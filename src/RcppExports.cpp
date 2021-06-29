@@ -10,21 +10,22 @@
 using namespace Rcpp;
 
 // maxflow
-LogicalVector maxflow(Eigen::MatrixXd const& A, Eigen::SparseMatrix<double,Eigen::ColMajor> const& W);
-static SEXP _martini_maxflow_try(SEXP ASEXP, SEXP WSEXP) {
+LogicalVector maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> const& A, Eigen::VectorXd const& As, Eigen::VectorXd const& At);
+static SEXP _martini_maxflow_try(SEXP ASEXP, SEXP AsSEXP, SEXP AtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd const& >::type A(ASEXP);
-    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> const& >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(maxflow(A, W));
+    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double,Eigen::ColMajor> const& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd const& >::type As(AsSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd const& >::type At(AtSEXP);
+    rcpp_result_gen = Rcpp::wrap(maxflow(A, As, At));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _martini_maxflow(SEXP ASEXP, SEXP WSEXP) {
+RcppExport SEXP _martini_maxflow(SEXP ASEXP, SEXP AsSEXP, SEXP AtSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_martini_maxflow_try(ASEXP, WSEXP));
+        rcpp_result_gen = PROTECT(_martini_maxflow_try(ASEXP, AsSEXP, AtSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -86,7 +87,7 @@ RcppExport SEXP _martini_mincut_c(SEXP cSEXP, SEXP etaSEXP, SEXP lambdaSEXP, SEX
 static int _martini_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("LogicalVector(*maxflow)(Eigen::MatrixXd const&,Eigen::SparseMatrix<double,Eigen::ColMajor> const&)");
+        signatures.insert("LogicalVector(*maxflow)(Eigen::SparseMatrix<double,Eigen::ColMajor> const&,Eigen::VectorXd const&,Eigen::VectorXd const&)");
         signatures.insert("LogicalVector(*mincut_c)(Eigen::VectorXd,double,double,Eigen::SparseMatrix<double,Eigen::ColMajor>)");
     }
     return signatures.find(sig) != signatures.end();
@@ -101,7 +102,7 @@ RcppExport SEXP _martini_RcppExport_registerCCallable() {
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_martini_maxflow", (DL_FUNC) &_martini_maxflow, 2},
+    {"_martini_maxflow", (DL_FUNC) &_martini_maxflow, 3},
     {"_martini_mincut_c", (DL_FUNC) &_martini_mincut_c, 4},
     {"_martini_RcppExport_registerCCallable", (DL_FUNC) &_martini_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
