@@ -246,7 +246,7 @@ connect_biomart <- function(organism) {
 #' @importFrom igraph simplify as_adj
 #' @importFrom Matrix diag rowSums
 #' @keywords internal
-get_laplacian <- function(gwas, net) {
+get_adjacency <- function(gwas, net) {
   
   map <- sanitize_map(gwas)
   
@@ -254,8 +254,6 @@ get_laplacian <- function(gwas, net) {
   net <- simplify(net)
   L <- as_adj(net, type="both", sparse = TRUE, attr = "weight")
   L <- L[map[['snp']], map[['snp']]]
-  L <- -L
-  diag(L) <- rowSums(abs(L))
   
   return(L)
   
