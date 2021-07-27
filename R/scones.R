@@ -222,7 +222,7 @@ snp_test <- function(gwas, covars, score, family, link) {
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
 #' @keywords internal
-score_fold <- function(gwas, covars, net, selected, criterion, max_prop_snp = 0.5) {
+score_fold <- function(gwas, covars, net, selected, criterion, max_prop_snp) {
   
   # score for a trivial solution
   score <- -Inf
