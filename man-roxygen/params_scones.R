@@ -5,3 +5,4 @@
 #' @template params_criterion
 #' @template params_etas
 #' @template params_lambdas
+#' @template params_max_prop_snp

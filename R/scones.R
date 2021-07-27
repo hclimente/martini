@@ -217,7 +217,6 @@ snp_test <- function(gwas, covars, score, family, link) {
 #' @template params_covars
 #' @template params_criterion
 #' @template params_max_prop_snp
-#' (between 0 and 1). Larger solutions will be discarded.
 #' @importFrom igraph induced_subgraph transitivity
 #' @importFrom methods as
 #' @importFrom stats glm BIC AIC
