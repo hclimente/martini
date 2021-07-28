@@ -83,8 +83,12 @@ mincut.cv <- function(gwas, net, covars, etas, lambdas, criterion, score,
       mat <- lapply(folds, function(x) x[[i]][[j]])
       mat <- do.call(rbind, mat)
       if (all(is.finite(mat))) {
-        pearson_cor = cor(t(mat))
-        grid[i,j] <- mean(pearson_cor[lower.tri(pearson_cor)], na.rm = TRUE)
+        if (criterion == "stability") {
+          pearson_cor = cor(t(mat))
+          grid[i,j] <- mean(pearson_cor[lower.tri(pearson_cor)], na.rm = TRUE)
+        } else {
+          grid[i,j] <- sum(colSums(mat)) / (10 * sum(colSums(mat) != 0))
+        }
       } else {
         grid[i, j] <- -Inf
       }
@@ -143,9 +147,9 @@ scones <- function(gwas, net, eta, lambda, covars = data.frame(),
 #' @template return_cones
 #' @keywords internal
 mincut <- function(gwas, net, covars, eta, lambda, score, sigmod, family, link){
- 
+  
   A <- get_adjacency(gwas, net)
-   
+  
   covars <- arrange_covars(gwas, covars)
   
   map <- sanitize_map(gwas)
@@ -230,7 +234,7 @@ score_fold <- function(gwas, covars, net, selected, criterion, max_prop_snp) {
     if (criterion == 'stability') {
       score <- selected
     } else if (criterion %in% c('bic', 'aic', 'aicc')) {
-        
+      
       phenotypes <- gwas[['fam']][['affected']]
       genotypes <- as(gwas[['genotypes']], 'numeric')
       genotypes <- as.data.frame(genotypes[, selected])
