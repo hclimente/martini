@@ -14,7 +14,8 @@ mincut.cv(
   score,
   sigmod,
   family,
-  link
+  link,
+  max_prop_snp
 )
 }
 \arguments{

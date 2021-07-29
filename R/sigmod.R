@@ -15,7 +15,8 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
                                     "global_clustering", "local_clustering"), 
                       etas = numeric(), lambdas = numeric(),
                       family = c("binomial", "poisson", "gaussian", "gamma"), 
-                      link = c("logit", "log", "identity", "inverse")) {
+                      link = c("logit", "log", "identity", "inverse"),
+                      max_prop_snp = 0.5) {
 
   score <- match.arg(score)
   criterion <- match.arg(criterion)
@@ -25,7 +26,7 @@ sigmod.cv <- function(gwas, net, covars = data.frame(),
   grid <- get_grid(c = c, etas, lambdas)
   
   return(mincut.cv(gwas, net, covars, grid[['etas']], grid[['lambdas']], 
-                   criterion, score, TRUE, family, link))
+                   criterion, score, TRUE, family, link, max_prop_snp))
   
 }
 

@@ -4,7 +4,7 @@
 \alias{score_fold}
 \title{Score the solutions of a k-fold}
 \usage{
-score_fold(gwas, covars, net, selected, criterion, max_solution = 0.5)
+score_fold(gwas, covars, net, selected, criterion, max_prop_snp)
 }
 \arguments{
 \item{gwas}{A SnpMatrix object with the GWAS information.}
@@ -17,8 +17,7 @@ covariate.}
 
 \item{criterion}{String with the function to measure the quality of a split.}
 
-\item{max_solution}{Maximum fraction of the SNPs involved in the solution
-(between 0 and 1). Larger solutions will be discarded.}
+\item{max_prop_snp}{Maximum proportion of SNPs accepted in the model (between 0 and 1). Larger solutions will be discarded.}
 }
 \description{
 Take the k-solutions for a combination of hyperparameters, and 
