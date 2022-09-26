@@ -130,7 +130,7 @@ get_gxg_string <- function(organism = 9606) {
   
   check_installed(c("STRINGdb", "httr", "biomaRt"), "get_gxg_string")
   
-  string_db <- STRINGdb::STRINGdb$new(version = '11', species = organism,
+  string_db <- STRINGdb::STRINGdb$new(version = '11.5', species = organism,
                                       score_threshold = 400)
   
   # download ppi
