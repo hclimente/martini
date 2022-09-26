@@ -24,7 +24,7 @@ test_that("we recover causal SNPs", {
   W <- cbind(rbind(0, W[-1,-1]),0) + rbind(cbind(0,W[-1,-1]),0)
   W[1:pCausal, 1:pCausal] <- 1
   diag(W) <- 0
-  W <- as(W, "sparseMatrix")
+  W <- as(W, Class = "dgCMatrix")
   
   selected <- mincut_c(c, 1, 2, W)
   

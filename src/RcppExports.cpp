@@ -9,6 +9,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // maxflow
 LogicalVector maxflow(Eigen::SparseMatrix<double,Eigen::ColMajor> const& A, Eigen::VectorXd const& As, Eigen::VectorXd const& At);
 static SEXP _martini_maxflow_try(SEXP ASEXP, SEXP AsSEXP, SEXP AtSEXP) {
