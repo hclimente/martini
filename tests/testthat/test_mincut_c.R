@@ -4,7 +4,7 @@ test_that("output is as expected", {
   
   c <- rep(1, 3)
   W <- matrix(c(0,1,0,1,0,1,0,1,0,0,0,1), 3, 3)
-  W <- as(W, "sparseMatrix")
+  W <- as(W, Class = "dgCMatrix")
   
   selected <- mincut_c(c, 1, 2, W)
   
