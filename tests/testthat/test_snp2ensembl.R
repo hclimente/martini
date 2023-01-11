@@ -51,8 +51,8 @@ test_that("we map snps to their known genes", {
   # correct mapping in arabidopsis
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297892"], "ACD6")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8297535"], "ACD6")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8301059"], "BHLH104")
-  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8300836"], "BHLH104")
+  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8301059"], "bHLH104")
+  expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8300836"], "bHLH104")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8254521"], "AT4G14342")
   expect_equal(athal_mapped$gene[athal_mapped$snp == "Chr4_8274507"], "AT4G14368")
   expect_equal(length(athal_mapped$gene[athal_mapped$snp == "Chr5_6485290"]), 0)
