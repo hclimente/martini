@@ -223,7 +223,7 @@ connect_biomart <- function(organism) {
   # consider vertebrates and plants
   conn <- tryCatch({
     datasetName <- paste0(organism, "_gene_ensembl")
-    biomaRt::useMart("ENSEMBL_MART_ENSEMBL", dataset = datasetName)
+    biomaRt::useEnsembl(biomart="ensembl", dataset=datasetName, mirror="useast")
   }, error = function(e){
     tryCatch({
       datasetName <- paste0(organism, "_eg_gene")
