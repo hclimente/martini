@@ -1,7 +1,7 @@
 Package: martini
 Type: Package
 Title: GWAS Incorporating Networks
-Version: 1.21.0
+Version: 1.22.0
 Authors@R: c(person("Hector", "Climente-Gonzalez", 
                     email = "hector.climente@riken.jp",
                     role = c("aut", "cre"),
