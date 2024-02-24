@@ -3,7 +3,7 @@ Type: Package
 Title: GWAS Incorporating Networks
 Version: 1.19.0
 Authors@R: c(person("Hector", "Climente-Gonzalez", 
-                    email = "hector.climente@riken.jp",
+                    email = "hector.climente@a.riken.jp",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-3030-7471")),
              person("Chloe-Agathe", "Azencott", 
